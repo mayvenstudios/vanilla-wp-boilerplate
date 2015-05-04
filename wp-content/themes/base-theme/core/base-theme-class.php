@@ -507,8 +507,10 @@ abstract class base_theme_class {
         /* Load WPCLI Interface for ACF */
         include_once('acf-wpcli/advanced-custom-fields-wpcli.php');
 
-
-        acf_wpcli_register_groups();
+        if(function_exists('acf_wpcli_register_groups'))
+        {
+            acf_wpcli_register_groups();
+        }
     }
 
     /**

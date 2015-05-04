@@ -18,7 +18,7 @@ class custom_theme_class extends base_theme_class {
     /* Load more custom post types here */
     public function load_custom_post_types()
     {
-        
+
         register_post_type( 'testimonial',
             array(
                 'labels' => array(
@@ -49,7 +49,7 @@ class custom_theme_class extends base_theme_class {
               'labels' => $labels,
               'hierarchical' => true,
               'rewrite' => array('with_front' => false), 
-              //'rewrite' => array('slug' => 'case-results/category', 'with_front' => false),
+              //'rewrite' => array('slug' => '', 'with_front' => false),
               'public' => false,
               'show_ui' => true,
               'show_admin_column' => true
