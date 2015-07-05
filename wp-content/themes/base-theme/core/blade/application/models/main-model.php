@@ -39,7 +39,7 @@ class WP_Blade_Main_Model {
 		require_once( WP_BLADE_CONFIG_PATH . 'paths.php' );
 
 		Laravel\Blade::sharpen();
-		$view = Laravel\View::make( 'path: ' . $template, array() );
+		$view = Laravel\View::make( 'path: ' .$template, array() );
 
 		$pathToCompiled = Laravel\Blade::compiled( $view->path );
 

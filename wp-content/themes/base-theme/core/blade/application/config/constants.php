@@ -51,7 +51,7 @@ define( 'EXT', '.php' );
 define('CRLF', "\r\n");
 
 // Blade files extension
-define('BLADE_EXT', '.php');
+define('BLADE_EXT', '.blade.php');
 
 // Directory separator
 if ( ! defined( 'DS' ) )

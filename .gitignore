@@ -1,6 +1,5 @@
 # WordPress #
 ############
-wp-config-local.php
 wp-content/uploads
 wp-content/blogs.dir/
 wp-content/upgrade/
@@ -11,10 +10,16 @@ sitemap.xml
 sitemap.xml.gz
 *.log
 
+.DS_Store
+.bundle
+.idea/
+.vagrant
+Movefile
+vendor
+
 # @TODO writable paths
 wp-content/cache/
 wp-content/backups/
-
 wp-content/blade-cache/
 
 node_modules
@@ -35,7 +40,6 @@ node_modules
 # Logs and databases #
 ######################
 *.log
-*.sql
 
 # OS generated files #
 ######################

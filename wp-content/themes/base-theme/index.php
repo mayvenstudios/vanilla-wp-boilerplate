@@ -1,8 +1,8 @@
-@layout('layouts/master')
+@layout('views.layouts.master')
 
 @section('content')
-        
-    @wpquery(array('post_type' => 'post'))
+    
+    @wpquery(['post_type' => 'post'])
 
     <!-- Article Schema for single.php -->   
     <div itemscope itemtype="http://schema.org/Article">
@@ -19,6 +19,7 @@
 
     @wpposts
 
+        {{ the_title() }}
 
     @wpempty
 

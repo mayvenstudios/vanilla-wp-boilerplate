@@ -1,0 +1,43 @@
+<?php // /home/vagrant/code/wordpress-starter-template.dev/wp-content/themes/base-theme/index.php ?>
+
+<?php \Laravel\Section::start('content'); ?>
+    
+    <?php $bladequery = new WP_Query(['post_type' => 'post']); if ( $bladequery->have_posts() ) : while ( $bladequery->have_posts() ) : $bladequery->the_post(); ?> 
+
+    <!-- Article Schema for single.php -->   
+    <div itemscope itemtype="http://schema.org/Article">
+         <span itemprop="name"></span>
+         <span itemprop="author"></span>
+         <span itemprop="datePublished"></span>
+         <span itemprop="image"></span>
+    </div>    
+
+    <?php endwhile; ?><?php else: ?>
+        
+
+    <?php endif; wp_reset_postdata(); ?>
+
+    <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+
+        <?php echo  the_title() ; ?>
+
+    <?php endwhile; ?><?php else: ?>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-5">
+
+                    <h1>Error.</h1>
+
+                    <p>Something went wrong.  We can not load this page.</p>
+
+                    <div class="buttons">
+                        <a href="/" class="btn btn-lg btn-primary">&laquo; Back to home</a>
+                    </div>
+                </div><!--col-->
+            </div><!--row-->
+        </div><!--container-->
+
+    <?php endif; wp_reset_postdata(); ?>
+<?php \Laravel\Section::stop(); ?>
+<?php echo view('views.layouts.master')->with(get_defined_vars())->render(); ?>

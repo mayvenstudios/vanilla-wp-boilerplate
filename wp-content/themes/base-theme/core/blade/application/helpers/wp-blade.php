@@ -10,7 +10,8 @@ class WP_Blade {
 		'wpend',
 		'debug',
 		'acfrepeater',
-		'acfend'
+		'acfend',
+		'define'
 	);
 
 
@@ -89,6 +90,14 @@ class WP_Blade {
 		if( strpos( $value, '@debug' ) )
 			die( $value );
 		return $value;
+	}
+
+	/**
+	 *
+	 */
+	protected static function compile_define( $value ) {
+
+		return preg_replace('/\@define(.+)/', '<?php ${1}; ?>', $value);
 	}
 
 }

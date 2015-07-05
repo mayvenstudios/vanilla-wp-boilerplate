@@ -5,15 +5,12 @@ abstract class base_theme_class {
     /* Set this to the version of your theme */
     public $version;
 
-
     /* The name of the theme */
     public $theme_name;
 
     /* Set this to true to include a contact form post type */
     public $contact_form_post_type;
 
-    /* Set this to true to include location post type */
-    public $location_post_type;
 
     /* You can set this to false if the theme javascript includes jQuery */
     public $include_jQuery;
@@ -25,44 +22,44 @@ abstract class base_theme_class {
     public $image_sizes;
 
     /**
-     * This is the array of menus fort the size.
-     * Set this with the set_menus method.
-     */
+    * This is the array of menus for the site.
+    * Set this with the set_menus method.
+    */
     public $menus;
 
     /**
-     * Bootstrap function for the class.
-     * Loads everything up based off of various parameters you can set.
-     */
+    * Bootstrap function for the class.
+    * Loads everything up based off of various parameters you can set.
+    */
     public function bootstrap()
     {   
+
+
+        add_action('init', [$this, 'load_files']);
+
+        $this->load_blade_templating();
+        
+        $this->include_advanced_custom_fields();
         
         /* Enqueue the Theme Script */
-        add_action( 'wp_enqueue_scripts', array($this, 'load_scripts') );
+        add_action( 'wp_enqueue_scripts', [$this, 'load_scripts'] );
 
 
         /* Enqueue the Theme Stylesheet */
         add_action( 'wp_enqueue_scripts', array($this, 'load_styles') );
 
 
-        if($this->location_post_type === true)
-        {
-
-            add_filter('wpseo_local_cpt_args', array($this, 'locations_cpt') );
-
-        }
-        
-
         add_filter('excerpt_more', array($this,'new_excerpt_more'));
         add_filter('get_the_excerpt', array($this,'custom_excerpt'));
 
-        
+
         if(method_exists($this, 'load_shortcodes'))
         {
 
             $this->load_shortcodes();
 
         }
+
 
 
         if(method_exists($this, 'load_custom_post_types'))
@@ -90,25 +87,75 @@ abstract class base_theme_class {
             add_action( 'wp_ajax_contact_form', array($this,'contact_form') );
             add_action( 'wp_ajax_nopriv_contact_form', array($this,'contact_form') );    
         }
-        
-        $this->load_blade_templating();
-
-        
-
-        $this->include_advanced_custom_fields();
-
-        
 
         $this->remove_junk();
     }
 
 
     /**
-     * Helper function that returns the first word of a string.
-     *
-     * @param  string  
-     * @return First word of the string param
-     */
+    * Files to Include
+    *
+    * The $files_to_load array determines the code included in the theme by default.
+    * Add or remove files to the array as needed.
+    *
+    * @param  int  
+    * @return Response
+    */
+    public function load_files()
+    {
+
+
+        $files_to_load = array(
+            'inc/blade.php',                  // Load Laravel's Blade Templating Engine
+            'inc/utils.php',                  // Utility functions
+            'inc/init.php',                   // Initial theme setup and constants
+            'inc/config.php',                 // Configuration
+            'inc/activation.php',             // Theme activation
+            'inc/titles.php',                 // Page titles
+            'inc/wp_bootstrap_navwalker.php', // Bootstrap Nav Walker (From https://github.com/twittem/wp-bootstrap-navwalker)
+            'inc/gallery.php',                // Custom [gallery] modifications
+            'inc/comments.php',               // Custom comments modifications
+            'inc/scripts.php',                // Scripts and stylesheets
+            'inc/extras.php'                  // Custom functions
+        );
+
+        $files_to_load = [
+            'core/helpers.php'
+        ];
+
+        foreach ($files_to_load as $file)
+        {
+            if (!$filepath = locate_template($file))
+            {
+
+                trigger_error(sprintf(__('Error locating %s for inclusion', 'cutlass'), $file), E_USER_ERROR);
+
+            }
+
+            require_once $filepath;
+        }
+        unset($file, $filepath);
+    }
+
+
+    /**
+    * Loads all of the custom post type files.
+    *
+    * @param  int  
+    * @return Response
+    */
+    public function load_custom_post_types()
+    {
+
+
+    }
+
+    /**
+    * Helper function that returns the first word of a string.
+    *
+    * @param  string  
+    * @return First word of the string param
+    */
     public function get_first_word($string)
     {
 
@@ -118,60 +165,10 @@ abstract class base_theme_class {
         return $parts[0];
     }
 
-    /*
-        $params = array(
-            'width' => 390,
-            'height' => 150,
-            'zoom' => 12,
-            'show_route' => false
-        );
-    */
-    public function get_map($id, $params)
-    {
-        if( function_exists( 'wpseo_local_show_map' ) )
-        {   
-            $params = array_merge($params, array('echo' => false, $id => $id));
-            return wpseo_local_show_map( $params );
-        }
-    }
-
-    /*
-     $params = array(
-          ‘hide_name’ => true, //or remove, defaults to false
-          'show_state' => true,
-          'show_country' => false,
-          'show_phone' => true,
-          ’show_phone_2’ => false,
-          ’show_fax’ => false,
-          'oneline' => false,
-          'show_opening_hours' => false
-     );
-    */
-    public function get_address($id, $params)
-    {
-        if( function_exists( 'wpseo_local_show_address' ) )
-        {   
-            $params = array_merge($params, array('echo' => false, $id => $id));
-            return wpseo_local_show_address( $params );
-        }
-    }
-
-    public function get_opening_hours($id, $params)
-    {
-
-        if ( function_exists( 'wpseo_local_show_opening_hours' ) )
-        {
-
-            $params = array_merge($params, array('echo' => false, $id => $id));
-            return wpseo_local_show_opening_hours( $params );
-        }
-
-    }
-
     /**
-     * Loads the contact form custom post type.
-     *
-     */
+    * Loads the contact form custom post type.
+    *
+    */
     public function register_contact_form_post_type()
     {
 
@@ -183,17 +180,17 @@ abstract class base_theme_class {
             'show_ui' => true,
             'supports' => array(
                 'title'
-            )
-        );
+                )
+            );
 
         register_post_type('contact_form',$args);
     }
 
 
     /**
-     * AJAX Endpoint for contact form.
-     * Post to admin-ajax.php with the action param as "contact_form"
-     */
+    * AJAX Endpoint for contact form.
+    * Post to admin-ajax.php with the action param as "contact_form"
+    */
     public function contact_form()
     {
         header( "Content-Type: application/json" );
@@ -201,13 +198,13 @@ abstract class base_theme_class {
         {
             die ( json_encode( array('status' => 'Busted!') ) );    
         }
-            
+
 
         $post_id = wp_insert_post(array(
             'post_status' => 'publish',
             'post_type' => 'contact_form',
             'post_title' => "New Contact Form Submission from {$_REQUEST['first_name']}"
-        ));
+            ));
 
         foreach($_REQUEST as $key => $value)
         {
@@ -216,18 +213,18 @@ abstract class base_theme_class {
 
         $response = json_encode(array('status' => 'success'));
 
-        
+
 
         die($response); 
     }
 
 
     /**
-     * Helper method that returns image URL.
-     *
-     * @param  $name - image name  
-     * @return url/to/image
-     */
+    * Helper method that returns image URL.
+    *
+    * @param  $name - image name  
+    * @return url/to/image
+    */
     public function image( $name )
     {
 
@@ -237,11 +234,11 @@ abstract class base_theme_class {
 
 
     /**
-     * Return Breadcrumbs
-     *
-     * @param  int  
-     * @return Response
-     */
+    * Return Breadcrumbs
+    *
+    * @param  int  
+    * @return Response
+    */
     public function breadcrumbs()
     {
         if ( function_exists('yoast_breadcrumb') )
@@ -253,34 +250,34 @@ abstract class base_theme_class {
 
             echo "<ul>{$breadcrumbs}</ul>";
         }
-        
+
     }
 
 
     /**
-     * Loads the theme scripts.
-     *
-     */
+    * Loads the theme scripts.
+    *
+    */
     public function load_scripts()
     {   
         if($this->include_jQuery === false)
         {
             wp_deregister_script('jquery');
             wp_enqueue_script( 'jquery' , get_template_directory_uri() . '/js/theme.js', null, $this->version, true );
-        
+
         }
         else
         {
             wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/js/theme.js', array('jquery'), $this->version, true );
         }
-    
+
     }
 
 
     /**
-     * Loads the theme styles.
-     *
-     */
+    * Loads the theme styles.
+    *
+    */
     public function load_styles()
     {
         wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/css/theme.css');
@@ -289,9 +286,9 @@ abstract class base_theme_class {
 
 
     /**
-     * Changes the theme's default excerpt mark.
-     *
-     */
+    * Changes the theme's default excerpt mark.
+    *
+    */
     public function new_excerpt_more( $more ) {
         return '...';
     }
@@ -318,11 +315,11 @@ abstract class base_theme_class {
 
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  
-     * @return Response
-     */
+    * Display the specified resource.
+    *
+    * @param  int  
+    * @return Response
+    */
     protected function load_thumbnail_support()
     {
 
@@ -338,12 +335,12 @@ abstract class base_theme_class {
 
 
     /**
-     * Returns h1 field from a post or page.
-     *
-     * @param  $id   - integer
-     * @param  $echo - boolean  
-     * @return title
-     */
+    * Returns h1 field from a post or page.
+    *
+    * @param  $id   - integer
+    * @param  $echo - boolean  
+    * @return title
+    */
     public function h1_title($id=false, $echo=true){
         global $post;
 
@@ -379,8 +376,8 @@ abstract class base_theme_class {
     }
 
     /**
-     * Returns the thumbnail with a caption.
-     */
+    * Returns the thumbnail with a caption.
+    */
     public function the_post_thumbnail_caption() {
         global $post;
 
@@ -419,20 +416,12 @@ abstract class base_theme_class {
     }
 
 
-    public function locations_cpt($args)
-    {
-        if (count($args)){
-            $args['rewrite'] = array( 'slug' => 'locations' , 'with_front' => false);
-        }
-        return $args;
-    }
-
     /**
-     * Loads the menus.
-     *
-     * You will need to set the $menus param in the set_menus method in functions.php 
-     * @return Response
-     */
+    * Loads the menus.
+    *
+    * You will need to set the $menus param in the set_menus method in functions.php 
+    * @return Response
+    */
     protected function load_menu_support()
     {
 
@@ -443,40 +432,41 @@ abstract class base_theme_class {
 
 
     /**
-     * Loads the blade template engine.
-     *
-     */
+    * Loads the blade template engine.
+    *
+    */
     protected function load_blade_templating()
     {
 
         if( !class_exists('WP_Blade_Main_Controller') )
         {
-            include_once( 'blade/blade.php' );    
+            include_once( 'blade/blade.php' );       
         }
 
+        /*
+
+        - Not sure if this is needed anymore.  7/1/2015
         $upload = wp_upload_dir();
 
         $cachePath = $upload['basedir'] . '/blade-cache';
 
 
         if (!file_exists( $cachePath )) {
-            mkdir($cachePath, 0777, true);
+        mkdir($cachePath, 0777, true);
         }
         if(function_exists('blade_set_storage_path'))
         {
-            blade_set_storage_path( $cachePath );
-        }
+        blade_set_storage_path( $cachePath );
+        }*/
 
     }
 
     /**
-     * Loads ACF if the plugin is not included.
-     */
+    * Loads ACF if the plugin is not included.
+    */
     public function include_advanced_custom_fields()
     {   
 
-        // Load only limited functionality
-        //define( 'ACF_LITE' , true );
 
         if( ! class_exists('acf') )
         {
@@ -499,10 +489,6 @@ abstract class base_theme_class {
 
         }
 
-        foreach (glob("../includes/custom-fields/*.php") as $filename)
-        {
-            include $filename;
-        }
 
         /* Load WPCLI Interface for ACF */
         include_once('acf-wpcli/advanced-custom-fields-wpcli.php');
@@ -514,8 +500,8 @@ abstract class base_theme_class {
     }
 
     /**
-     * Uneeded pingback header.
-     */
+    * Uneeded pingback header.
+    */
     public function remove_x_pingback($headers) {
 
         unset($headers['X-Pingback']);
@@ -524,15 +510,15 @@ abstract class base_theme_class {
     }
 
     /**
-     * Clean code = better code.
-     */
+    * Clean code = better code.
+    */
     protected function remove_junk()
     {
 
         // Remove "Link" canonical HTTP header
         remove_action('template_redirect', 'wp_shortlink_header', 11);
 
-        add_filter('wp_headers', array($this,'remove_x_pingback') );
+        add_filter('wp_headers', [$this,'remove_x_pingback'] );
 
         // remove junk from head
         remove_action('wp_head', 'rel_canonical'); 
