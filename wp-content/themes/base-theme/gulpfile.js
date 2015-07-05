@@ -1,4 +1,6 @@
+var gulp = require('gulp');
 var elixir = require('laravel-elixir');
+var del = require('del');
 
 /*
 |--------------------------------------------------------------------------
@@ -11,7 +13,15 @@ var elixir = require('laravel-elixir');
 |
 */
 
+
 elixir.config.assetsDir = 'assets/';
+
+elixir.extend("remove", function(path) {
+    gulp.task("remove", function() {
+        del(path);
+    });
+    return this.queueTask("remove");
+});
 
 elixir(function(mix)
 {
@@ -26,4 +36,12 @@ elixir(function(mix)
         'custom/*'
     ], 'public/js/theme.js');
 
+
+    mix.remove([
+        'public/images',
+        'public/fonts'
+    ]);
+
+    mix.copy('assets/images', 'public/images');
+    mix.copy('assets/fonts', 'public/fonts');
 });

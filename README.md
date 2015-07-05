@@ -5,6 +5,8 @@
 
 # Quick Section about getting dev environment setup, and adding .env file
 
+# Running composer install (installing)
+
 # Quick overview of the directory structure
 
 # wp cli and advanced custom fields
