@@ -1,5 +1,7 @@
 <?php
 
+namespace BaseTheme;
+
 abstract class base_theme_class {
 
     /* Set this to the version of your theme */
@@ -8,12 +10,8 @@ abstract class base_theme_class {
     /* The name of the theme */
     public $theme_name;
 
-    /* Set this to true to include a contact form post type */
-    public $contact_form_post_type;
-
-
     /* You can set this to false if the theme javascript includes jQuery */
-    public $include_jQuery;
+    public $include_jquery;
 
     /**
     * This is the array that holds the image sizes.
@@ -27,32 +25,52 @@ abstract class base_theme_class {
     */
     public $menus;
 
+
+    /**
+    * This is a boolean that determines whether or not to load the custom options panel
+    * The custom options panel can be set in the load_options_panel method
+    * Set this with the set_menus method.
+    */
+    public $load_options_panel;
+
+
     /**
     * Bootstrap function for the class.
     * Loads everything up based off of various parameters you can set.
     */
-    public function bootstrap()
+    public function __construct()
     {   
-
 
         add_action('init', [$this, 'load_files']);
 
         $this->load_blade_templating();
-        
+
         $this->include_advanced_custom_fields();
-        
+
         /* Enqueue the Theme Script */
         add_action( 'wp_enqueue_scripts', [$this, 'load_scripts'] );
 
-
         /* Enqueue the Theme Stylesheet */
-        add_action( 'wp_enqueue_scripts', array($this, 'load_styles') );
+        add_action( 'wp_enqueue_scripts', [$this, 'load_styles'] );
+
+        /* Load custom CSS/JS into head */
+        add_action('wp_head', [$this, 'load_additional_head_js_css']);
+
+        /* Load additional JS into footer */
+        add_action('wp_footer', [$this, 'load_additional_footer_js']);
+
+        /* Load favicions into head */
+        add_action('wp_head', [$this, 'load_favicons']);
+
+        /* Clean up excerpt */
+        add_filter('excerpt_more', [$this,'excerpt_more']);
 
 
-        add_filter('excerpt_more', array($this,'new_excerpt_more'));
-        add_filter('get_the_excerpt', array($this,'custom_excerpt'));
+        define( 'DISALLOW_FILE_EDIT', true );
 
 
+
+        /* Load shortcodes */
         if(method_exists($this, 'load_shortcodes'))
         {
 
@@ -60,8 +78,7 @@ abstract class base_theme_class {
 
         }
 
-
-
+        /* Load all custom post types */
         if(method_exists($this, 'load_custom_post_types'))
         {
 
@@ -69,25 +86,45 @@ abstract class base_theme_class {
 
         }
 
+        /* Load all options panels if not globally disabled */
+        if(method_exists($this, 'load_options_panel') && $this->load_options_panel == true)
+        {
+
+            $this->load_options_panel();
+
+        }
+
+        
+        /* Load all dynamic sidebars */
+        if(method_exists($this, 'load_sidebars'))
+        {
+
+            add_action('widgets_init', [$this, 'load_sidebars']);
+
+        }
+
+
+        /* Load all image sizes */
         if(method_exists($this, 'set_image_sizes'))
         {   
+        
             $this->set_image_sizes();
             $this->load_thumbnail_support();
+        
         }
 
+
+        /* Set all menus and load menu support */
         if(method_exists($this, 'set_menus'))
         {   
+        
             $this->set_menus();
             $this->load_menu_support();
+        
         }
 
-        if($this->contact_form_post_type === true)
-        {
-            add_action( 'init', array($this,'register_contact_form_post_type') );
-            add_action( 'wp_ajax_contact_form', array($this,'contact_form') );
-            add_action( 'wp_ajax_nopriv_contact_form', array($this,'contact_form') );    
-        }
 
+        /* Remove all junk */
         $this->remove_junk();
     }
 
@@ -105,152 +142,79 @@ abstract class base_theme_class {
     {
 
 
-        $files_to_load = array(
-            'inc/blade.php',                  // Load Laravel's Blade Templating Engine
-            'inc/utils.php',                  // Utility functions
-            'inc/init.php',                   // Initial theme setup and constants
-            'inc/config.php',                 // Configuration
-            'inc/activation.php',             // Theme activation
-            'inc/titles.php',                 // Page titles
-            'inc/wp_bootstrap_navwalker.php', // Bootstrap Nav Walker (From https://github.com/twittem/wp-bootstrap-navwalker)
-            'inc/gallery.php',                // Custom [gallery] modifications
-            'inc/comments.php',               // Custom comments modifications
-            'inc/scripts.php',                // Scripts and stylesheets
-            'inc/extras.php'                  // Custom functions
-        );
-
         $files_to_load = [
-            'core/helpers.php'
+            'inc/Helper.php'
         ];
 
         foreach ($files_to_load as $file)
         {
-            if (!$filepath = locate_template($file))
-            {
-
-                trigger_error(sprintf(__('Error locating %s for inclusion', 'cutlass'), $file), E_USER_ERROR);
-
-            }
-
-            require_once $filepath;
+            require_once $file;
         }
-        unset($file, $filepath);
-    }
-
-
-    /**
-    * Loads all of the custom post type files.
-    *
-    * @param  int  
-    * @return Response
-    */
-    public function load_custom_post_types()
-    {
-
 
     }
 
     /**
-    * Helper function that returns the first word of a string.
-    *
-    * @param  string  
-    * @return First word of the string param
-    */
-    public function get_first_word($string)
+     * Clean up the_excerpt()
+     */
+    public function excerpt_more($more)
+    {
+      return ' &hellip; <a href="' . get_permalink() . '">Continued</a>';
+    }
+
+    public function load_additional_head_js_css()
+    {
+        echo get_field('header_css_js_custom', 'option');
+    }
+
+    public function load_additional_footer_js()
     {
 
-        $parts = explode(" ", $string);
+        echo get_field('custom_js_footer', 'option');
 
-
-        return $parts[0];
     }
+
 
     /**
     * Loads the contact form custom post type.
     *
     */
-    public function register_contact_form_post_type()
+    public function register_form_submission_post_type()
     {
 
-        $args = array(
-
-            'label' => 'Contact Form Submissions',
-            'description' => 'This post type holds all of the contact form submissions',
+        $args = [
+            'label' => 'Form Submissions',
+            'description' => 'This post type holds all of the form submissions',
             'public' => false,
             'show_ui' => true,
-            'supports' => array(
-                'title'
-                )
-            );
+            'supports' => ['title']
+        ];
+        register_post_type('form-submission',$args);
 
-        register_post_type('contact_form',$args);
-    }
-
-
-    /**
-    * AJAX Endpoint for contact form.
-    * Post to admin-ajax.php with the action param as "contact_form"
-    */
-    public function contact_form()
-    {
-        header( "Content-Type: application/json" );
-        if ( ! wp_verify_nonce( $_REQUEST['contact-form-nonce'] , 'contact-form-nonce' ) )
-        {
-            die ( json_encode( array('status' => 'Busted!') ) );    
-        }
-
-
-        $post_id = wp_insert_post(array(
-            'post_status' => 'publish',
-            'post_type' => 'contact_form',
-            'post_title' => "New Contact Form Submission from {$_REQUEST['first_name']}"
-            ));
-
-        foreach($_REQUEST as $key => $value)
-        {
-            update_field($key, $value, $post_id);
-        }
-
-        $response = json_encode(array('status' => 'success'));
-
-
-
-        die($response); 
-    }
-
-
-    /**
-    * Helper method that returns image URL.
-    *
-    * @param  $name - image name  
-    * @return url/to/image
-    */
-    public function image( $name )
-    {
-
-        return get_template_directory_uri() . "/images/{$name}";
-
-    }
-
-
-    /**
-    * Return Breadcrumbs
-    *
-    * @param  int  
-    * @return Response
-    */
-    public function breadcrumbs()
-    {
-        if ( function_exists('yoast_breadcrumb') )
-        {
-            $breadcrumbs = yoast_breadcrumb( '<li>', '</li>', false );
-
-            $breadcrumbs = str_replace( '|', '</li><li>', $breadcrumbs );
-
-
-            echo "<ul>{$breadcrumbs}</ul>";
-        }
-
+        $labels = [
+            'name'              => _x( 'Form Types', 'taxonomy general name' ),
+            'singular_name'     => _x( 'Form Type', 'taxonomy singular name' ),
+            'search_items'      => __( 'Search Form Types' ),
+            'all_items'         => __( 'All Form Types' ),
+            'parent_item'       => __( 'Parent Form Type' ),
+            'parent_item_colon' => __( 'Parent Form Type:' ),
+            'edit_item'         => __( 'Edit Form Type' ),
+            'update_item'       => __( 'Update Form Type' ),
+            'add_new_item'      => __( 'Add New Form Type' ),
+            'new_item_name'     => __( 'New Form Type' ),
+            'menu_name'         => __( 'Form Types' )
+        ];
+        
+        $args = [
+            'labels' => $labels,
+            'hierarchical' => true,
+            'rewrite' => ['with_front' => false], 
+            //'rewrite' => array('slug' => '', 'with_front' => false),
+            'public' => false,
+            'show_ui' => true,
+            'show_admin_column' => true
+        ];
+        
+        register_taxonomy( 'form-type', 'form-submission', $args );
     }
 
 
@@ -260,15 +224,15 @@ abstract class base_theme_class {
     */
     public function load_scripts()
     {   
-        if($this->include_jQuery === false)
+        if($this->include_jquery === false)
         {
             wp_deregister_script('jquery');
-            wp_enqueue_script( 'jquery' , get_template_directory_uri() . '/js/theme.js', null, $this->version, true );
+            wp_enqueue_script( 'jquery' , get_template_directory_uri() . '/public/js/theme.js', null, $this->version, true );
 
         }
         else
         {
-            wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/js/theme.js', array('jquery'), $this->version, true );
+            wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/public/js/theme.js', ['jquery'], $this->version, true );
         }
 
     }
@@ -280,38 +244,10 @@ abstract class base_theme_class {
     */
     public function load_styles()
     {
-        wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/css/theme.css');
+        wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/public/css/theme.css');
 
     }
 
-
-    /**
-    * Changes the theme's default excerpt mark.
-    *
-    */
-    public function new_excerpt_more( $more ) {
-        return '...';
-    }
-
-    /* remove [...] and Continue Reading from manual/custom excerpt 
-    (fix for qa plugin's filters getting in the way even if we don't use FAQ excerpts) */
-    public function custom_excerpt($output) {
-        $excerpt = strip_tags( str_replace('Continue reading <span class="meta-nav">&rarr;</span>', '', $output) );
-        return $excerpt;
-    }
-
-    /* Custom excerpt lengths (usage: echo excerpt(100); ) */
-    public function excerpt($limit) {
-        $excerpt = explode(' ', get_the_excerpt(), $limit);
-        if (count($excerpt)>=$limit) {
-            array_pop($excerpt);
-            $excerpt = implode(" ",$excerpt).'...';
-        } else {
-            $excerpt = implode(" ",$excerpt);
-        }
-        $excerpt = preg_replace('`[[^]]*]`','',$excerpt);
-        return $excerpt;
-    }
 
 
     /**
@@ -335,62 +271,6 @@ abstract class base_theme_class {
 
 
     /**
-    * Returns h1 field from a post or page.
-    *
-    * @param  $id   - integer
-    * @param  $echo - boolean  
-    * @return title
-    */
-    public function h1_title($id=false, $echo=true){
-        global $post;
-
-        $title = "";
-        if($id)
-        {
-            $title = get_field('h1_title', $id)? get_field('h1_title', $id) : get_the_title($id);   
-        }
-        else
-        {
-            $title = get_field('h1_title', $post->ID)? get_field('h1_title', $post->ID) : get_the_title($post->ID);
-        }
-
-        if($title != "")
-        {
-
-            if($echo)
-            {
-                echo $title;
-            }
-            else
-            {
-                return $title;
-            }
-
-        }
-        else
-        {
-
-            return false;
-
-        }
-    }
-
-    /**
-    * Returns the thumbnail with a caption.
-    */
-    public function the_post_thumbnail_caption() {
-        global $post;
-
-        $thumbnail_id    = get_post_thumbnail_id($post->ID);
-        $thumbnail_image = get_posts(array('p' => $thumbnail_id, 'post_type' => 'attachment'));
-
-        if ($thumbnail_image && isset($thumbnail_image[0])) {
-            echo '<span>'.$thumbnail_image[0]->post_excerpt.'</span>';
-        }
-    }
-
-
-    /**
     * Returms the path to the favicon files for the head of the site.
     * 
     * @param  $faviconPath - this should be absolute path to the favicon file.
@@ -398,21 +278,31 @@ abstract class base_theme_class {
     *           - array('72x72' => 'path/to/image.png', '144x144' => 'path/to/image')  
     * @return HTML output
     */
-    public function load_favicons($faviconPath, $additionalIcons = array())
+    public function load_favicons()
     {
 
-        $output = "<link rel='shortcut icon' href='{$faviconPath}' type='image/x-icon'>\n";
+        $output = '';    
 
-        foreach($additionalIcons as $size => $iconPath)
+        $faviconPath = get_field('favicon','option');
+        $otherIcons  = get_field('other_icons','option');
+
+        if($faviconPath)
         {
-
-
-            $output .= "<link rel='apple-touch-icon' type='image/png' sizes='{$size}' href='{$iconPath}'>\n";
-
+            $output .= "<link rel='shortcut icon' href='{$faviconPath}' type='image/x-icon'>\n";
         }
 
+        if($otherIcons)
+        {
+            foreach($otherIcons as $icon)
+            {
 
-        return $output;
+
+                $output .= "<link rel='apple-touch-icon' type='image/png' sizes='{$icon['size']}' href='{$icon['image']}'>\n";
+
+            }    
+        }
+
+        echo $output;
     }
 
 
@@ -442,23 +332,6 @@ abstract class base_theme_class {
         {
             include_once( 'blade/blade.php' );       
         }
-
-        /*
-
-        - Not sure if this is needed anymore.  7/1/2015
-        $upload = wp_upload_dir();
-
-        $cachePath = $upload['basedir'] . '/blade-cache';
-
-
-        if (!file_exists( $cachePath )) {
-        mkdir($cachePath, 0777, true);
-        }
-        if(function_exists('blade_set_storage_path'))
-        {
-        blade_set_storage_path( $cachePath );
-        }*/
-
     }
 
     /**
@@ -471,24 +344,23 @@ abstract class base_theme_class {
         if( ! class_exists('acf') )
         {
 
-            include_once( 'advanced-custom-fields/acf.php'); 
+            add_filter('acf/settings/path', [$this, 'my_acf_settings_path']);
+            add_filter('acf/settings/dir', [$this, 'my_acf_settings_dir']);
+            
+            
+
+            include_once( 'acf/acf.php'); 
+
+
+            if(getenv('WP_DEBUG') == 'false')
+            {
+                add_filter('acf/settings/show_admin', '__return_false');        
+            }
+            
 
         }    
 
-        if( ! class_exists('acf_repeater_plugin') )
-        {
-
-            include_once( 'acf-repeater/acf-repeater.php');
-
-        }
-
-        if( ! class_exists('acf_options_page_plugin') )
-        {
-
-            include_once( 'acf-options-page/acf-options-page.php');
-
-        }
-
+        add_filter('acf/format_value',[$this,'parse_template_directory'], 10, 3);
 
         /* Load WPCLI Interface for ACF */
         include_once('acf-wpcli/advanced-custom-fields-wpcli.php');
@@ -499,16 +371,41 @@ abstract class base_theme_class {
         }
     }
 
-    /**
-    * Uneeded pingback header.
-    */
-    public function remove_x_pingback($headers) {
+    public function parse_template_directory( $value, $post_id, $field )
+    {
 
-        unset($headers['X-Pingback']);
+        $searchAndReplace = [
 
-        return $headers;
+            '{IMAGEPATH}' => get_template_directory_uri() . '/public/images'
+
+        ];
+
+        foreach($searchAndReplace as $search => $replace)
+        {
+            $value = str_replace($search, $replace, $value);
+        }
+
+        return $value;
     }
 
+     
+    public function my_acf_settings_path( $path ) {
+     
+        $path = get_stylesheet_directory() . '/core/acf/';
+        
+        return $path;
+        
+    }
+     
+     
+    public function my_acf_settings_dir( $dir ) {
+     
+        $dir = get_stylesheet_directory_uri() . '/core/acf/';
+        
+        return $dir;
+        
+    }
+     
     /**
     * Clean code = better code.
     */
@@ -532,6 +429,16 @@ abstract class base_theme_class {
         remove_action('wp_head', 'parent_post_rel_link', 10, 0); 
         remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0); 
 
+    }
+
+    /**
+    * Uneeded pingback header.
+    */
+    public function remove_x_pingback($headers) {
+
+        unset($headers['X-Pingback']);
+
+        return $headers;
     }
 
 }

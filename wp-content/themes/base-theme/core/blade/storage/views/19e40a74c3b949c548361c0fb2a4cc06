@@ -2,6 +2,8 @@
 
 <?php \Laravel\Section::start('content'); ?>
     
+
+    <?php echo view('views/forms/contact-form')->with(get_defined_vars())->render(); ?>
     <?php $bladequery = new WP_Query(['post_type' => 'post']); if ( $bladequery->have_posts() ) : while ( $bladequery->have_posts() ) : $bladequery->the_post(); ?> 
 
     <!-- Article Schema for single.php -->   

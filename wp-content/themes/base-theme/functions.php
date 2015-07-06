@@ -1,5 +1,7 @@
 <?php
 
+namespace BaseTheme;
+
 /**
 * Loads the base theme class.  The base_theme_class is extended here.
 * Please see wiki documentation for full set of features and helpers available in the base_theme_class.
@@ -7,15 +9,15 @@
 include_once( 'core/base-theme-class.php' );  
 
 
-class custom_theme_class extends base_theme_class {
+class Theme extends base_theme_class {
 
     var $version = '1.0';
 
     var $theme_name = THEME_NAME;
 
-    var $contact_form_post_type = true;
+    var $include_jquery = true;
 
-    var $include_jQuery = false;
+    var $load_options_panel = true;
 
 
     /* Load more custom post types here */
@@ -32,6 +34,8 @@ class custom_theme_class extends base_theme_class {
 
     }
 
+
+
     /* Sample shortcode.  Please see full shortcode documentation */
     public function custom_shortcode_1( $atts )
     {
@@ -40,6 +44,48 @@ class custom_theme_class extends base_theme_class {
 
             'form_title' => 'Contact Us'
 
+        ]);
+
+    }
+
+
+    public function load_sidebars()
+    {
+
+        register_sidebar([
+            'name'          => 'Primary',
+            'id'            => 'sidebar-primary',
+            'before_widget' => '<section class="widget %1$s %2$s">',
+            'after_widget'  => '</section>',
+            'before_title'  => '<h3>',
+            'after_title'   => '</h3>',
+        ]);
+
+        
+    }
+
+    public function load_options_panel()
+    {
+
+        acf_add_options_page([
+            'page_title'    => 'Theme Options',
+            'menu_title'    => 'Options',
+            'menu_slug'     => 'theme-options-settings',
+            'capability'    => 'edit_posts',
+            'redirect'      => true
+        ]);
+
+
+        acf_add_options_sub_page([
+            'page_title'    => 'JavaScript & CSS Options',
+            'menu_title'    => 'Javascript / CSS',
+            'parent_slug'   => 'theme-options-settings',
+        ]);
+
+        acf_add_options_sub_page([
+            'page_title'    => 'Header & Footer Options',
+            'menu_title'    => 'Header / Footer',
+            'parent_slug'   => 'theme-options-settings',
         ]);
 
     }
@@ -64,26 +110,23 @@ class custom_theme_class extends base_theme_class {
     public function set_image_sizes()
     {
 
-        $this->image_sizes[] = array(
+        $this->image_sizes[] = [
             'name' => 'medium-size',
             'width' => 600,
             'height' => 400,
             'crop' =>true
-            );
+        ];
 
 
-        $this->image_sizes[] = array(
+        $this->image_sizes[] = [
             'name' => 'large-size',
             'width' => 1050,
             'height' => 9999,
             'crop' =>true
-            );
+        ];
     }
 
 }
 
-global $theme;   
+$theme = new \BaseTheme\Theme;
 
-$theme = new custom_theme_class;
-
-$theme->bootstrap();

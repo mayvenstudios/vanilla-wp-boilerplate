@@ -17,6 +17,8 @@ sitemap.xml.gz
 Movefile
 vendor
 
+.env
+
 # @TODO writable paths
 wp-content/cache/
 wp-content/backups/

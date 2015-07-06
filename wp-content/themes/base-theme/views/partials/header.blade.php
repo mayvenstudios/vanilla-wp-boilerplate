@@ -2,20 +2,10 @@
 <html lang="en">
 <head>
 
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ bloginfo('name') }} | {{ is_front_page() ? bloginfo('description') : wp_title('') }}</title>
-
-
-    {{ get_field('header_css_js_custom', 'options') }}
-    <?php 
-
-    /* $theme->load_favicons( get_template_directory_uri() . '/favicon.ico', array('144x144' => '/images/test123.png', '250x250' => 'images/testx250x250.png') ) */
-
-    ?>
-
 
     {{ wp_head() }}
     <!--[if lt IE 9]>

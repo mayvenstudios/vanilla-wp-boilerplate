@@ -1,0 +1,10 @@
+<?php // /home/vagrant/code/wordpress-starter-template.dev/wp-content/themes/base-theme/front-page.php ?>
+
+<?php \Laravel\Section::start('content'); ?>
+
+    
+    <?php echo view('views/forms/contact-form')->with(get_defined_vars())->render(); ?>
+
+
+<?php \Laravel\Section::stop(); ?>
+<?php echo view('views.layouts.master')->with(get_defined_vars())->render(); ?>

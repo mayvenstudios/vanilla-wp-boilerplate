@@ -2,6 +2,8 @@
 
 @section('content')
     
+
+    @include('views/forms/contact-form')
     @wpquery(['post_type' => 'post'])
 
     <!-- Article Schema for single.php -->   

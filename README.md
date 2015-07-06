@@ -2,6 +2,10 @@
 =========
 
 
+# Recommended Software
+
+- sublime
+- sequelpro
 
 # Quick Section about getting dev environment setup, and adding .env file
 
@@ -21,6 +25,20 @@
 
 # gulp
 
+# {IMAGEPATH} constant
+
+# options panel
+
+# sidebars
+
+```
+acf_add_options_sub_page([
+    'title' => 'Test 123',
+    'parent' => 'edit.php?post_type=contact_form',
+    'capability' => 'manage_options'
+]);
+```
+
 # blade templating
 
 # image sizes
@@ -28,6 +46,8 @@
 # set name of the theme in various places
 
 # include jQuery
+
+# Helper static methods
 
 #menus
 
@@ -145,6 +165,57 @@ Special Thanks to [Mikael Mattsson](https://github.com/MikaelMattsson) and the T
 3. Run `bower install` to install dependencies
 4. Run `gulp dev` to compile the initial css and js or just `gulp` to compile initial css and js and then run watch task
 
+```
+public function __construct()
+    {
+        add_action( 'wp_ajax_contact_form', [$this, 'contact_form'] );
+        add_action( 'wp_ajax_nopriv_contact_form', [$this,'contact_form'] );  
+    }
+
+    /**
+    * AJAX Endpoint for contact form.
+    * Post to admin-ajax.php with the action param as "contact_form"
+    */
+    public function contact_form()
+    {   
+
+        $nonce = 'contact-form-nonce';
+
+        header( "Content-Type: application/json" );
+        if ( ! wp_verify_nonce( $_REQUEST[ $nonce ] , $nonce ) )
+        {
+            die ( json_encode( array('status' => 'Busted!') ) );
+        }
+
+        $post_id = wp_insert_post([
+            'post_status' => 'publish',
+            'post_type' => 'contact_form',
+            'post_title' => "New Contact Form Submission from {$_REQUEST['first_name']}"
+        ]);
+
+        $savedFormData = [];
+        foreach($_REQUEST as $key => $value)
+        {   
+
+            if(in_array($key, [$nonce, 'action']))
+            {
+                continue;
+            }
+
+            $savedFormData[] = [
+                'key' => $key,
+                'value' => $value
+            ];
+
+        }
+
+        update_field('field_5599f54bb44fb', $savedFormData, $post_id);
+
+        $response = json_encode(array('status' => 'success'));
+
+        die($response); 
+    }
+```
 
 ```
 

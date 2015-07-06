@@ -1,10 +1,9 @@
 <?php
 
-use Dotenv\Dotenv;
 
 require 'vendor/autoload.php';
 
-$dotenv = new Dotenv(__DIR__);
+$dotenv = new \Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 // ** MySQL settings ** //

@@ -1,1 +1,1 @@
-{"version":3,"sources":["custom-plugin.js","script.js"],"names":[],"mappings":"AAAA;ACAA;AACA;AACA;AACA;AACA;AACA","file":"theme.js","sourcesContent":["var hello = 'world';","jQuery(document).on('ready',function($)\n{\n\n    alert( hello );\n\n});"],"sourceRoot":"/source/"}
+{"version":3,"sources":["custom-plugin.js","script.js"],"names":[],"mappings":"AAAA;ACAA;AACA;AACA;AACA","file":"theme.js","sourcesContent":["var hello = 'world';","jQuery(document).on('ready',function($)\n{\n\n});"],"sourceRoot":"/source/"}

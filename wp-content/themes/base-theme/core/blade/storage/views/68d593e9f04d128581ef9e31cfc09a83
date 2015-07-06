@@ -1,8 +1,8 @@
 <h3><?php echo  $form_title ; ?></h3>
-<form data-thankyou-text="Thank you for your message. We’ll get back to you as soon as possible." action="<?php admin_url('admin-ajax.php') ?>" id="form-contact" method="post">
+<form data-thankyou-text="Thank you for your message. We’ll get back to you as soon as possible." action="<?php echo  admin_url('admin-ajax.php') ; ?>" id="form-contact" method="post">
     <div class="row">
         <input type="hidden" name="action" value="contact_form" />
-        <input type="hidden" name="contact-form-nonce" value="<?php wp_create_nonce('contact-form-nonce') ?>" />
+        <input type="hidden" name="contact-form-nonce" value="<?php echo  wp_create_nonce('contact-form-nonce') ; ?>" />
         <div class="col-sm-5">
             <div class="form-group">
                 <input type="text" name="first_name" placeholder="First Name" class="required form-control" />
