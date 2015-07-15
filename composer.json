@@ -1,6 +1,0 @@
-{
-    "require": {
-        "vlucas/phpdotenv": "^2.0",
-        "wp-cli/wp-cli": "^0.19.2"
-    }
-}

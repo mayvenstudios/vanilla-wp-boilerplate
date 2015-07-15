@@ -7,7 +7,7 @@ namespace BaseTheme;
 * Please see wiki documentation for full set of features and helpers available in the base_theme_class.
 */
 include_once( 'core/base-theme-class.php' );  
-
+include_once( 'filters-actions.php' );  
 
 class Theme extends base_theme_class {
 

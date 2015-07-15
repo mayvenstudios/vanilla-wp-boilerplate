@@ -36,12 +36,4 @@ elixir(function(mix)
         'custom/*'
     ], 'public/js/theme.js');
 
-
-    mix.remove([
-        'public/images',
-        'public/fonts'
-    ]);
-
-    mix.copy('assets/images', 'public/images');
-    mix.copy('assets/fonts', 'public/fonts');
 });
