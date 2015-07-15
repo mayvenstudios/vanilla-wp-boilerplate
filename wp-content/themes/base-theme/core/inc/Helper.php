@@ -12,61 +12,97 @@ class Helper {
     {
 
         $parts = explode(" ", $string);
-        
+
         return $parts[0];
     }
 
-
     /**
-     * Page titles
-     */
+    * Page titles
+    */
     public static function index_title()
     {
-      if (is_home()) {
-        if (get_option('page_for_posts', true)) {
-          return get_the_title(get_option('page_for_posts', true));
+        if (is_home()) {
+            if (get_option('page_for_posts', true)) {
+                return get_the_title(get_option('page_for_posts', true));
+            } else {
+                return __('Latest Posts', 'default-theme');
+            }
+        } elseif (is_archive()) {
+            $term = get_term_by('slug', get_query_var('term'), get_query_var('taxonomy'));
+            if ($term) {
+                return apply_filters('single_term_title', $term->name);
+            } elseif (is_post_type_archive()) {
+                return apply_filters('the_title', get_queried_object()->labels->name);
+            } elseif (is_day()) {
+                return sprintf(__('Daily Archives: %s', 'default-theme'), get_the_date());
+            } elseif (is_month()) {
+                return sprintf(__('Monthly Archives: %s', 'default-theme'), get_the_date('F Y'));
+            } elseif (is_year()) {
+                return sprintf(__('Yearly Archives: %s', 'default-theme'), get_the_date('Y'));
+            } elseif (is_author()) {
+                $author = get_queried_object();
+                return sprintf(__('Author Archives: %s', 'default-theme'), apply_filters('the_author', is_object($author) ? $author->display_name : null));
+            } else {
+                return single_cat_title('', false);
+            }
+        } elseif (is_search()) {
+            return sprintf(__('Search Results for %s', 'default-theme'), get_search_query());
+        } elseif (is_404()) {
+            return __('Not Found', 'default-theme');
         } else {
-          return __('Latest Posts', 'default-theme');
+            return get_the_title();
         }
-      } elseif (is_archive()) {
-        $term = get_term_by('slug', get_query_var('term'), get_query_var('taxonomy'));
-        if ($term) {
-          return apply_filters('single_term_title', $term->name);
-        } elseif (is_post_type_archive()) {
-          return apply_filters('the_title', get_queried_object()->labels->name);
-        } elseif (is_day()) {
-          return sprintf(__('Daily Archives: %s', 'default-theme'), get_the_date());
-        } elseif (is_month()) {
-          return sprintf(__('Monthly Archives: %s', 'default-theme'), get_the_date('F Y'));
-        } elseif (is_year()) {
-          return sprintf(__('Yearly Archives: %s', 'default-theme'), get_the_date('Y'));
-        } elseif (is_author()) {
-          $author = get_queried_object();
-          return sprintf(__('Author Archives: %s', 'default-theme'), apply_filters('the_author', is_object($author) ? $author->display_name : null));
-        } else {
-          return single_cat_title('', false);
-        }
-      } elseif (is_search()) {
-        return sprintf(__('Search Results for %s', 'default-theme'), get_search_query());
-      } elseif (is_404()) {
-        return __('Not Found', 'default-theme');
-      } else {
-        return get_the_title();
-      }
     }
 
     /**
-    * Helper method that returns image URL.
+    * Helper method that returns a file from the public directory.
     *
-    * @param  $name - image name  
-    * @return url/to/image
+    * @param  $name - path to asset
+    * @return path/to/asset
     */
-    public static function image( $name )
+    public static function asset( $name )
     {
 
-        return get_template_directory_uri() . "/public/images/{$name}";
+        return get_template_directory_uri() . "/public/{$name}";
 
     }
+
+    public static function image($attachment_id, $size = 'thumbnail', $icon = false, $attr = '') {
+
+    $html = '';
+    $image = wp_get_attachment_image_src($attachment_id, $size, $icon);
+    if ( $image ) {
+        list($src, $width, $height) = $image;
+        $hwstring = image_hwstring($width, $height);
+        $size_class = $size;
+        if ( is_array( $size_class ) ) {
+            $size_class = join( 'x', $size_class );
+        }
+        $attachment = get_post($attachment_id);
+        $default_attr = array(
+            'src'   => $src,
+            'class' => "attachment-$size_class",
+            'alt'   => trim(strip_tags( get_post_meta($attachment_id, '_wp_attachment_image_alt', true) )), // Use Alt field first
+        );
+        if ( empty($default_attr['alt']) )
+            $default_attr['alt'] = trim(strip_tags( $attachment->post_excerpt )); // If not, Use the Caption
+        if ( empty($default_attr['alt']) )
+            $default_attr['alt'] = trim(strip_tags( $attachment->post_title )); // Finally, use the title
+
+        $attr = wp_parse_args($attr, $default_attr);
+
+
+        $attr = apply_filters( 'wp_get_attachment_image_attributes', $attr, $attachment, $size );
+        $attr = array_map( 'esc_attr', $attr );
+        $html = rtrim("<img ");
+        foreach ( $attr as $name => $value ) {
+            $html .= " $name=" . '"' . $value . '"';
+        }
+        $html .= ' />';
+    }
+
+    return $html;
+}
 
 
     /**
@@ -105,4 +141,4 @@ class Helper {
 
 
 
-}
+    }

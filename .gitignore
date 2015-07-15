@@ -17,6 +17,7 @@ sitemap.xml.gz
 Movefile
 vendor
 
+wp-config.php
 .env
 
 # @TODO writable paths
