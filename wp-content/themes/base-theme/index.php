@@ -1,44 +1,45 @@
-@layout('views.layouts.master')
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Laravel</title>
 
-@section('content')
-    
+        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
-    @include('views/forms/contact-form')
-    @wpquery(['post_type' => 'post'])
+        <style>
+            html, body {
+                height: 100%;
+            }
 
-    <!-- Article Schema for single.php -->   
-    <div itemscope itemtype="http://schema.org/Article">
-         <span itemprop="name"></span>
-         <span itemprop="author"></span>
-         <span itemprop="datePublished"></span>
-         <span itemprop="image"></span>
-    </div>    
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                display: table;
+                font-weight: 100;
+                font-family: 'Lato';
+            }
 
-    @wpempty
-        
+            .container {
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+            }
 
-    @wpend
+            .content {
+                text-align: center;
+                display: inline-block;
+            }
 
-    @wpposts
-
-        {{ the_title() }}
-
-    @wpempty
-
+            .title {
+                font-size: 96px;
+            }
+        </style>
+    </head>
+    <body>
         <div class="container">
-            <div class="row">
-                <div class="col-sm-5">
-
-                    <h1>Error.</h1>
-
-                    <p>Something went wrong.  We can not load this page.</p>
-
-                    <div class="buttons">
-                        <a href="/" class="btn btn-lg btn-primary">&laquo; Back to home</a>
-                    </div>
-                </div><!--col-->
-            </div><!--row-->
-        </div><!--container-->
-
-    @wpend
-@endsection
+            <div class="content">
+                <div class="title">WordPress Rapid Theme</div>
+            </div>
+        </div>
+    </body>
+</html>

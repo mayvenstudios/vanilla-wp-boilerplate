@@ -128,9 +128,9 @@ class acf_field_image extends acf_field {
 		<img data-name="image" src="<?php echo $url; ?>" alt=""/>
 		<ul class="acf-hl acf-soh-target">
 			<?php if( $uploader != 'basic' ): ?>
-				<li><a class="acf-icon dark" data-name="edit" href="#"><i class="acf-sprite-edit"></i></a></li>
+				<li><a class="acf-icon acf-icon-pencil dark" data-name="edit" href="#"></a></li>
 			<?php endif; ?>
-			<li><a class="acf-icon dark" data-name="remove" href="#"><i class="acf-sprite-delete"></i></a></li>
+			<li><a class="acf-icon acf-icon-cancel dark" data-name="remove" href="#"></a></li>
 		</ul>
 	</div>
 	<div class="view hide-if-value">

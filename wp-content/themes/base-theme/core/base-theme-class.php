@@ -26,6 +26,9 @@ abstract class base_theme_class {
     public $menus;
 
 
+    /* This allows you to enable/disable the theme editor. */
+    public $disabled_theme_editor;
+
     /**
     * This is a boolean that determines whether or not to load the custom options panel
     * The custom options panel can be set in the load_options_panel method
@@ -34,6 +37,9 @@ abstract class base_theme_class {
     public $load_options_panel;
 
 
+    /* This allows you to enable/disable the post thumbnail. */
+    public $load_thumbnail_support;
+
     /**
     * Bootstrap function for the class.
     * Loads everything up based off of various parameters you can set.
@@ -41,34 +47,39 @@ abstract class base_theme_class {
     public function __construct()
     {   
 
-        add_action('init', [$this, 'load_files']);
+        add_action('init', array($this, 'load_files') );
 
         $this->load_blade_templating();
 
         $this->include_advanced_custom_fields();
 
         /* Enqueue the Theme Script */
-        add_action( 'wp_enqueue_scripts', [$this, 'load_scripts'] );
+        add_action( 'wp_enqueue_scripts', array($this, 'load_scripts') );
 
         /* Enqueue the Theme Stylesheet */
-        add_action( 'wp_enqueue_scripts', [$this, 'load_styles'] );
+        add_action( 'wp_enqueue_scripts', array($this, 'load_styles') );
 
         /* Load custom CSS/JS into head */
-        add_action('wp_head', [$this, 'load_additional_head_js_css']);
+        add_action('wp_head', array($this, 'load_additional_head_js_css') );
 
         /* Load additional JS into footer */
-        add_action('wp_footer', [$this, 'load_additional_footer_js']);
+        add_action('wp_footer', array($this, 'load_additional_footer_js') );
 
         /* Load favicions into head */
-        add_action('wp_head', [$this, 'load_favicons']);
+        add_action('wp_head', array($this, 'load_favicons') );
 
         /* Clean up excerpt */
-        add_filter('excerpt_more', [$this,'excerpt_more']);
+        add_filter('excerpt_more', array($this,'excerpt_more') );
+
+        /* Clear blade view cache if DISABLE_BLADE_CACHE constant = true */
+        add_action('init', array($this, 'clear_blade_cache') );
+
+        define( 'DISALLOW_FILE_EDIT', $this->disabled_theme_editor );
 
 
-        define( 'DISALLOW_FILE_EDIT', true );
 
 
+        require_once( get_template_directory() . '/filters-actions.php' );
 
         /* Load shortcodes */
         if(method_exists($this, 'load_shortcodes'))
@@ -99,7 +110,7 @@ abstract class base_theme_class {
         if(method_exists($this, 'load_sidebars'))
         {
 
-            add_action('widgets_init', [$this, 'load_sidebars']);
+            add_action('widgets_init', array($this, 'load_sidebars') );
 
         }
 
@@ -122,7 +133,6 @@ abstract class base_theme_class {
             $this->load_menu_support();
         
         }
-
 
         /* Remove all junk */
         $this->remove_junk();
@@ -244,7 +254,7 @@ abstract class base_theme_class {
     */
     public function load_styles()
     {
-        wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/public/css/theme.css');
+        wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/public/css/theme.css',array(), $this->version);
 
     }
 
@@ -259,7 +269,12 @@ abstract class base_theme_class {
     protected function load_thumbnail_support()
     {
 
-        add_theme_support( 'post-thumbnails' );
+
+        if($this->load_thumbnail_support === true)
+        {
+            add_theme_support( 'post-thumbnails' );
+        }
+        
 
         foreach($this->image_sizes as $size)
         {
@@ -332,7 +347,36 @@ abstract class base_theme_class {
         {
             include_once( 'blade/blade.php' );       
         }
+
     }
+
+
+    /**
+    * Clears the blade view cache in development
+    *
+    */
+    public function clear_blade_cache()
+    {
+
+
+        if(defined('DISABLE_BLADE_CACHE') && DISABLE_BLADE_CACHE === true)
+        {
+
+            $cachedViewsDirectory = WP_BLADE_ROOT . 'storage/views/';
+
+
+            $files = glob($cachedViewsDirectory.'*');
+
+            foreach($files as $file) {
+                if(is_file($file)) {
+                    @unlink($file);
+                }
+            }
+
+        }
+
+    }
+
 
     /**
     * Loads ACF if the plugin is not included.

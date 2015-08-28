@@ -67,8 +67,9 @@ class Helper {
 
     }
 
-    public static function image($attachment_id, $size = 'thumbnail', $icon = false, $attr = '') {
+    public static function image($attachment_id, $size = 'thumbnail', $attr = '') {
 
+    $icon = false;
     $html = '';
     $image = wp_get_attachment_image_src($attachment_id, $size, $icon);
     if ( $image ) {

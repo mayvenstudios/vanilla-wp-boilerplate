@@ -15,7 +15,6 @@ sitemap.xml.gz
 .vagrant
 Movefile
 vendor
-
 wp-config.php
 
 .env

@@ -1,45 +1,46 @@
 <?php // /home/vagrant/code/wordpress-starter-template.dev/wp-content/themes/base-theme/index.php ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Laravel</title>
 
-<?php \Laravel\Section::start('content'); ?>
-    
+        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
-    <?php echo view('views/forms/contact-form')->with(get_defined_vars())->render(); ?>
-    <?php $bladequery = new WP_Query(['post_type' => 'post']); if ( $bladequery->have_posts() ) : while ( $bladequery->have_posts() ) : $bladequery->the_post(); ?> 
+        <style>
+            html, body {
+                height: 100%;
+            }
 
-    <!-- Article Schema for single.php -->   
-    <div itemscope itemtype="http://schema.org/Article">
-         <span itemprop="name"></span>
-         <span itemprop="author"></span>
-         <span itemprop="datePublished"></span>
-         <span itemprop="image"></span>
-    </div>    
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                display: table;
+                font-weight: 100;
+                font-family: 'Lato';
+            }
 
-    <?php endwhile; ?><?php else: ?>
-        
+            .container {
+                text-align: center;
+                display: table-cell;
+                vertical-align: middle;
+            }
 
-    <?php endif; wp_reset_postdata(); ?>
+            .content {
+                text-align: center;
+                display: inline-block;
+            }
 
-    <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-
-        <?php echo  the_title() ; ?>
-
-    <?php endwhile; ?><?php else: ?>
-
+            .title {
+                font-size: 96px;
+            }
+        </style>
+    </head>
+    <body>
         <div class="container">
-            <div class="row">
-                <div class="col-sm-5">
-
-                    <h1>Error.</h1>
-
-                    <p>Something went wrong.  We can not load this page.</p>
-
-                    <div class="buttons">
-                        <a href="/" class="btn btn-lg btn-primary">&laquo; Back to home</a>
-                    </div>
-                </div><!--col-->
-            </div><!--row-->
-        </div><!--container-->
-
-    <?php endif; wp_reset_postdata(); ?>
-<?php \Laravel\Section::stop(); ?>
-<?php echo view('views.layouts.master')->with(get_defined_vars())->render(); ?>
+            <div class="content">
+                <div class="title">WordPress Rapid Theme</div>
+            </div>
+        </div>
+    </body>
+</html>

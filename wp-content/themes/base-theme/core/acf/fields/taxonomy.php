@@ -167,9 +167,8 @@ class acf_field_taxonomy extends acf_field {
 	
 	function ajax_query() {
 		
-		
 		// validate
-		if( empty($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'acf_nonce') ) {
+		if( !acf_verify_ajax() ) {
 		
 			die();
 			
@@ -562,9 +561,7 @@ class acf_field_taxonomy extends acf_field {
 		?>
 <div <?php acf_esc_attr_e($div); ?>>
 	<?php if( $field['add_term'] && current_user_can( $taxonomy->cap->manage_terms) ): ?>
-	<a href="#" class="acf-js-tooltip acf-icon small acf-soh-target" data-name="add" title="<?php echo sprintf( __('Add new %s ', 'acf'), $taxonomy->labels->singular_name ); ?>">
-		<i class="acf-sprite-add"></i>
-	</a>
+	<a href="#" class="acf-icon acf-icon-plus acf-js-tooltip small acf-soh-target" data-name="add" title="<?php echo sprintf( __('Add new %s ', 'acf'), $taxonomy->labels->singular_name ); ?>"></a>
 	<?php endif;
 
 	if( $field['field_type'] == 'select' ) {

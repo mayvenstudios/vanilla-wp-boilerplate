@@ -1,5 +1,0 @@
-<?php echo  wp_footer() ; ?>
-
-<?php echo  get_field('custom_js_footer', 'options') ; ?>
-</body>
-</html>

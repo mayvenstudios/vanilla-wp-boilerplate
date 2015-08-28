@@ -1,7 +1,0 @@
-<?php echo view('views/partials/header')->with(get_defined_vars())->render(); ?>
-
-    
-<?php echo \Laravel\Section::do_yield('content'); ?>
-
-
-<?php echo view('views/partials/footer')->with(get_defined_vars())->render(); ?>

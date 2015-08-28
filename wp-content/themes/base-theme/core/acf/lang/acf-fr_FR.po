@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: Advanced Custom Field - version 5 Pro\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/advanced-custom-fields\n"
 "POT-Creation-Date: 2015-06-08 13:49+0100\n"
-"PO-Revision-Date: 2015-06-23 10:07+0100\n"
-"Last-Translator: Maxime BERNARD-JACQUET <maxime@smoothie-creative.com>\n"
+"PO-Revision-Date: 2015-07-30 10:02+1000\n"
+"Last-Translator: Elliot Condon <e@elliotcondon.com>\n"
 "Language-Team: Dysign <maxime@dysign.fr>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
 "X-Textdomain-Support: yes\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.7.1\n"
+"X-Generator: Poedit 1.8.1\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 # @ acf
@@ -1867,7 +1867,7 @@ msgstr "Trouver l'emplacement actuel"
 
 #: ../fields/google-map.php:145
 msgid "Search for address..."
-msgstr "Recherche une adesse"
+msgstr "Rechercher une adresse"
 
 #: ../fields/google-map.php:177 ../fields/google-map.php:188
 msgid "Center"

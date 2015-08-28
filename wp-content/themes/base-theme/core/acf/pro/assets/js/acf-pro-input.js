@@ -944,9 +944,13 @@
 			// remove
 			acf.remove_el( $layout, function(){
 				
+				// update order
+				self.render();
+			
+			
 				// trigger change to allow attachment save
 				self.$input.trigger('change');
-			
+				
 			
 				if( end_height > 0 ) {
 				
@@ -1505,9 +1509,7 @@
 					filename,
 				'</div>',
 				'<div class="actions acf-soh-target">',
-					'<a href="#" class="acf-icon dark remove-attachment" data-id="' + a.id + '">',
-						'<i class="acf-sprite-delete"></i>',
-					'</a>',
+					'<a href="#" class="acf-icon acf-icon-cancel dark remove-attachment" data-id="' + a.id + '"></a>',
 				'</div>',
 			'</div>'].join('');
 			
@@ -1698,11 +1700,11 @@
 			    	// type
 			    	if( a.type === 'image' ) {
 				    	
-				    	a.url = acf.maybe_get(atts, 'sizes', preview_size, 'url') || atts.url;
+				    	a.url = acf.maybe_get(atts, 'sizes.'+preview_size+'.url', atts.url);
 				    	
 			    	} else {
 				    	
-				    	a.url = acf.maybe_get(atts, 'thumb', 'src') || '';
+				    	a.url = acf.maybe_get(atts, 'thumb.src', '');
 				    	
 				    }
 				    

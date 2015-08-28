@@ -3,7 +3,7 @@
 Plugin Name: Advanced Custom Fields Pro
 Plugin URI: http://www.advancedcustomfields.com/
 Description: Customise WordPress with powerful, professional and intuitive fields
-Version: 5.2.7
+Version: 5.3.0
 Author: elliot condon
 Author URI: http://www.elliotcondon.com/
 Copyright: Elliot Condon
@@ -61,7 +61,7 @@ class acf {
 			
 			// basic
 			'name'				=> __('Advanced Custom Fields', 'acf'),
-			'version'			=> '5.2.7',
+			'version'			=> '5.3.0',
 						
 			// urls
 			'basename'			=> plugin_basename( __FILE__ ),
@@ -79,7 +79,8 @@ class acf {
 			'default_language'	=> '',
 			'current_language'	=> '',
 			'capability'		=> 'manage_options',
-			'uploader'			=> 'wp'
+			'uploader'			=> 'wp',
+			'autoload'			=> false
 		);
 		
 		
@@ -127,7 +128,7 @@ class acf {
 			acf_include('admin/field-group.php');
 			acf_include('admin/field-groups.php');
 			acf_include('admin/update.php');
-			acf_include('admin/settings-export.php');
+			acf_include('admin/settings-tools.php');
 			//acf_include('admin/settings-addons.php');
 			acf_include('admin/settings-info.php');
 		}
@@ -198,8 +199,8 @@ class acf {
 		$min = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 		
 		
-		// Create post type 'acf-field-group'
-		register_post_type( 'acf-field-group', array(
+		// register post type 'acf-field-group'
+		register_post_type('acf-field-group', array(
 			'labels'			=> array(
 			    'name'					=> __( 'Field Groups', 'acf' ),
 				'singular_name'			=> __( 'Field Group', 'acf' ),
@@ -230,8 +231,8 @@ class acf {
 		));
 		
 		
-		// Create post type 'acf-field'
-		register_post_type( 'acf-field', array(
+		// register post type 'acf-field'
+		register_post_type('acf-field', array(
 			'labels'			=> array(
 			    'name'					=> __( 'Fields', 'acf' ),
 				'singular_name'			=> __( 'Field', 'acf' ),
@@ -259,6 +260,17 @@ class acf {
 			'query_var'			=> false,
 			'supports' 			=> array('title'),
 			'show_in_menu'		=> false,
+		));
+		
+		
+		// register post status
+		register_post_status('acf-disabled', array(
+			'label'                     => __( 'Disabled', 'acf' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Disabled <span class="count">(%s)</span>', 'Disabled <span class="count">(%s)</span>', 'acf' ),
 		));
 		
 		
@@ -477,6 +489,7 @@ class acf {
 	    }
 	    
 	    
+	    // return
 	    return $where;
 	    
 	}

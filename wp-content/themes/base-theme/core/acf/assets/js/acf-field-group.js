@@ -71,12 +71,6 @@
 				
 			});
 			
-			$(document).on('change', '#adv-settings input[name="show_field_keys"]', function(){
-				
-				self.toggle_field_keys( $(this).val() );
-				
-			});
-			
 			
 			// field events
 			this.$fields.on('click', '.edit-field', function( e ){
@@ -197,43 +191,6 @@
 			
 			// show field keys	
 			if( options.show_field_keys ) {
-			
-				this.$fields.addClass('show-field-keys');
-			
-			} else {
-				
-				this.$fields.removeClass('show-field-keys');
-				
-			}
-			
-		},
-		
-		
-		/*
-		*  toggle_field_keys
-		*
-		*  description
-		*
-		*  @type	function
-		*  @date	15/07/2014
-		*  @since	5.0.0
-		*
-		*  @param	$post_id (int)
-		*  @return	$post_id (int)
-		*/
-		
-		toggle_field_keys : function( val ){
-			
-			// vars
-			val = parseInt(val);
-			
-			
-			// update user setting
-			acf.update_user_setting('show_field_keys', val);
-			
-			
-			// toggle class
-			if( val ) {
 			
 				this.$fields.addClass('show-field-keys');
 			
@@ -2637,6 +2594,78 @@
 		
 		// clear name
 		$el.find('tr[data-name="name"]:first input').val('').trigger('change');
+		
+	});
+	
+	
+	/*
+	*  screen
+	*
+	*  description
+	*
+	*  @type	function
+	*  @date	23/07/2015
+	*  @since	5.2.3
+	*
+	*  @param	$post_id (int)
+	*  @return	$post_id (int)
+	*/
+	
+	acf.field_group.screen = acf.model.extend({
+		
+		actions: {
+			'ready': 'ready'
+		},
+		
+		events: {
+			'click #acf-field-key-hide': 'toggle'
+		},
+		
+		ready: function(){
+			
+			// vars
+			var $el = $('#adv-settings'),
+				$append = $el.find('#acf-append-show-on-screen');
+			
+			
+			// append
+			$el.find('.metabox-prefs').append( $append.html() );
+			
+			
+			// move br
+			$el.find('.metabox-prefs br').remove();
+			
+			
+			// remove
+			$append.remove();
+			
+		},
+		
+		toggle: function( e ){
+			
+			// vars
+			var val = e.$el.prop('checked') ? 1 : 0;
+			
+			
+			// update user setting
+			acf.update_user_setting('show_field_keys', val);
+			
+			
+			// toggle class
+			var $fields = acf.field_group.$fields;
+			
+			if( val ) {
+			
+				$fields.addClass('show-field-keys');
+			
+			} else {
+				
+				$fields.removeClass('show-field-keys');
+				
+			}
+			
+		}
+		
 		
 	});
 	
