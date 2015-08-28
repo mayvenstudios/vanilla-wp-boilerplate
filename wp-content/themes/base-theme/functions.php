@@ -22,6 +22,8 @@ class Theme extends base_theme_class {
 
     var $load_thumbnail_support = true;
 
+    var $excerpt_text = 'Read More';
+
     /* Load more custom post types here */
     public function load_custom_post_types()
     {

@@ -30,6 +30,14 @@ abstract class base_theme_class {
     public $disabled_theme_editor;
 
     /**
+     * Set the excerpt read more link text.
+     * set to null if you do not want to output a read more link.
+     * @param  int  
+     * @return Response
+     */
+    public $excerpt_text;
+
+    /**
     * This is a boolean that determines whether or not to load the custom options panel
     * The custom options panel can be set in the load_options_panel method
     * Set this with the set_menus method.
@@ -152,9 +160,9 @@ abstract class base_theme_class {
     {
 
 
-        $files_to_load = [
+        $files_to_load = array(
             'inc/Helper.php'
-        ];
+        );
 
         foreach ($files_to_load as $file)
         {
@@ -168,7 +176,24 @@ abstract class base_theme_class {
      */
     public function excerpt_more($more)
     {
-      return ' &hellip; <a href="' . get_permalink() . '">Continued</a>';
+
+
+        if( !is_null($this->excerpt_text) )
+        {
+
+            return '... <a href="' . get_permalink() . '">' . $this->excerpt_text . '</a>';
+
+        }
+        else
+        {
+                
+            return '...';
+
+        }
+
+
+
+      
     }
 
     public function load_additional_head_js_css()
@@ -181,50 +206,6 @@ abstract class base_theme_class {
 
         echo get_field('custom_js_footer', 'option');
 
-    }
-
-
-    /**
-    * Loads the contact form custom post type.
-    *
-    */
-    public function register_form_submission_post_type()
-    {
-
-        $args = [
-            'label' => 'Form Submissions',
-            'description' => 'This post type holds all of the form submissions',
-            'public' => false,
-            'show_ui' => true,
-            'supports' => ['title']
-        ];
-        register_post_type('form-submission',$args);
-
-        $labels = [
-            'name'              => _x( 'Form Types', 'taxonomy general name' ),
-            'singular_name'     => _x( 'Form Type', 'taxonomy singular name' ),
-            'search_items'      => __( 'Search Form Types' ),
-            'all_items'         => __( 'All Form Types' ),
-            'parent_item'       => __( 'Parent Form Type' ),
-            'parent_item_colon' => __( 'Parent Form Type:' ),
-            'edit_item'         => __( 'Edit Form Type' ),
-            'update_item'       => __( 'Update Form Type' ),
-            'add_new_item'      => __( 'Add New Form Type' ),
-            'new_item_name'     => __( 'New Form Type' ),
-            'menu_name'         => __( 'Form Types' )
-        ];
-        
-        $args = [
-            'labels' => $labels,
-            'hierarchical' => true,
-            'rewrite' => ['with_front' => false], 
-            //'rewrite' => array('slug' => '', 'with_front' => false),
-            'public' => false,
-            'show_ui' => true,
-            'show_admin_column' => true
-        ];
-        
-        register_taxonomy( 'form-type', 'form-submission', $args );
     }
 
 
@@ -242,7 +223,7 @@ abstract class base_theme_class {
         }
         else
         {
-            wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/public/js/theme.js', ['jquery'], $this->version, true );
+            wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/public/js/theme.js', array('jquery'), $this->version, true );
         }
 
     }
@@ -388,23 +369,25 @@ abstract class base_theme_class {
         if( ! class_exists('acf') )
         {
 
-            add_filter('acf/settings/path', [$this, 'my_acf_settings_path']);
-            add_filter('acf/settings/dir', [$this, 'my_acf_settings_dir']);
+            add_filter('acf/settings/path', array($this, 'my_acf_settings_path') );
+            add_filter('acf/settings/dir', array($this, 'my_acf_settings_dir') );
             
             
 
             include_once( 'acf/acf.php'); 
 
 
-            if(getenv('WP_DEBUG') == 'false')
+            if(WP_DEBUG == false)
             {
+                
                 add_filter('acf/settings/show_admin', '__return_false');        
+            
             }
             
 
         }    
 
-        add_filter('acf/format_value',[$this,'parse_template_directory'], 10, 3);
+        add_filter('acf/format_value',array( $this,'parse_template_directory'), 10, 3);
 
         /* Load WPCLI Interface for ACF */
         include_once('acf-wpcli/advanced-custom-fields-wpcli.php');
@@ -459,7 +442,7 @@ abstract class base_theme_class {
         // Remove "Link" canonical HTTP header
         remove_action('template_redirect', 'wp_shortlink_header', 11);
 
-        add_filter('wp_headers', [$this,'remove_x_pingback'] );
+        add_filter('wp_headers', array($this,'remove_x_pingback') );
 
         // remove junk from head
         remove_action('wp_head', 'rel_canonical'); 
