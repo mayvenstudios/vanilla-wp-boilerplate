@@ -29,7 +29,7 @@ function custom_upload_mimes ( $existing_mimes=array() ) {
 * AJAX Endpoint for contact form.
 * Post to admin-ajax.php with the action param as "contact_form"
 */
-public function custom_contact_form_submission()
+function custom_contact_form_submission()
 {   
 
     $nonce = 'contact-form-nonce';
