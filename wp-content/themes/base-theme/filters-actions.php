@@ -23,3 +23,39 @@ function custom_upload_mimes ( $existing_mimes=array() ) {
     $existing_mimes['vcf'] = 'text/x-vcard';
     return $existing_mimes;
 }
+
+
+/**
+* AJAX Endpoint for contact form.
+* Post to admin-ajax.php with the action param as "contact_form"
+*/
+public function custom_contact_form_submission()
+{   
+
+    $nonce = 'contact-form-nonce';
+
+    header( "Content-Type: application/json" );
+    if ( ! wp_verify_nonce( $_REQUEST[ $nonce ] , $nonce ) )
+    {
+        die ( json_encode( array('status' => 'Busted!') ) );
+    }
+
+    /*$entry['form_id'] = $_REQUEST['form_id'];
+    $entry['status'] = 'active';
+
+
+    $entry['1'] = $_REQUEST['name'];
+    $entry['2'] = $_REQUEST['company'];
+    $entry['3'] = $_REQUEST['phone'];
+    $entry['4'] = $_REQUEST['email'];
+    $entry['5'] = $_REQUEST['message'];
+
+    GFAPI::add_entry( $entry );*/
+
+    $response = json_encode(array('status' => 'success'));
+
+    die($response); 
+}
+
+add_action( 'wp_ajax_contact_form', 'custom_contact_form_submission' );
+add_action( 'wp_ajax_nopriv_contact_form', 'custom_contact_form_submission' );
