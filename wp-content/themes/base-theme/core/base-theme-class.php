@@ -48,6 +48,13 @@ abstract class base_theme_class {
     /* This allows you to enable/disable the post thumbnail. */
     public $load_thumbnail_support;
 
+
+    /**
+    * By default, the ACF Option panel is wp-admin is hidden unless WP_DEBUG is defined as true.
+    * By setting this var to true, you can force enable the option panel to show even if WP_DEBUG is set to false (i.e. in a production environment)
+    */
+    public $force_enable_acf_option_panel;
+
     /**
     * Bootstrap function for the class.
     * Loads everything up based off of various parameters you can set.
@@ -85,6 +92,7 @@ abstract class base_theme_class {
         define( 'DISALLOW_FILE_EDIT', $this->disabled_theme_editor );
 
 
+        add_action('init', array($this, 'load_wp_cli_commands'));
 
 
         require_once( get_template_directory() . '/filters-actions.php' );
@@ -168,6 +176,26 @@ abstract class base_theme_class {
         {
             require_once $file;
         }
+
+    }
+
+    public function load_wp_cli_commands()
+    {
+        if ( defined( 'WP_CLI' ) && \WP_CLI )
+        {
+
+            $files_to_load = array(
+                'wp-cli-commands/DevMode.php'
+            );
+
+            foreach ($files_to_load as $file)
+            {
+                require_once $file;
+            }
+
+             \WP_CLI::add_command( 'devmode', '\DevMode_Command' );
+        }
+
 
     }
 
@@ -340,7 +368,7 @@ abstract class base_theme_class {
     {
 
 
-        if(defined('DISABLE_BLADE_CACHE') && DISABLE_BLADE_CACHE === true)
+        if(defined('WP_DEBUG') && WP_DEBUG === true)
         {
 
             $cachedViewsDirectory = WP_BLADE_ROOT . 'storage/views/';
@@ -377,7 +405,7 @@ abstract class base_theme_class {
             include_once( 'acf/acf.php'); 
 
 
-            if(WP_DEBUG == false)
+            if(WP_DEBUG == false && $this->force_enable_acf_option_panel === false)
             {
                 
                 add_filter('acf/settings/show_admin', '__return_false');        
@@ -401,11 +429,11 @@ abstract class base_theme_class {
     public function parse_template_directory( $value, $post_id, $field )
     {
 
-        $searchAndReplace = [
+        $searchAndReplace = array(
 
             '{IMAGEPATH}' => get_template_directory_uri() . '/public/images'
 
-        ];
+        );
 
         foreach($searchAndReplace as $search => $replace)
         {

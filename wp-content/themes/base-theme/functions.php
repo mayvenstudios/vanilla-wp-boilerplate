@@ -24,6 +24,8 @@ class Theme extends base_theme_class {
 
     var $excerpt_text = 'Read More';
 
+    var $force_enable_acf_option_panel = false;
+
     /* Load more custom post types here */
     public function load_custom_post_types()
     {
