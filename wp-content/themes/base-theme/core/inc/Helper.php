@@ -1,5 +1,12 @@
 <?php
 
+function asset($name)
+{
+
+    return Helper::asset($name);
+
+}
+
 class Helper {
 
     /**
@@ -139,7 +146,4 @@ class Helper {
             echo '<span>'.$thumbnail_image[0]->post_excerpt.'</span>';
         }
     }
-
-
-
-    }
+}
