@@ -56,6 +56,16 @@ abstract class base_theme_class {
     public $force_enable_acf_option_panel;
 
     /**
+    * This is the variable where you add the custom post types to be loaded into the theme
+    */
+    public $custom_post_types;
+
+
+    /**
+    * This is the variable where you add the custom taxonomies to be loaded into the theme
+    */
+    public $custom_taxonomies;
+    /**
     * Bootstrap function for the class.
     * Loads everything up based off of various parameters you can set.
     */
@@ -109,7 +119,15 @@ abstract class base_theme_class {
         if(method_exists($this, 'load_custom_post_types'))
         {
 
-            $this->load_custom_post_types();
+            add_action('init', array($this, 'add_custom_post_types'));
+
+        }
+
+        /* Load all custom post types */
+        if(method_exists($this, 'load_custom_taxonomies'))
+        {
+
+            add_action('init', array($this, 'add_custom_taxonomies'));
 
         }
 
@@ -155,6 +173,72 @@ abstract class base_theme_class {
     }
 
 
+    /**
+     * This method will loop through the $custom_post_types array and generate the register_post_type function call.
+     *
+     * @param  int  
+     * @return Response
+     */
+    public function add_custom_post_types()
+    {
+        /* loads the CPTs from functions.php */
+        $this->load_custom_post_types();
+
+        if( is_array($this->custom_post_types) ) 
+        {
+
+            foreach($this->custom_post_types as $post_type_name => $options)
+            {
+
+                register_post_type($post_type_name, $options);
+
+            }
+
+        }
+
+    }
+
+    /**
+     * This method will loop through the $custom_post_types array and generate the register_post_type function call.
+     *
+     * @param  int  
+     * @return Response
+     */
+    public function add_custom_taxonomies()
+    {
+        /* loads the custom taxonomies from functions.php */
+        $this->load_custom_taxonomies();
+
+        if( is_array($this->custom_taxonomies) ) 
+        {
+
+            foreach($this->custom_taxonomies as $taxonomy_name => $options)
+            {
+
+                $belongs_to_post_type = $options['belongs_to_post_type'];
+
+
+                if( ! post_type_exists( $belongs_to_post_type ))
+                {
+
+                    add_action( 'admin_notices', function() use($taxonomy_name){
+
+                        $class = "error";
+                        $message = "The taxonomy you are trying to register in functions.php references a custom post type that does not exist.  Please make sure you are properly registering your custom post type in the functions.php load_custom_post_types method.  The CPT from this error is called: <strong>{$taxonomy_name}</strong>.";
+                        echo"<div class=\"$class\"> <p>$message</p></div>"; 
+
+                    });
+                }
+                
+                unset( $options['belongs_to_post_type'] );
+
+                register_taxonomy($taxonomy_name, $belongs_to_post_type, $options);
+
+            }
+
+        }
+
+    }
     /**
     * Files to Include
     *

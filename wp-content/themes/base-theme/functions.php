@@ -30,13 +30,50 @@ class Theme extends base_theme_class {
     public function load_custom_post_types()
     {
 
+        /* Sample Custom Post Type - Add as many as you'd like 
+
+        $this->custom_post_types['testimonial'] = array(
+
+            'label' => 'Testimonials',            
+            'description' => 'This is the testimonial custom post type',
+            'public' => true,
+            'exclude_from_search' => true,
+            'show_ui' => true,
+            'supports' => array('title', 'editor'),
+            'has_archive' => false,
+            'rewrite' => false
+
+            // any additional options can be added as defined in WP codex: https://codex.wordpress.org/Function_Reference/register_post_type
+        ); 
+        */
+        
+
+    }
+
+
+    public function load_custom_taxonomies()
+    {
+
+        /* Sample Custom Taxonomy - Add as many as you'd like 
+
+        $this->custom_taxonomies['testimonial-category'] = array(
+
+            'belongs_to_post_type' => 'testimonial',
+            'label' => 'Testimonial Categories',
+            'description' => 'These are the categories used to sort testimonials',
+            'public' => true,
+            'hierarchical' => false
+
+            // any additional options can be added as defined in WP codex: https://codex.wordpress.org/Function_Reference/register_taxonomy
+        );
+        */
     }
 
     public function load_shortcodes()
     {
 
         /* This is a sample shortcode.  Please see full shortcode documentation. */
-       //add_shortcode( 'contact_form', array($this,'custom_shortcode_1') );
+        //add_shortcode( 'contact_form', array($this,'custom_shortcode_1') );
 
     }
 
@@ -46,7 +83,7 @@ class Theme extends base_theme_class {
     public function custom_shortcode_1( $atts )
     {
 
-        return view('views/forms/contact-form')->with(array(
+        return view('forms/contact-form')->with(array(
 
             'form_title' => 'Contact Us'
 
