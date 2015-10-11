@@ -30,7 +30,18 @@ class Helper {
     {
         if (is_home()) {
             if (get_option('page_for_posts', true)) {
-                return get_the_title(get_option('page_for_posts', true));
+
+                if(get_field('h1_title', get_option('page_for_posts', true)))
+                {
+                
+                    return get_field('h1_title', get_option('page_for_posts', true));
+                
+                } else {
+                    
+                    return get_the_title(get_option('page_for_posts', true));
+
+                }
+                
             } else {
                 return __('Latest Posts', 'default-theme');
             }
