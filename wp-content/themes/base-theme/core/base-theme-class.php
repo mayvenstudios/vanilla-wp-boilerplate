@@ -255,6 +255,18 @@ abstract class base_theme_class {
             require_once $file;
         }
 
+
+        $custom_endpoints = get_template_directory() . '/endpoints/';
+
+        $files = glob($custom_endpoints.'*');
+
+   
+        foreach($files as $file) {
+            if(is_file($file)) {
+                require_once $file;
+            }
+        }
+
     }
 
     public function load_wp_cli_commands()

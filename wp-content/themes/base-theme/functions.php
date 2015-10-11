@@ -78,7 +78,7 @@ class Theme extends base_theme_class {
 
         //This is a sample shortcode.  Please see full shortcode documentation. 
         
-        /*
+        /* */
 
         add_shortcode( 'contact_form', function($atts) {
 
@@ -91,7 +91,7 @@ class Theme extends base_theme_class {
 
         });
 
-        */
+       
 
     }
 
