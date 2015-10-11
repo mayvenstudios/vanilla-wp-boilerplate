@@ -30,8 +30,9 @@ class Theme extends base_theme_class {
     public function load_custom_post_types()
     {
 
-        /* Sample Custom Post Type - Add as many as you'd like 
+        // Sample Custom Post Type - Add as many as you'd like 
 
+        /* 
         $this->custom_post_types['testimonial'] = array(
 
             'label' => 'Testimonials',            
@@ -54,7 +55,9 @@ class Theme extends base_theme_class {
     public function load_custom_taxonomies()
     {
 
-        /* Sample Custom Taxonomy - Add as many as you'd like 
+        // Sample Custom Taxonomy - Add as many as you'd like 
+
+        /*
 
         $this->custom_taxonomies['testimonial-category'] = array(
 
@@ -66,30 +69,32 @@ class Theme extends base_theme_class {
 
             // any additional options can be added as defined in WP codex: https://codex.wordpress.org/Function_Reference/register_taxonomy
         );
+
         */
     }
 
     public function load_shortcodes()
     {
 
-        /* This is a sample shortcode.  Please see full shortcode documentation. */
-        //add_shortcode( 'contact_form', array($this,'custom_shortcode_1') );
+        //This is a sample shortcode.  Please see full shortcode documentation. 
+        
+        /*
+
+        add_shortcode( 'contact_form', function($atts) {
+
+            return view('forms/contact-form')->with(array(
+
+                'form_title' => 'Contact Us',
+                'atts' => $atts
+
+            ));
+
+        });
+
+        */
 
     }
 
-
-
-    /* Sample shortcode.  Please see full shortcode documentation */
-    public function custom_shortcode_1( $atts )
-    {
-
-        return view('forms/contact-form')->with(array(
-
-            'form_title' => 'Contact Us'
-
-        ));
-
-    }
 
 
     public function load_sidebars()
@@ -118,6 +123,11 @@ class Theme extends base_theme_class {
             'redirect'      => true
         ));
 
+        acf_add_options_sub_page(array(
+            'page_title'    => 'Header & Footer Options',
+            'menu_title'    => 'Header / Footer',
+            'parent_slug'   => 'theme-options-settings',
+        ));
 
         acf_add_options_sub_page(array(
             'page_title'    => 'JavaScript & CSS Options',
@@ -125,11 +135,7 @@ class Theme extends base_theme_class {
             'parent_slug'   => 'theme-options-settings',
         ));
 
-        acf_add_options_sub_page(array(
-            'page_title'    => 'Header & Footer Options',
-            'menu_title'    => 'Header / Footer',
-            'parent_slug'   => 'theme-options-settings',
-        ));
+        
 
     }
 

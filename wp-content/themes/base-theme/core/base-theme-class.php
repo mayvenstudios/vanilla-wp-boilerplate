@@ -176,8 +176,6 @@ abstract class base_theme_class {
     /**
      * This method will loop through the $custom_post_types array and generate the register_post_type function call.
      *
-     * @param  int  
-     * @return Response
      */
     public function add_custom_post_types()
     {
@@ -201,8 +199,6 @@ abstract class base_theme_class {
     /**
      * This method will loop through the $custom_post_types array and generate the register_post_type function call.
      *
-     * @param  int  
-     * @return Response
      */
     public function add_custom_taxonomies()
     {
@@ -245,8 +241,6 @@ abstract class base_theme_class {
     * The $files_to_load array determines the code included in the theme by default.
     * Add or remove files to the array as needed.
     *
-    * @param  int  
-    * @return Response
     */
     public function load_files()
     {
