@@ -13,8 +13,11 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix)
 {
+    /* Enable either sass or less by uncommenting one of the lines below. */
 
-    mix.less('theme.less');
+    //mix.less(['theme.less'], 'public/css/theme.css');
+
+    //mix.sass(['theme.scss'], 'public/css/theme.css');
 
     mix.scripts([
         'plugins',

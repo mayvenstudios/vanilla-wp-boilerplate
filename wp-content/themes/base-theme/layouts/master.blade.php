@@ -1,7 +1,7 @@
-@include('views/partials/header')
+@include('partials/header')
 
     
 @yield('content')
 
 
-@include('views/partials/footer')
+@include('partials/footer')
