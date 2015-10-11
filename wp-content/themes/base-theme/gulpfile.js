@@ -19,6 +19,13 @@ elixir(function(mix)
 
     //mix.sass(['theme.scss'], 'public/css/theme.css');
 
+
+    /* Uncomment below if there is an IE specific stylesheet */
+    //mix.less(['ie.less'], 'public/css/ie.css');
+
+    //mix.sass(['ie.scss'], 'public/css/ie.css');
+
+
     mix.scripts([
         'plugins',
         'custom'
