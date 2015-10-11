@@ -185,7 +185,8 @@ abstract class base_theme_class {
         {
 
             $files_to_load = array(
-                'wp-cli-commands/DevMode.php'
+                'wp-cli-commands/DevMode.php',
+                'wp-cli-commands/UpdateSiteUrl.php'
             );
 
             foreach ($files_to_load as $file)
@@ -194,6 +195,7 @@ abstract class base_theme_class {
             }
 
              \WP_CLI::add_command( 'devmode', '\DevMode_Command' );
+             \WP_CLI::add_command( 'url', '\UpdateSiteUrl_Command' );
         }
 
 
