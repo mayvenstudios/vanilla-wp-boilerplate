@@ -121,4 +121,6 @@ $group = array (
   'label_placement' => 'top',
   'instruction_placement' => 'label',
   'hide_on_screen' => '',
+  'active' => 1,
+  'description' => '',
 );
