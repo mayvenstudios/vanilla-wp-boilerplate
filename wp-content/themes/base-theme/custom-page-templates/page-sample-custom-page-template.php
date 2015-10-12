@@ -3,9 +3,11 @@
 @section('content')
 <?php while ( have_posts() ) : the_post(); ?>
 
-    <h1>{{ get_the_title() }}</h1>
+    <!--  
 
-    {{ the_content() }}
+    your html goes here
 
-<?php endwhile; ?>
+    -->
+
+
 @endsection
