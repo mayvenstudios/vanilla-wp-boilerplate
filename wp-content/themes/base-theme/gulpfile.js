@@ -13,8 +13,6 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix)
 {
-
-
     mix.sass([
         'theme.scss'
     ], 'public/css/theme.css');
