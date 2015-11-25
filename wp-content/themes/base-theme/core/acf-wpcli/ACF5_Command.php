@@ -13,7 +13,10 @@ class ACF5_Command extends WP_CLI_Command {
   function __construct() {
     $this->paths = array(
       'active_theme'        => get_template_directory() . '/field-groups/',
-      'active_child_theme'  => get_stylesheet_directory() . '/field-groups/',
+      
+      /* uncommented because causing duplication of fields on import */
+      
+      //'active_child_theme'  => get_stylesheet_directory() . '/field-groups/',
       'child_themes_shared' => ABSPATH . 'field-groups/shared-childs/',
     );
 
