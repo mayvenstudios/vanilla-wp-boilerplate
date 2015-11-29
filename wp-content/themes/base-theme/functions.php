@@ -12,7 +12,7 @@ class Theme extends base_theme_class {
 
     var $version = '1.0';
 
-    var $theme_name = 'THEME_NAME_HERE';
+    var $theme_name = THEME_NAME;
 
     var $include_jquery = true;
 
