@@ -1,3 +1,10 @@
 {
-    "assetsPath": "assets/"
+    "assetsPath": "assets/",
+    "css":{
+        "autoprefix":{
+            "options":{
+                "browsers": ["last 5 versions"]
+            }
+        }
+    }
 }
