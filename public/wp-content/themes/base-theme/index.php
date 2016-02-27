@@ -5,6 +5,8 @@
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
+        {{ wp_head() }}
+
         <style>
             html, body {
                 height: 100%;
@@ -41,5 +43,7 @@
                 <div class="title">WordPress Rapid Development Theme</div>
             </div>
         </div>
+
+        {{ wp_footer() }}
     </body>
 </html>

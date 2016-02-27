@@ -3,4 +3,13 @@ Theme Name:         A New Theme
 Theme URI:          http://github.com/theme-url
 Description:        Please see functions.php for a description of this bootstrap theme
 Version:            1.0
+
+
+The stylesheet for this theme can be edited in the assets/sass directory.
+
+The theme uses Gulp to compile the SASS files in the assets/sass directory into the assets/compiled directory.
+
+Please see the gulpfile.js for more details.
+
+Any styles added to this file will not be used in the theme.
 */

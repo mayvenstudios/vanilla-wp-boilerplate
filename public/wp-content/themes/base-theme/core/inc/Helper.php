@@ -2,9 +2,47 @@
 
 function asset($name)
 {
-
+    /**
+     * Generate an asset path for the application.
+     *
+     * @param  string  $path
+     * @return string
+     */
     return Helper::asset($name);
 
+}
+
+
+if (! function_exists('elixir')) {
+    /**
+     * Get the path to a versioned Elixir file.
+     *
+     * @param  string  $file
+     * @return string
+     *
+     * @throws \Exception
+     */
+    function elixir($file)
+    {
+        $manifest = null;
+
+        $path_to_manifest = get_template_directory() . '/assets/compiled/rev-manifest.json';
+
+        if(file_exists($path_to_manifest) && is_null($manifest)) {
+       
+            $manifest = json_decode(file_get_contents($path_to_manifest), true);
+
+            if (isset($manifest[$file]))
+            {
+                return asset('compiled/'.$manifest[$file]);
+            }
+
+        }
+        
+
+        return asset('compiled/'. $file);
+
+    }
 }
 
 class Helper {
@@ -81,7 +119,7 @@ class Helper {
     public static function asset( $name )
     {
 
-        return get_template_directory_uri() . "/public/{$name}";
+        return get_template_directory_uri() . "/assets/{$name}";
 
     }
 

@@ -105,8 +105,6 @@ abstract class base_theme_class {
         add_action('init', array($this, 'load_wp_cli_commands'));
 
 
-        require_once( get_template_directory() . '/filters-actions.php' );
-
         /* Load shortcodes */
         if(method_exists($this, 'load_shortcodes'))
         {
@@ -338,12 +336,12 @@ abstract class base_theme_class {
         if($this->include_jquery === false)
         {
             wp_deregister_script('jquery');
-            wp_enqueue_script( 'jquery' , get_template_directory_uri() . '/public/js/theme.js', null, $this->version, true );
+            wp_enqueue_script( 'jquery' , elixir('js/theme.js'), null, null, true );
 
         }
         else
         {
-            wp_enqueue_script( $this->theme_name .'-script' , get_template_directory_uri() . '/public/js/theme.js', array('jquery'), $this->version, true );
+            wp_enqueue_script( $this->theme_name .'-script' , elixir('js/theme.js'), array('jquery'), null, true );
         }
 
     }
@@ -355,7 +353,7 @@ abstract class base_theme_class {
     */
     public function load_styles()
     {
-        wp_enqueue_style( $this->theme_name .'-style', get_template_directory_uri() . '/public/css/theme.css',array(), $this->version);
+        wp_enqueue_style( $this->theme_name .'-style', elixir('css/theme.css'),array(), null);
 
     }
 
