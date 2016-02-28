@@ -1,49 +1,40 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Laravel</title>
+@layout('layouts/master')
+@section('head')
+<link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+<style>
+    html, body {
+        height: 100%;
+    }
 
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        display: table;
+        font-weight: 100;
+        font-family: 'Lato';
+    }
 
-        {{ wp_head() }}
+    .container {
+        text-align: center;
+        display: table-cell;
+        vertical-align: middle;
+    }
 
-        <style>
-            html, body {
-                height: 100%;
-            }
+    .content {
+        text-align: center;
+        display: inline-block;
+    }
 
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                display: table;
-                font-weight: 100;
-                font-family: 'Lato';
-            }
-
-            .container {
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-            }
-
-            .content {
-                text-align: center;
-                display: inline-block;
-            }
-
-            .title {
-                font-size: 96px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="content">
-                <div class="title">WordPress Rapid Development Theme</div>
-            </div>
-        </div>
-
-        {{ wp_footer() }}
-    </body>
-</html>
+    .title {
+        font-size: 96px;
+    }
+</style>
+@endsection
+@section('content')
+<div class="container">
+    <div class="content">
+        <div class="title">WordPress Rapid Development Theme</div>
+    </div>
+</div>
+@endsection

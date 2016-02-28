@@ -12,6 +12,8 @@
 
 var elixir = require('laravel-elixir');
 
+var enableCacheBusting = true;
+
 /* Update path to compiled assets */
 elixir.config.publicPath = 'assets/compiled';
 
@@ -38,10 +40,16 @@ elixir(function(mix)
         'custom'
     ], 'assets/compiled/js/theme.js');
 
-    mix.version([
-        'assets/compiled/css/theme.css',
-        'assets/compiled/css/ie.css',
-        'assets/compiled/js/theme.js'
-    ]);
+    if(enableCacheBusting === true)
+    {
+        
+        mix.version([
+            'assets/compiled/css/theme.css',
+            'assets/compiled/css/ie.css',
+            'assets/compiled/js/theme.js'
+        ]);
+         
+    }
+    
 
 });

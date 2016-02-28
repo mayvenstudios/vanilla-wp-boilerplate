@@ -374,13 +374,18 @@ abstract class base_theme_class {
             add_theme_support( 'post-thumbnails' );
         }
         
-
-        foreach($this->image_sizes as $size)
+        if(is_array($this->image_sizes))
         {
 
-            add_image_size($size['name'], $size['width'], $size['height'], $size['crop']);
+            foreach($this->image_sizes as $size)
+            {
+
+                add_image_size($size['name'], $size['width'], $size['height'], $size['crop']);
+
+            }
 
         }
+        
     }
 
 
@@ -429,9 +434,17 @@ abstract class base_theme_class {
     protected function load_menu_support()
     {
 
-        add_theme_support( 'menus' );
+        
 
-        register_nav_menus( $this->menus );
+        if(is_array( $this->menus ))
+        {
+            
+            add_theme_support( 'menus' );
+
+            register_nav_menus( $this->menus );
+                
+        }
+        
     }
 
 

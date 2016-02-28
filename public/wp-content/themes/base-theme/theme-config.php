@@ -12,8 +12,6 @@ class Theme extends base_theme_class {
 
     var $version = '1.0';
 
-    var $theme_name = THEME_NAME;
-
     var $include_jquery = true;
 
     var $load_options_panel = true;
@@ -24,7 +22,18 @@ class Theme extends base_theme_class {
 
     var $excerpt_text = 'Read More';
 
-    var $force_enable_acf_option_panel = false;
+    var $force_enable_acf_option_panel = true;
+
+
+    public function __construct()
+    {
+
+        parent::__construct(); 
+
+        $this->theme_name = defined('THEME_NAME') ? THEME_NAME : 'base-theme';
+
+    }
+
 
     /* Load more custom post types here */
     public function load_custom_post_types()
@@ -80,7 +89,7 @@ class Theme extends base_theme_class {
         
         /* */
 
-        add_shortcode( 'contact_form', function($atts) {
+        /*add_shortcode( 'contact_form', function($atts) {
 
             return view('forms/contact-form')->with(array(
 
@@ -89,7 +98,7 @@ class Theme extends base_theme_class {
 
             ));
 
-        });
+        });*/
 
        
 

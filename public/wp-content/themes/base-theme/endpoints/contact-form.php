@@ -31,7 +31,11 @@ function custom_contact_form_submission()
     ...
 
     //Sample gforms entry using GFAPI class
-    $response = GFAPI::add_entry( $_REQUEST );
+
+    $entry = array();
+    $entry['1'] = $_REQUEST['email'];
+    $response = GFAPI::add_entry( $entry );
+    GFAPI::send_notifications( GFAPI::get_form( $entry['form_id'] ), GFAPI::get_entry( $response ), 'form_submission' );
 
     */
     $response = true;
