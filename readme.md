@@ -64,7 +64,7 @@ Here is a quick overview of the directory structure of the theme:
 +-- package.json - This file defines the Node.js packages that are required for the gulpfile to work correctly (more on this later)
 +-- screenshot.png - This is the screenshot that appears on the theme activation page in wp-admin.  Feel free to replace this with any image you want.
 +-- theme-config.php - The config file for Vanilla.  This is where the bulk of the configuration will happen for your theme.
-
++-- style.css - This is the default stylesheet.  You can update the name of the theme, and the author, in this file.
 
 # Key Theme Components
 
@@ -182,12 +182,40 @@ Your theme likely has a navigation menu (or two menus, or many).  For example, y
 
 ## Image Sizes
 
-
+Your theme also probably has many images that exist in various parts of the site.  For example, if you have products on your site, each product might have an image.  You will create a ACF field group that allows the user to upload and change the image that is associated with the product.  In an ideal world, the user would upload the perfect sized image of the product so that it displays properly on the site.  But often times, a user will upload an image that is too big, or not the right size.  By defining Image Sizes in your theme, WordPress will automatically crop the image so that it is the perfect size.  Within the Vanilla theme, you can define these image sizes.
 
 ## WYSIWYG Editor
 
+The "What You See Is What You Get" (WYSIWYG) editor is built into WordPress by default.  This allows the user to update the content section on the page or post.
 
+An important rule of thumb here is to never place blocks of HTML directly into the WYSIWYG editor.  For example, on the home page, your HTML for the testimonial section may look like this:
+
+```
+<div class="testimonial-item">
+    <h3>Testimonial</h3>
+    <blockquote>
+        <p>Here is my testimonial</p>
+        <cite>- James Jiggins, CEO CMV</cite>
+    </blockquote>
+
+</div>
+```
+
+Often times, you will be tempted to simply copy and paste this HTML block directly into the WYSIWYG on your home page in wp-admin.  This is something we never recommend, and instead, you should create a ACF field group that allows the user to fill out the content for the Testimonial, and then you should dynamically generate the HTML in the View.
+
+So what is the WYSIWYG editor used for?  On many views, we entirely disable the WYSIWYG editor, and instead only have ACF field groups on the page.  However, on pages where there are long blocks of long-form content (for example, a blog post) the user will be able to edit the content there, and add h1 --> h6 tags and other basic content styles to the post.
 
 ## Shortcodes
 
-Shortcodes are built into WordPress by default.
+In the case where you want users to be able to add more dynamic content to a WYSIWYG, we use Shortcodes.  Shortcodes allow the user to automatically generate HTML into a WYSIWYG box.  For example, we have a testimonial shortcode that looks like this: `[testimonial text="Here is my testimonial" by="James Jiggins, CEO CMV"]`
+
+We would then have a file in the `shortcodes` directory in the theme, and when the user places the shortcode into the WYSWIYG box, when the user views the page on the front end, the template for the shortcode would be outputted.  We will give more specific examples of Shortcodes later on in this tutorial.
+
+## Options Panel
+
+Within the Vanilla theme, you can create custom Options Panels that will then appear in wp-admin.  You can assign ACF field groups to these option panels.  The purpose of the Options Panels is to give the theme some Global configuration options.  For example, perhaps you want the user to be able to update the logo on the site.  You can create a Options panel called "Header Options", and then create a field group on this Options panel called "Header Logo".  The user will then be able to update the logo dynamically in wp-admin.
+
+
+## Gulp
+
+Info on Gulp here.
