@@ -24,6 +24,7 @@ You will also need to setup your local dev environment to run the site.  You sho
 Once everything is setup, login to your site at http://sitename.dev/wp-admin with the username and password you created.  You will need to activate the starter theme by visiting the "Themes" section, and activating the Starter Theme.
 
 
+
 # Pre-Requisites 
 
 Before you can really benefit from this starter theme, you should have an already completed front end (HTML/CSS/JavaScript) of the site you are building.  This starter theme will simplify the process of taking the static HTML/CSS/JavaScript that you have created, and then integrating it into WordPress so that all of the content and pages are controlled via the WordPress CMS.
