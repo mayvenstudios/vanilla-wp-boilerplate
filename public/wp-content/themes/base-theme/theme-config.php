@@ -13,7 +13,7 @@ class Theme extends base_theme_class {
 
     var $version = '1.0';
 
-    /**
+    /*
     
     Allows you to disable WordPress from including jQuery by default.
 
@@ -23,7 +23,7 @@ class Theme extends base_theme_class {
     var $include_jquery = true;
 
 
-    /**
+    /*
     
     Loads an options panel in wp-admin.
     If this is enabled, you create custom fields and target them to this option panel.
@@ -32,7 +32,7 @@ class Theme extends base_theme_class {
     var $load_options_panel = true;
 
 
-    /**
+    /*
 
     if you want to force disable to WP theme editor, set this to true.
     Since we keep our WP themes in version control, we set this to true by default.
@@ -41,7 +41,7 @@ class Theme extends base_theme_class {
     var $disabled_theme_editor = true;
 
 
-    /**
+    /*
 
     toggle featured image support on your posts and pages
 
@@ -49,7 +49,7 @@ class Theme extends base_theme_class {
     var $load_thumbnail_support = true;
 
 
-    /**
+    /*
 
     this allows you to edit the default text that appears with post excerpts.
     If you set this to null, a simple "..." will output at the end of each excerpt.
@@ -58,7 +58,7 @@ class Theme extends base_theme_class {
     var $excerpt_text = 'Read More';
 
 
-    /**
+    /*
 
     by default, the theme will disable the ACF Options menu in wp-admin, unless WP_DEBUG is set to true.
     If you want to force enable to ACF options panel to display, you can set this variable as true
