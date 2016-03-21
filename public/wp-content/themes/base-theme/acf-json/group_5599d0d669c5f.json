@@ -7,7 +7,7 @@
             "label": "Additional CSS or JavaScript in Header",
             "name": "header_css_js_custom",
             "type": "textarea",
-            "instructions": "You can paste additioanl &lt;script&gt; tags here.  You can also input &lt;style&gt; tags.  This will be injected into the &lt;head&gt;.",
+            "instructions": "You can paste additional &lt;script&gt; tags here.  You can also input &lt;style&gt; tags.  This will be injected into the &lt;head&gt;.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -61,5 +61,7 @@
     "instruction_placement": "label",
     "hide_on_screen": "",
     "active": 1,
-    "description": ""
+    "description": "",
+    "modified": 1458598081,
+    "local": "json"
 }
