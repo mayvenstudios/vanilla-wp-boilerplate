@@ -71,7 +71,7 @@ class Theme extends base_theme_class {
         parent::__construct(); 
 
         $this->theme_name = defined('THEME_NAME') ? THEME_NAME : 'base-theme';
-        $this->version = defined('VERSION') ? VERSION : '1.0';
+        $this->version = getenv('VERSION') ? getenv('VERSION') : '1.0';
 
     }
 
