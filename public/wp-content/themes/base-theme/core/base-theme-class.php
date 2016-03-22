@@ -336,12 +336,12 @@ abstract class base_theme_class {
         if($this->include_jquery === false)
         {
             wp_deregister_script('jquery');
-            wp_enqueue_script( 'jquery' , elixir('js/theme.js'), null, null, true );
+            wp_enqueue_script( 'jquery' , asset('compiled/js/theme.js'), null, $this->version, true );
 
         }
         else
         {
-            wp_enqueue_script( $this->theme_name .'-script' , elixir('js/theme.js'), array('jquery'), null, true );
+            wp_enqueue_script( $this->theme_name .'-script' , asset('compiled/js/theme.js'), array('jquery'), $this->version, true );
         }
 
     }
@@ -353,7 +353,7 @@ abstract class base_theme_class {
     */
     public function load_styles()
     {
-        wp_enqueue_style( $this->theme_name .'-style', elixir('css/theme.css'),array(), null);
+        wp_enqueue_style( $this->theme_name .'-style', asset('compiled/css/theme.css'),array(), $this->version);
 
     }
 

@@ -11,8 +11,6 @@ include_once( 'core/base-theme-class.php' );
 class Theme extends base_theme_class {
 
 
-    var $version = '1.0';
-
     /*
     
     Allows you to disable WordPress from including jQuery by default.
@@ -73,6 +71,7 @@ class Theme extends base_theme_class {
         parent::__construct(); 
 
         $this->theme_name = defined('THEME_NAME') ? THEME_NAME : 'base-theme';
+        $this->version = defined('VERSION') ? VERSION : '1.0';
 
     }
 

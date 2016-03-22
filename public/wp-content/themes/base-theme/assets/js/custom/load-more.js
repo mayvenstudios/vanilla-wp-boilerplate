@@ -7,6 +7,7 @@ jQuery(document).ready(function($)
 
         var contentTarget = btn.parent().data('target');
 
+        var hello_world = 'tester2';
         var appendTo = btn.parent().data('append-to');
 
         var loadMore = btn.parent().data('load-more');
