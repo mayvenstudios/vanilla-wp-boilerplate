@@ -90,6 +90,38 @@ class Helper {
 
     }
 
+     public static function assetImage( $name )
+    {
+        return self::asset('images/'.$name);
+    }
+
+    public static function imageURL($attachment_id, $size = 'thumbnail', $icon = false){
+        return wp_get_attachment_image_src($attachment_id, $size, $icon)[0];
+    }
+
+    public static function imageDiv($attachment_id_or_url, $size = 'thumbnail', $attr = '') {
+        $htmlAttr = '';
+        $htmlCls = '';
+        $htmlStyle = $attachment_id_or_url;
+        if(is_numeric($attachment_id_or_url)){
+            $htmlStyle = self::imageURL($attachment_id_or_url, $size, $attr);
+        }
+        $htmlStyle = 'background-image: url('.$htmlStyle.');'
+        ;
+        if($attr){
+            foreach ( $attr as $name => $value ) {
+                if($name == 'class'){
+                    $htmlCls .= ' '.$value;
+                }else if($name == 'style'){
+                    $htmlStyle .= ' '.$value;
+                }else{
+                    $htmlAttr .= " $name=" . '"' . $value . '"';
+                }
+            }
+        }
+        return "<div class='image$htmlCls' style='$htmlStyle' $htmlAttr ></div>";
+    }
+
     public static function image($attachment_id, $size = 'thumbnail', $attr = '') {
 
     $icon = false;
