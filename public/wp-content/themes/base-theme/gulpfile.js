@@ -25,18 +25,16 @@ elixir.config.css.autoprefix.options.browsers.push("last 5 versions");
 elixir(function(mix)
 {
 
-    
-
     mix.sass([
         'theme.scss'
     ], 'assets/compiled/css/theme.css');
 
 
     mix.scripts([
-        'plugins',
-        'custom'
-    ], 'assets/compiled/js/theme.js');
+        'vendor'
+    ], 'assets/compiled/js/vendor.js');
 
+    mix.browserify('app.js', 'assets/compiled/js/app.js');
 
 
 });
