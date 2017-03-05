@@ -76,32 +76,71 @@ class Theme extends base_theme_class {
     }
 
 
-    /* Load more custom post types here */
+    /*
+    
+    Load Custom Post Types
+    Extended CPTs https://github.com/johnbillion/extended-cpts/wiki
+    
+    */
     public function load_custom_post_types()
     {
 
-        // Sample Custom Post Type - Add as many as you'd like 
+        
 
         /* 
-        $this->custom_post_types['testimonial'] = array(
+        // Sample Custom Post Type - Add as many as you'd like 
+        register_extended_post_type( 'story', array(
 
-            'label' => 'Testimonials',            
-            'description' => 'This is the testimonial custom post type',
-            'public' => true,
-            'exclude_from_search' => true,
-            'show_ui' => true,
-            'supports' => array('title', 'editor'),
-            'has_archive' => false,
-            'rewrite' => false
+            # Add the post type to the site's main RSS feed:
+            'show_in_feed' => true,
 
-            // any additional options can be added as defined in WP codex: https://codex.wordpress.org/Function_Reference/register_post_type
-        ); 
+            # Show all posts on the post type archive:
+            'archive' => array(
+                'nopaging' => true
+            ),
+
+            # Add some custom columns to the admin screen:
+            'admin_cols' => array(
+                'featured_image' => array(
+                    'title'          => 'Illustration',
+                    'featured_image' => 'thumbnail'
+                ),
+                'published' => array(
+                    'title'       => 'Published',
+                    'meta_key'    => 'published_date',
+                    'date_format' => 'd/m/Y'
+                ),
+                'genre' => array(
+                    'taxonomy' => 'genre'
+                )
+            ),
+
+            # Add a dropdown filter to the admin screen:
+            'admin_filters' => array(
+                'genre' => array(
+                    'taxonomy' => 'genre'
+                )
+            )
+
+        ), array(
+
+            # Override the base names used for labels:
+            'singular' => 'Story',
+            'plural'   => 'Stories',
+            'slug'     => 'stories'
+
+        ) );
         */
         
 
     }
 
-
+    /*
+    
+    Load Custom Taxonomies
+    Extended Taxos https://github.com/johnbillion/extended-taxos
+    
+    */
     public function load_custom_taxonomies()
     {
 
@@ -109,16 +148,31 @@ class Theme extends base_theme_class {
 
         /*
 
-        $this->custom_taxonomies['testimonial-category'] = array(
+        register_extended_taxonomy( 'story', 'post', array(
 
-            'belongs_to_post_type' => 'testimonial',
-            'label' => 'Testimonial Categories',
-            'description' => 'These are the categories used to sort testimonials',
-            'public' => true,
-            'hierarchical' => false
+            # Use radio buttons in the meta box for this taxonomy on the post editing screen:
+            'meta_box' => 'radio',
 
-            // any additional options can be added as defined in WP codex: https://codex.wordpress.org/Function_Reference/register_taxonomy
-        );
+            # Show this taxonomy in the 'At a Glance' dashboard widget:
+            'dashboard_glance' => true,
+
+            # Add a custom column to the admin screen:
+            'admin_cols' => array(
+            'updated' => array(
+                'title'       => 'Updated',
+                'meta_key'    => 'updated_date',
+                'date_format' => 'd/m/Y'
+            ),
+            ),
+
+            ), array(
+
+            # Override the base names used for labels:
+            'singular' => 'Story',
+            'plural'   => 'Stories',
+            'slug'     => 'tales'
+
+        ) );
 
         */
     }

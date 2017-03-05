@@ -121,6 +121,9 @@ class SearchReplace extends AbstractPage implements PageInterface {
 
 		//check for errors in form
 		if ( ! $this->is_request_valid() ) {
+
+			$this->display_errors();
+
 			return FALSE;
 		}
 
@@ -252,6 +255,8 @@ class SearchReplace extends AbstractPage implements PageInterface {
 			}
 
 		}
+
+
 
 		return TRUE;
 	}

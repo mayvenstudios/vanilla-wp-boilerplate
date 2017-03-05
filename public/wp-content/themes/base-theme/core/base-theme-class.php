@@ -176,21 +176,11 @@ abstract class base_theme_class {
      *
      */
     public function add_custom_post_types()
-    {
+    {   
+        require_once 'extended-cpts/extended-cpts.php';
+
         /* loads the CPTs from functions.php */
         $this->load_custom_post_types();
-
-        if( is_array($this->custom_post_types) ) 
-        {
-
-            foreach($this->custom_post_types as $post_type_name => $options)
-            {
-
-                register_post_type($post_type_name, $options);
-
-            }
-
-        }
 
     }
 
@@ -199,38 +189,11 @@ abstract class base_theme_class {
      *
      */
     public function add_custom_taxonomies()
-    {
+    {   
+        require_once 'extended-taxos/extended-taxos.php';
+
         /* loads the custom taxonomies from functions.php */
         $this->load_custom_taxonomies();
-
-        if( is_array($this->custom_taxonomies) ) 
-        {
-
-            foreach($this->custom_taxonomies as $taxonomy_name => $options)
-            {
-
-                $belongs_to_post_type = $options['belongs_to_post_type'];
-
-
-                if( ! post_type_exists( $belongs_to_post_type ))
-                {
-
-                    add_action( 'admin_notices', function() use($taxonomy_name){
-
-                        $class = "error";
-                        $message = "The taxonomy you are trying to register in functions.php references a custom post type that does not exist.  Please make sure you are properly registering your custom post type in the functions.php load_custom_post_types method.  The CPT from this error is called: <strong>{$taxonomy_name}</strong>.";
-                        echo"<div class=\"$class\"> <p>$message</p></div>"; 
-
-                    });
-                }
-                
-                unset( $options['belongs_to_post_type'] );
-
-                register_taxonomy($taxonomy_name, $belongs_to_post_type, $options);
-
-            }
-
-        }
 
     }
     /**
@@ -519,9 +482,6 @@ abstract class base_theme_class {
         }    
 
         add_filter('acf/format_value',array( $this,'parse_template_directory'), 10, 3);
-
-        /* Load WPCLI Interface for ACF */
-        include_once('acf-wpcli/advanced-custom-fields-wpcli.php');
 
         if(function_exists('acf_wpcli_register_groups'))
         {

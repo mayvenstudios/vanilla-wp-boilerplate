@@ -3,7 +3,7 @@
  * Template for displaying replace domain page
  */
 // Prevent direct access.
-if ( ! defined( 'INSR_DIR' ) ) {
+if ( ! defined( 'SEARCH_REPLACE_BASEDIR' ) ) {
 	echo "Hi there!  I'm just a part of plugin, not much I can do when called directly.";
 	exit;
 }
@@ -18,7 +18,7 @@ if ( ! defined( 'INSR_DIR' ) ) {
 
 			<tr>
 				<th><label for="search"><strong><?php esc_html_e( 'Search for: ', 'search-and-replace' ); ?></strong></label></th>
-				<td><input id="search" type="text" name="search" value="<?php echo get_site_url(); ?>" /></td>
+				<td><input id="search" type="text" disabled="disabled" name="search" value="<?php echo get_site_url(); ?>" /></td>
 			</tr>
 			<tr>
 				<th><label for="replace"><strong><?php esc_html_e( 'Replace with: ', 'search-and-replace' ); ?></strong></label></th>
