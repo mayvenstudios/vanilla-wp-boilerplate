@@ -482,7 +482,7 @@ abstract class base_theme_class {
             include_once( 'acf/acf.php'); 
 
 
-            if(WP_DEBUG == false && $this->force_enable_acf_option_panel === false)
+            if((WP_DEBUG == false && $this->force_enable_acf_option_panel === false) || FORCE_HIDE_ACF_EDIT === true)
             {
                 
                 add_filter('acf/settings/show_admin', '__return_false');        

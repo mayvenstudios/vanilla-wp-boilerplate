@@ -32,6 +32,7 @@ define('NONCE_SALT',       getenv('NONCE_SALT'));
 define( 'WP_HOME', getenv('WP_HOME') );
 define( 'WP_SITEURL', getenv('WP_SITEURL'));
 
+define('FORCE_HIDE_ACF_EDIT', getenv('FORCE_HIDE_ACF_EDIT') == 'true' ? true : false);
 
 if(getenv('WP_DEBUG') === true)
 {

@@ -62,7 +62,7 @@ class Theme extends base_theme_class {
     If you want to force enable to ACF options panel to display, you can set this variable as true
     
     */
-    var $force_enable_acf_option_panel = false;
+    var $force_enable_acf_option_panel = true;
 
 
     public function __construct()
