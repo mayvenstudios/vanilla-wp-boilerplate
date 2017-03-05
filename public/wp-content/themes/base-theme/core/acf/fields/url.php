@@ -60,12 +60,13 @@ class acf_field_url extends acf_field {
 	function render_field( $field ) {
 		
 		// vars
+		$atts = array();
 		$o = array( 'type', 'id', 'class', 'name', 'value', 'placeholder' );
+		$s = array( 'readonly', 'disabled' );
 		$e = '';
 		
 		
-		// populate atts
-		$atts = array();
+		// append atts
 		foreach( $o as $k ) {
 		
 			$atts[ $k ] = $field[ $k ];	
@@ -73,21 +74,17 @@ class acf_field_url extends acf_field {
 		}
 		
 		
-		// special atts
-		foreach( array( 'readonly', 'disabled' ) as $k ) {
+		// append special atts
+		foreach( $s as $k ) {
 		
-			if( !empty($field[ $k ]) ) {
-			
-				$atts[ $k ] = $k;
-				
-			}
+			if( !empty($field[ $k ]) ) $atts[ $k ] = $k;
 			
 		}
 		
 		
 		// render
 		$e .= '<div class="acf-input-wrap acf-url">';
-		$e .= '<i class="acf-icon acf-icon-globe small"></i><input ' . acf_esc_attr( $atts ) . ' />';
+		$e .= '<i class="acf-icon -globe small"></i><input ' . acf_esc_attr( $atts ) . ' />';
 		$e .= '</div>';
 		
 		
@@ -155,11 +152,20 @@ class acf_field_url extends acf_field {
 		}
 		
 		
-		if( substr($value, 0, 4) !== 'http' ) {
+		if( strpos($value, '://') !== false ) {
+			
+			// url
+			
+		} elseif( strpos($value, '//') === 0 ) {
+			
+			// protocol relative url
+			
+		} else {
 			
 			$valid = __('Value must be a valid URL', 'acf');
 			
 		}
+		
 		
 		// return		
 		return $valid;
@@ -168,8 +174,10 @@ class acf_field_url extends acf_field {
 	
 }
 
-new acf_field_url();
 
-endif;
+// initialize
+acf_register_field_type( new acf_field_url() );
+
+endif; // class_exists check
 
 ?>

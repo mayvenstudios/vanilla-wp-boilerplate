@@ -24,7 +24,7 @@ if( empty($groups) ) {
 }
 
 ?>
-<tr data-name="conditional_logic" class="acf-field">
+<tr class="acf-field acf-field-true-false acf-field-setting-conditional_logic" data_type="true_false" data-name="conditional_logic">
 	<td class="acf-label">
 		<label><?php _e("Conditional Logic",'acf'); ?></label>
 	</td>
@@ -32,42 +32,34 @@ if( empty($groups) ) {
 		<?php 
 		
 		acf_render_field(array(
-			'type'			=> 'radio',
+			'type'			=> 'true_false',
 			'name'			=> 'conditional_logic',
 			'prefix'		=> $field['prefix'],
 			'value'			=> $disabled ? 0 : 1,
-			'choices'		=> array(
-								1	=> __("Yes",'acf'),
-								0	=> __("No",'acf'),
-			),
-			'layout'		=> 'horizontal',
+			'ui'			=> 1,
+			'class'			=> 'conditional-toggle',
 		));
 		
 		?>
-		<div class="location-groups" <?php if($disabled): ?>style="display:none;"<?php endif; ?>>
+		<div class="rule-groups" <?php if($disabled): ?>style="display:none;"<?php endif; ?>>
 			
 			<?php foreach( $groups as $group_id => $group ): 
 				
 				// validate
-				if( empty($group) ) {
+				if( empty($group) ) continue;
 				
-					continue;
-					
-				}
 				
+				// vars
 				// $group_id must be completely different to $rule_id to avoid JS issues
 				$group_id = "group_{$group_id}";
+				$h4 = ($group_id == "group_0") ? __("Show this field if",'acf') : __("or",'acf');
 				
 				?>
-				<div class="location-group" data-id="<?php echo $group_id; ?>">
+				<div class="rule-group" data-id="<?php echo $group_id; ?>">
 				
-					<?php if( $group_id == 'group_0' ): ?>
-						<h4><?php _e("Show this field if",'acf'); ?></h4>
-					<?php else: ?>
-						<h4><?php _e("or",'acf'); ?></h4>
-					<?php endif; ?>
+					<h4><?php echo $h4; ?></h4>
 					
-					<table class="acf-table acf-clear-table">
+					<table class="acf-table -clear">
 						<tbody>
 						<?php foreach( $group as $rule_id => $rule ): 
 							
@@ -78,13 +70,14 @@ if( empty($groups) ) {
 								'value'		=>	'',
 							));
 							
-										
+							
+							// vars		
 							// $group_id must be completely different to $rule_id to avoid JS issues
 							$rule_id = "rule_{$rule_id}";
 							$prefix = "{$field['prefix']}[conditional_logic][{$group_id}][{$rule_id}]";
 							
 							?>
-							<tr data-id="<?php echo $rule_id; ?>">
+							<tr class="rule" data-id="<?php echo $rule_id; ?>">
 								<td class="param">
 									<?php 
 									
@@ -98,7 +91,7 @@ if( empty($groups) ) {
 										'name'		=> 'field',
 										'value'		=> $rule['field'],
 										'choices'	=> $choices,
-										'class'		=> 'conditional-logic-field',
+										'class'		=> 'conditional-rule-param',
 										'disabled'	=> $disabled,
 									));										
 		
@@ -120,7 +113,7 @@ if( empty($groups) ) {
 										'name'		=> 'operator',
 										'value'		=> $rule['operator'],
 										'choices' 	=> $choices,
-										'class'		=> 'conditional-logic-operator',
+										'class'		=> 'conditional-rule-operator',
 										'disabled'	=> $disabled,
 									)); 	
 									
@@ -139,17 +132,17 @@ if( empty($groups) ) {
 										'name'		=> 'value',
 										'value'		=> $rule['value'],
 										'choices'	=> $choices,
-										'class'		=> 'conditional-logic-value',
+										'class'		=> 'conditional-rule-value',
 										'disabled'	=> $disabled,
 									));
 									
 									?>
 								</td>
 								<td class="add">
-									<a href="#" class="acf-button location-add-rule"><?php _e("and",'acf'); ?></a>
+									<a href="#" class="button add-conditional-rule"><?php _e("and",'acf'); ?></a>
 								</td>
 								<td class="remove">
-									<a href="#" class="acf-icon acf-icon-minus location-remove-rule"></a>
+									<a href="#" class="acf-icon -minus remove-conditional-rule"></a>
 								</td>
 								</tr>
 							<?php endforeach; ?>
@@ -161,7 +154,7 @@ if( empty($groups) ) {
 			
 			<h4><?php _e("or",'acf'); ?></h4>
 			
-			<a class="acf-button location-add-group" href="#"><?php _e("Add rule group",'acf'); ?></a>
+			<a href="#" class="button add-conditional-group"><?php _e("Add rule group",'acf'); ?></a>
 			
 		</div>
 		

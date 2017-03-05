@@ -1,741 +1,142 @@
 (function($){        
 	
-	acf.field_group_pro = {
-		
-		/*
-		*  init
-		*
-		*  This function will run on document ready and initialize the module
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	n/a
-		*  @return	n/a
-		*/
-		
-		init : function(){
-	    	
-	    	// reference
-	    	var self = this;
-	    	
-	    	
-	    	// actions
-	    	acf.add_action('open_field sortstop', function( $el ){
-			    
-			    self.update_field_parent( $el );
-				
-		    });
-		    
-		    acf.add_action('duplicate_field', function( $el ){
-			    
-			    self.duplicate_field( $el );
-				
-		    });
-		    
-		    acf.add_action('delete_field', function( $el ){
-			    
-			    self.delete_field( $el );
-				
-		    });
-		    
-			acf.add_action('change_field_type', function( $el ){
-			    
-			    self.change_field_type( $el );
-				
-		    });
-		    
-		    
-		    // modules
-		    this.repeater.init();
-	    	this.flexible_content.init();
-    	},
-    	
-    	
-    	/*
-    	*  fix_conditional_logic
-    	*
-    	*  This function will update sub field conditional logic rules after duplication
-    	*
-    	*  @type	function
-    	*  @date	10/06/2014
-    	*  @since	5.0.0
-    	*
-    	*  @param	$fields (jquery selection)
-    	*  @return	n/a
-    	*/
-    	
-    	fix_conditional_logic : function( $fields ){
-	    	
-	    	// build refernce
-			var ref = {};
-			
-			$fields.each(function(){
-				
-				ref[ $(this).attr('data-orig') ] = $(this).attr('data-key');
-				
-			});
-			
-	    	$fields.find('.conditional-logic-field').each(function(){
-		    	
-		    	// vars
-		    	var key = $(this).val();
-		    	
-		    	
-		    	// bail early if val is not a ref key
-		    	if( !(key in ref) ) {
-			    	
-			    	return;
-			    	
-		    	}
-		    	
-		    	
-		    	// add option if doesn't yet exist
-		    	if( ! $(this).find('option[value="' + ref[key] + '"]').exists() ) {
-			    	
-			    	$(this).append('<option value="' + ref[key] + '">' + ref[key] + '</option>');
-			    	
-		    	}
-		    	
-		    	
-		    	// set new val
-		    	$(this).val( ref[key] );
-		    	//console.log('setting new value to ' + ref[key]);
-		    	
-	    	});
-	    	
-    	},
-    	
-    	
-    	/*
-    	*  update_field_parent
-    	*
-    	*  This function will update field meta such as parent
-    	*
-    	*  @type	function
-    	*  @date	8/04/2014
-    	*  @since	5.0.0
-    	*
-    	*  @param	$el
-    	*  @return	n/a
-    	*/
-    	
-    	update_field_parent : function( $el ){
-	    	
-	    	// bail early if not div.field (flexible content tr)
-	    	if( ! $el.hasClass('acf-field-object') ) {
-		    	
-		    	return;
-		    	
-	    	}
-	    	
-	    	
-	    	// vars
-	    	var $parent = $el.parent().closest('.acf-field-object'),
-		    	val = 0;
-		    
-		    
-		    // find parent
-			if( $parent.exists() ) {
-				
-				// vars
-				var id = acf.get_data($parent, 'id'),
-					key = acf.get_data($parent, 'key');
-					
-				
-				// set val
-				val = key;
-				
-				
-				// if field has an ID, use that
-				if( id ) {
-					
-					val = id;
-					
-				}
-				
-			}
-			
-			
-			// update parent
-			acf.field_group.update_field_meta( $el, 'parent', val );
-	    	
-	    	
-	    	// action for 3rd party customization
-			acf.do_action('update_field_parent', $el, $parent);
-			
-    	},
-    	
-    	
-    	/*
-    	*  duplicate_field
-    	*
-    	*  This function is triggered when duplicating a field
-    	*
-    	*  @type	function
-    	*  @date	8/04/2014
-    	*  @since	5.0.0
-    	*
-    	*  @param	$el
-    	*  @return	n/a
-    	*/
-    	
-    	duplicate_field : function( $el ) {
-	    	
-	    	// vars
-			var $fields = $el.find('.acf-field-object').not('[data-key="acfcloneindex"]');
-				
-			
-			// bail early if $fields are empty
-			if( !$fields.exists() ) {
-				
-				return;
-				
-			}
-			
-			
-			// loop over sub fields
-	    	$fields.each(function(){
-		    	
-		    	// vars
-		    	var $parent = $(this).parent().closest('.acf-field-object'),
-		    		key = acf.field_group.get_field_meta( $parent, 'key');
-		    		
-		    	
-		    	// wipe field
-		    	acf.field_group.wipe_field( $(this) );
-		    	
-		    	
-		    	// update parent
-		    	acf.field_group.update_field_meta( $(this), 'parent', key );
-		    	
-		    	
-		    	// save field
-		    	acf.field_group.save_field( $(this) );
-		    	
-		    	
-	    	});
-	    	
-	    	
-	    	// fix conditional logic rules
-	    	this.fix_conditional_logic( $fields );
-	    	
-    	},
-    	
-    	
-    	/*
-    	*  delete_field
-    	*
-    	*  This function is triggered when deleting a field
-    	*
-    	*  @type	function
-    	*  @date	8/04/2014
-    	*  @since	5.0.0
-    	*
-    	*  @param	$el
-    	*  @return	n/a
-    	*/
-    	
-    	delete_field : function( $el ){
-	    	
-	    	$el.find('.acf-field-object').each(function(){
-		    	
-		    	acf.field_group.delete_field( $(this), false );
-		    	
-	    	});
-	    	
-    	},
-    	
-    	
-    	/*
-    	*  change_field_type
-    	*
-    	*  This function is triggered when changing a field type
-    	*
-    	*  @type	function
-    	*  @date	7/06/2014
-    	*  @since	5.0.0
-    	*
-    	*  @param	$post_id (int)
-    	*  @return	$post_id (int)
-    	*/
-		
-		change_field_type : function( $el ) {
-			
-			$el.find('.acf-field-object').each(function(){
-		    	
-		    	acf.field_group.delete_field( $(this), false );
-		    	
-	    	});
-			
-		}
-		
-	};
+	/*
+	*  Repeater
+	*
+	*  This field type requires some extra logic for its settings
+	*
+	*  @type	function
+	*  @date	24/10/13
+	*  @since	5.0.0
+	*
+	*  @param	n/a
+	*  @return	n/a
+	*/
 	
-	acf.field_group_pro.repeater = {
-	
-		/*
-		*  init
-		*
-		*  This function will run on document ready and initialize the module
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	n/a
-		*  @return	n/a
-		*/
+	var acf_settings_repeater = acf.field_group.field_object.extend({
 		
-		init : function(){
+		type: 'repeater',
+		
+		actions: {
+			'render_settings': 'render'
+		},
+		
+		events: {
+			'change .acf-field-setting-layout input':		'_change_layout',
+			'focus .acf-field-setting-collapsed select':	'_focus_collapsed'
+		},
+		
+		focus: function(){
 			
-			// reference
-			var _this = this;
-			
-			
-			// actions
-			acf.add_action('open_field change_field_type', function( $el ){
-			    
-			    _this.render_field( $el );
-				
-		    });
-		    
-			
-			// events	
-			$(document).on('change', '.acf-repeater-layout input', function(){
-				
-				_this.render_field( $(this).closest('.acf-field-object') );
-				
-			});
+			this.$fields = this.$field.find('.acf-field-list:first');
 			
 		},
 		
-		
-		/*
-		*  render_field
-		*
-		*  This function is triggered when a repeater field is visible
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$el
-		*  @return	n/a
-		*/
-		
-		render_field : function( $el ){
+		render: function(){
 			
-			// bail early if not repeater
-			if( $el.attr('data-type') != 'repeater' ) {
-				
-				return;
-				
-			}
+			this.render_layout();
+			this.render_collapsed();
 			
+		},
+		
+		render_layout: function(){
 			
 			// vars
-			var $tbody = $el.find('> .settings > table > tbody'),
-				$field_list = $tbody.find('> [data-name="sub_fields"] .acf-field-list:first'),
-				layout = $tbody.find('> [data-name="layout"] input:checked').val();
+			var layout = this.setting('layout input:checked').val();
+			
+			
+			// update data
+			this.$fields.attr('data-layout', layout);
+			
+		},
+		
+		render_collapsed: function(){
+			
+			// vars
+			var $select = this.setting('collapsed select');
+			
+			
+			// collapsed
+			var choices = [];
+			
+			
+			// keep 'null' choice
+			choices.push({
+				'label': $select.find('option[value=""]').text(),
+				'value': ''
+			});
+			
+			
+			// loop
+			this.$fields.children('.acf-field-object').each(function(){
 				
+				// vars
+				var $field = $(this);
+				
+				
+				// append
+				choices.push({
+					'label': $field.find('.field-label:first').val(),
+					'value': $field.attr('data-key')
+				});
+				
+			});
 			
 			
-			// add class
-			$field_list.removeClass('layout-row layout-table').addClass( 'layout-' + layout );
+			// render
+			acf.render_select( $select, choices );
+			
+		},
+		
+		_change_layout: function( e ){
+			
+			this.render_layout();
+			
+		},
+		
+		_focus_collapsed: function( e ){
+			
+			this.render_collapsed();
+			
+		}
+		
+	});
+	
+	
+	/*
+	*  flexible_content
+	*
+	*  description
+	*
+	*  @type	function
+	*  @date	25/09/2015
+	*  @since	5.2.3
+	*
+	*  @param	$post_id (int)
+	*  @return	$post_id (int)
+	*/
+	
+	var acf_settings_flexible_content = acf.field_group.field_object.extend({
+		
+		type: 'flexible_content',
+		
+		actions: {
+			'render_settings':		'render'
+		},
+					
+		render: function(){
+			
+			// reference
+			var self = this,
+				$field = this.$field;
 			
 			
 			// sortable
-			if( ! $field_list.hasClass('ui-sortable') ) {
-			
-				acf.field_group.sort_fields( $field_list );
-				
-			}
-			
-		}
-		
-	}
-	
-	
-	acf.field_group_pro.flexible_content = {
-		
-		/*
-		*  init
-		*
-		*  This function will run on document ready and initialize the module
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	n/a
-		*  @return	n/a
-		*/
-		
-		init : function(){
-			
-			// reference
-			var _this = this;
-			
-			
-			// actions
-			acf.add_action('open_field change_field_type', function( $el ){
-			    
-			    _this.render_field( $el );
-				
-		    });
-		    
-		    acf.add_action('update_field_parent', function( $el, $parent ){
-			    
-			    _this.update_field_parent( $el, $parent );
-				
-		    });
-			
-						
-			// events
-			$(document).on('click', '[data-name="acf-fc-add"]', function( e ){
-				
-				e.preventDefault();
-				
-				_this.add_layout( $(this).closest('.acf-field') );
-				
-			});
-			
-			$(document).on('click', '[data-name="acf-fc-duplicate"]', function( e ){
-				
-				e.preventDefault();
-				
-				_this.duplicate_layout( $(this).closest('.acf-field') );
-				
-			});
-			
-			$(document).on('click', '[data-name="acf-fc-delete"]', function( e ){
-				
-				e.preventDefault();
-				
-				_this.delete_layout( $(this).closest('.acf-field') );
-				
-			});
-			
-			$(document).on('blur', '.acf-fc-meta-label input', function( e ){
-				
-				_this.change_layout_label( $(this) );
-				
-			});
-			
-			$(document).on('change', '.acf-fc-meta-display select', function( e ){
-				
-				_this.render_layout( $(this).closest('.acf-field') );
-				
-			});	
-			
-		},
-		
-		
-		/*
-		*  add_layout
-		*
-		*  This function will add another fc layout after the given $tr
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$post_id (int)
-		*  @return	$post_id (int)
-		*/
-		
-		add_layout : function( $tr ){
-			
-			// vars
-			var $new_tr = $tr.clone( false );
-		
-		
-			// remove sub fields
-			$new_tr.find('.acf-field-object').not('[data-key="acfcloneindex"]').remove();
-	
-			
-			// show add new message
-			$new_tr.find('.no-fields-message').show();
-			
-			
-			// reset layout meta values
-			$new_tr.find('.acf-fc-meta input').val('');
-			
-			
-			// wipe layout
-			this.wipe_layout( $new_tr );
-			
-			
-			// add new tr
-			$tr.after( $new_tr );
-			
-			
-			// make sortbale
-			$new_tr.find('.acf-field-list').each(function(){
-				
-				acf.field_group.sort_fields( $(this) );
-				
-			});
-			
-			
-			// display
-			$new_tr.find('.acf-fc-meta select').val('row').trigger('change');
-			
-		},
-		
-		
-		/*
-		*  wipe_layout
-		*
-		*  This function will prepare a new fc layout
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$tr
-		*  @return	n/a
-		*/
-		
-		wipe_layout : function( $tr ){
-			
-			// vars
-			var old_key = $tr.attr('data-key'),
-				new_key = acf.get_uniqid();
-			
-			
-			// give field a new id
-			$tr.attr('data-key', new_key);
-			$tr.find('> .acf-input > .acf-hidden [data-name="layout-key"]').val(new_key);
-			
-			
-			// update attributes
-			$tr.find('[id*="' + old_key + '"]').each(function(){	
-			
-				$(this).attr('id', $(this).attr('id').replace('-layouts-' + old_key + '-','-layouts-' + new_key + '-') );
-				
-			});
-			
-			$tr.find('[name*="' + old_key + '"]').each(function(){	
-			
-				$(this).attr('name', $(this).attr('name').replace('[layouts][' + old_key + ']','[layouts][' + new_key + ']') );
-				
-			});
-						
-		},
-		
-		
-		/*
-		*  duplicate_layout
-		*
-		*  This function will duplicate a fc layout
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$tr
-		*  @return	n/a
-		*/
-		
-		duplicate_layout : function( $tr ){
-			
-			// allow acf to modify DOM
-			acf.do_action('before_duplicate', $tr);
-			
-			
-			// vars
-			var $new_tr = $tr.clone( false );
-			
-			
-			// wipe layout
-			this.wipe_layout( $new_tr );
-			
-			
-			// vars
-			var new_parent_layout = $new_tr.attr('data-key'),
-				$fields = $new_tr.find('.acf-field-object').not('[data-key="acfcloneindex"]');
-				
-			$fields.each(function(){
-				
-				// wipe
-				acf.field_group.wipe_field( $(this) );
-				
-				
-				// update layput key
-				acf.field_group.update_field_meta( $(this), 'parent_layout', new_parent_layout );
-				
-				
-				// save
-				acf.field_group.save_field( $(this) );
-				
-			});
-			
-			
-			// add new tr
-			$tr.after( $new_tr );
-			
-			
-			// allow acf to modify DOM
-			acf.do_action('after_duplicate', $tr, $new_tr);
-			
-			
-			// fix conditional logic rules
-			acf.field_group_pro.fix_conditional_logic( $fields );
-			
-			
-			// make sortbale
-			$new_tr.find('.acf-field-list').each(function(){
-				
-				acf.field_group.sort_fields( $(this) );
-				
-			});
-				
-			
-			// focus on new label
-			$new_tr.find('.acf-fc-meta-label input').focus();
-			
-		},
-
-		
-		/*
-		*  delete_layout
-		*
-		*  This function will delete a fc layout
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$tr
-		*  @return	n/a
-		*/
-		
-		delete_layout : function( $tr ){
-			
-			// validate
-			if( $tr.siblings('tr[data-name="fc_layout"]').length == 0 ) {
-			
-				alert( acf._e('flexible_content','layout_warning') );
-				
-				return false;
-				
-			}
-			
-			
-			// delete fields
-			$tr.find('.acf-field-object').not('[data-key="acfcloneindex"]').each(function(){
-				
-				// dlete without animation
-				acf.field_group.delete_field( $(this), false );
-				
-			});
-			
-			
-			// save field
-			acf.field_group.save_field( $tr.closest('.acf-field-object') );
-			
-			
-			// remove tr
-			acf.remove_tr( $tr );
-						
-		},
-		
-		
-		/*
-		*  change_layout_label
-		*
-		*  This function is triggered when changing the layout's label
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$input 
-		*  @return	n/a
-		*/
-		
-		change_layout_label : function( $label ){
-			
-			var $name = $label.closest('.acf-fc-meta').find('.acf-fc-meta-name input');
-			
-			// only if name is empty
-			if( $name.val() == '' ) {
-				
-				// thanks to https://gist.github.com/richardsweeney/5317392 for this code!
-				var val = $label.val(),
-					replace = {
-						'ä': 'a',
-						'æ': 'a',
-						'å': 'a',
-						'ö': 'o',
-						'ø': 'o',
-						'é': 'e',
-						'ë': 'e',
-						'ü': 'u',
-						'ó': 'o',
-						'ő': 'o',
-						'ú': 'u',
-						'é': 'e',
-						'á': 'a',
-						'ű': 'u',
-						'í': 'i',
-						' ' : '_',
-						'\'' : '',
-						'\\?' : ''
-					};
-				
-				$.each( replace, function(k, v){
-					var regex = new RegExp( k, 'g' );
-					val = val.replace( regex, v );
-				});
-				
-				
-				val = val.toLowerCase();
-				$name.val( val ).trigger('change');
-			}
-			
-		},
-		
-		
-		/*
-		*  render_field
-		*
-		*  This function is triggered when a fc field is visible
-		*
-		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
-		*
-		*  @param	$el
-		*  @return	n/a
-		*/
-		
-		render_field : function( $el ){
-			
-			// bail early if not flexible_content
-			if( $el.attr('data-type') != 'flexible_content' ) {
-				
-				return;
-				
-			}
-			
-			// reference
-			var _this = this;
-			
-			
-			// vars
-			var $tbody = $el.find('> .settings > table > tbody');
-			
-			
-			// validate
-			if( ! $tbody.hasClass('ui-sortable') ) {
+			if( ! this.$settings.hasClass('ui-sortable') ) {
 				
 				// add sortable
-				$tbody.sortable({
-					items					: '> tr[data-name="fc_layout"]',
+				this.$settings.sortable({
+					items					: '> .acf-field-setting-fc_layout',
 					handle					: '[data-name="acf-fc-reorder"]',
 					forceHelperSize			: true,
 					forcePlaceholderSize	: true,
@@ -750,9 +151,8 @@
 					
 						acf.do_action('sortstop', ui.item, ui.placeholder);
 						
-						// save
-						acf.field_group.save_field( $el );
-						
+						// save flexible content (layout order has changed)
+						acf.field_group.save_field( $field );
 						
 		   			}
 				});
@@ -760,19 +160,95 @@
 			}
 			
 			
-			// layouts
-			$tbody.children('tr[data-name="fc_layout"]').each(function(){
+			// render layouts
+			this.$settings.children('.acf-field-setting-fc_layout').each(function(){
 				
-				_this.render_layout( $(this) );
+				self.layout.render( $(this) );
 					
 			});
-
+			
+		},
+		
+		
+		layout: null
+		
+	});
+	
+	
+	acf_settings_flexible_content.layout = acf.model.extend({
+		
+		actions: {
+			'update_field_parent':	'update_field_parent'
+		},
+		
+		events: {
+			'change .acf-fc-meta-display select':		'_change_display',
+			'blur .acf-fc-meta-label input':			'_blur_label',
+			'click a[data-name="acf-fc-add"]':			'_add',
+			'click a[data-name="acf-fc-duplicate"]':	'_duplicate',
+			'click a[data-name="acf-fc-delete"]':		'_delete'
+		},
+		
+		event: function( e ){
+			
+			return e.$el.closest('.acf-field-setting-fc_layout');
+			
+		},
+			
+		update_meta: function( $field, $layout ){
+			
+			acf.field_group.update_field_meta( $field, 'parent_layout', $layout.attr('data-id') );
+			
+		},
+		
+		delete_meta: function( $field ){
+			
+			acf.field_group.delete_field_meta( $field, 'parent_layout' );
 			
 		},
 		
 		
 		/*
-		*  render_layout
+		*  update_field_parent
+		*
+		*  this function will update a sub field's 'parent_layout' meta data
+		*
+		*  @type	function
+		*  @date	16/11/16
+		*  @since	5.5.0
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		update_field_parent: function( $el, $parent ){			
+			
+			// vars
+			var $layout = $el.closest('.acf-field-setting-fc_layout');
+			
+			
+			// bail early if not a sub field of a flexible content field
+			// - don't save field as lack of 'parent' will avoid any issues with field's 'parent_layout' setting
+			if( !$layout.exists() ) {
+				
+				return this.delete_meta( $el );
+				
+			}
+			
+			
+			// update meta
+			this.update_meta( $el, $layout );
+						
+			
+			// save field
+			// - parent_layout meta needs to be saved within the post_content serialized array
+			acf.field_group.save_field( $el );
+						
+		},
+		
+		
+		/*
+		*  render
 		*
 		*  This function will update the field list class
 		*
@@ -784,31 +260,31 @@
 		*  @return	n/a
 		*/
 		
-		render_layout : function( $tr ){
+		render: function( $el ){
+			
+			// reference
+			var self = this;
+			
 			
 			// vars
-			var layout = $tr.find('.acf-fc-meta:first .acf-fc-meta-display select').val(),
-				$field_list = $tr.find('.acf-field-list:first');
+			var $key = $el.find('.acf-fc-meta-key:first input'),
+				$fields = $el.find('.acf-field-list:first'),
+				display = $el.find('.acf-fc-meta-display:first select').val();
 			
 			
-			// add class
-			$field_list.removeClass('layout-row layout-table').addClass( 'layout-' + layout );
+			// update key
+			// - both duplicate and add function need this
+			$key.val( $el.attr('data-id') );
 			
 			
-			// sortable
-			if( ! $field_list.hasClass('ui-sortable') ) {
+			// update data
+			$fields.attr('data-layout', display);
 			
-				acf.field_group.sort_fields( $field_list );
+			
+			// update meta
+			$fields.children('.acf-field-object').each(function(){
 				
-			}
-			
-			
-			// append parent_layout input
-			var layout_key = $tr.attr('data-key');
-			
-			$field_list.children('.acf-field-object').each(function(){
-				
-				acf.field_group.update_field_meta( $(this), 'parent_layout', layout_key );
+				self.update_meta( $(this), $el );
 				
 			});
 			
@@ -816,82 +292,287 @@
 		
 		
 		/*
-		*  update_field_parent
+		*  events
 		*
-		*  This function is triggered when a field's parent is being updated
+		*  description
 		*
 		*  @type	function
-		*  @date	8/04/2014
-		*  @since	5.0.0
+		*  @date	25/09/2015
+		*  @since	5.2.3
 		*
-		*  @param	$el
-		*  @return	n/a
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
 		*/
 		
-		update_field_parent : function( $el, $parent ){			
+		_change_display: function( $el ){
 			
-			// remove parent_layout if not a sub field
-			if( !$parent.exists() ) {
-				
-				acf.field_group.delete_field_meta( $el, 'parent_layout' );
-				return;
-				
-			}
+			this.render( $el );
 			
+		},
+		
+		_blur_label: function( $el ){
 			
 			// vars
-			var $tr = $el.closest('tr.acf-field');
+			var $label = $el.find('.acf-fc-meta-label:first input'),
+				$name = $el.find('.acf-fc-meta-name:first input');
 			
 			
-			// bail early if $tr is not a fc layout
-			if( $tr.attr('data-name') != 'fc_layout' ) {
+			// only if name is empty
+			if( $name.val() == '' ) {
 				
-				return;
+				// vars
+				var s = $label.val();
+				
+				
+				// sanitize
+				s = acf.str_sanitize(s);
+				
+				
+				// update name
+				$name.val( s ).trigger('change');
+				
+			}
+			
+		},
+		
+		_add: function( $el ){
+			
+			// duplicate
+			var $el2 = acf.duplicate({
+				$el: $el,
+				after: function( $el, $el2 ){
+					
+					// remove sub fields
+					$el2.find('.acf-field-object').remove();
+					
+					
+					// show add new message
+					$el2.find('.no-fields-message').show();
+					
+					
+					// reset layout meta values
+					$el2.find('.acf-fc-meta input').val('');
+					
+				}
+			});
+			
+			
+			// render layout
+			this.render( $el2 );
+			
+			
+			// save field
+			acf.field_group.save_field( $el.closest('.acf-field-object') );
+			
+		},
+		
+		_duplicate: function( $el ){
+			
+			// duplicate
+			$el2 = acf.duplicate( $el );
+			
+			
+			// fire action 'duplicate_field' and allow acf.pro logic to clean sub fields
+			acf.do_action('duplicate_field', $el2);
+					
+			
+			// render layout
+			this.render( $el2 );
+			
+			
+			// save field
+			acf.field_group.save_field( $el.closest('.acf-field-object') );
+			
+		},
+		
+		_delete: function( $el ){
+			
+			// validate
+			if( $el.siblings('.acf-field-setting-fc_layout').length == 0 ) {
+			
+				alert( acf._e('flexible_content','layout_warning') );
+				
+				return false;
 				
 			}
 			
 			
-			// vars
-			var parent_layout = acf.field_group.get_field_meta( $el, 'parent_layout' ),
-				new_parent_layout = $tr.attr('data-key');
-			
-			
-			// bail early if no change
-			if( parent_layout == new_parent_layout ) {
+			// delete fields
+			$el.find('.acf-field-object').each(function(){
 				
-				return;
+				// delete without animation
+				acf.field_group.delete_field( $(this), false );
 				
-			}
+			});
 			
 			
-			// update meta
-			acf.field_group.update_field_meta( $el, 'parent_layout', new_parent_layout );
+			// remove tr
+			acf.remove_tr( $el );
 			
 			
-			// save
-			acf.field_group.save_field( $el );
-			
+			// save field
+			acf.field_group.save_field( $el.closest('.acf-field-object') );
+				
 		}
 		
-	}
+	});
+	
 	
 	/*
-	*  ready
+	*  clone
 	*
-	*  This function is riggered on document ready and will initialize the fiedl group object
+	*  This field type requires some extra logic for its settings
 	*
 	*  @type	function
-	*  @date	8/04/2014
+	*  @date	24/10/13
 	*  @since	5.0.0
 	*
 	*  @param	n/a
 	*  @return	n/a
 	*/
 	
-	acf.add_action('ready', function(){
-	 	
-		acf.field_group_pro.init();
-	 	
+	var acf_settings_clone = acf.field_group.field_object.extend({
+		
+		type: 'clone',
+		
+		actions: {
+			'render_settings': 'render'
+		},
+		
+		events: {
+			'change .acf-field-setting-display select':			'render_display',
+			'change .acf-field-setting-prefix_label input':		'render_prefix_label',
+			'change .acf-field-setting-prefix_name input':		'render_prefix_name'
+		},
+		
+		render: function(){
+			
+			// render
+			this.render_display();
+			this.render_prefix_label();
+			this.render_prefix_name();
+			
+		},
+		
+		render_display: function(){
+			
+			// vars
+			var display = this.setting('display select').val()
+			
+			
+			// update data
+			this.$field.attr('data-display', display);
+			
+		},
+		
+		render_prefix_label: function(){
+			
+			// vars
+			var s = '%field_label%';
+			
+			
+			// is checked
+			if( this.setting('prefix_label input[type="checkbox"]').prop('checked') ) {
+				
+				s = this.setting('label input[type="text"]').val() + ' ' + s;
+				
+			}
+			
+			
+			// update code
+			this.setting('prefix_label code').html( s );
+			
+		},
+		
+		render_prefix_name: function(){
+			
+			// vars
+			var s = '%field_name%';
+			
+			
+			// is checked
+			if( this.setting('prefix_name input[type="checkbox"]').prop('checked') ) {
+				
+				s = this.setting('name input[type="text"]').val() + '_' + s;
+				
+			}
+			
+			
+			// update code
+			this.setting('prefix_name code').html( s );
+			
+		},
+		
+		select2: null
+			
+	});
+	
+	acf_settings_clone.select2 = acf.model.extend({
+		
+		filters: {
+			'select2_args':			'select2_args',
+			'select2_ajax_data':	'select2_ajax_data'
+		},
+		
+		select2_args: function( select2_args, $select, args ){
+			
+			// bail early if not clone
+			if( args.ajax_action !== 'acf/fields/clone/query' ) return select2_args;
+			
+			
+			// remain open on select
+			select2_args.closeOnSelect = false;
+			
+			
+			// return
+			return select2_args;
+		},
+		
+		select2_ajax_data: function( data, args, params ){
+			
+			// bail early if not clone
+			if( args.ajax_action !== 'acf/fields/clone/query' ) return data;
+			
+			
+			// find current fields
+			var fields = {};
+			
+			
+			// loop
+			$('.acf-field-object').each(function(){
+				
+				// vars
+				var $el = $(this),
+					key = $el.data('key'),
+					type = $el.data('type'),
+					label = $el.find('.field-label:first').val(),
+					$ancestors = $el.parents('.acf-field-object');
+				
+				
+				// label
+				fields[ key ] = {
+					'key': key,
+					'type': type,
+					'label': label,
+					'ancestors': $ancestors.length
+				};
+				
+			});
+			
+			
+			// append fields
+			data.fields = fields;
+			
+			
+			// append title
+			data.title = $('#title').val();
+			
+			
+			// return
+			return data;
+			
+		}
+		
 	});
 
 })(jQuery);

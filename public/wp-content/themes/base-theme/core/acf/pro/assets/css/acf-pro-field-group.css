@@ -11,6 +11,15 @@
   margin: 0 0 10px;
   padding: 0;
 }
+.acf-fc-meta .acf-fc-meta-key {
+  display: none;
+}
+.acf-fc-meta .acf-fc-meta-display,
+.acf-fc-meta .acf-fc-meta-min {
+  float: left;
+  width: 33%;
+  padding-right: 10px;
+}
 .acf-input-wrap.select {
   border-radius: 0 3px 3px 0 !important;
   border: #DFDFDF solid 1px;
@@ -38,6 +47,21 @@
   padding: 1px 0;
   font-size: 13px;
 }
-.acf-fl-actions a[data-name="acf-fc-reorder"] {
+.acf-fl-actions a.ui-sortable-handle {
   cursor: move;
+}
+/*---------------------------------------------------------------------------------------------
+*
+*	Clone
+*	
+*---------------------------------------------------------------------------------------------*/
+.acf-field-object-clone {
+  /* group */
+  /* seamless */
+}
+.acf-field-object-clone[data-display="seamless"] .acf-field-setting-instructions,
+.acf-field-object-clone[data-display="seamless"] .acf-field-setting-layout,
+.acf-field-object-clone[data-display="seamless"] .acf-field-setting-wrapper,
+.acf-field-object-clone[data-display="seamless"] .acf-field-setting-conditional_logic {
+  display: none;
 }

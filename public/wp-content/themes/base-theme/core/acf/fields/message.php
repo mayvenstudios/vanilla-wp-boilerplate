@@ -36,9 +36,9 @@ class acf_field_message extends acf_field {
 		$this->label = __("Message",'acf');
 		$this->category = 'layout';
 		$this->defaults = array(
-			'value'		=> false, // prevents acf_render_fields() from attempting to load value
-			'message'	=> '',
-			'esc_html'	=> 0
+			'message'		=> '',
+			'esc_html'		=> 0,
+			'new_lines'		=> 'wpautop',
 		);
 		
 		
@@ -61,24 +61,36 @@ class acf_field_message extends acf_field {
 	
 	function render_field( $field ) {
 		
+		// vars
+		$m = $field['message'];
+		
+		
 		// wptexturize (improves "quotes")
-		$field['message'] = wptexturize( $field['message'] );
+		$m = wptexturize( $m );
 		
 		
 		// esc_html
 		if( $field['esc_html'] ) {
 			
-			$field['message'] = esc_html( $field['message'] );
+			$m = esc_html( $m );
 			
 		}
 		
 		
-		// wpautop (wraps in p)
-		$field['message'] = wpautop( $field['message'] );
+		// new lines
+		if( $field['new_lines'] == 'wpautop' ) {
+			
+			$m = wpautop($m);
+			
+		} elseif( $field['new_lines'] == 'br' ) {
+			
+			$m = nl2br($m);
+			
+		}
 		
 		
 		// return
-		echo $field['message'];
+		echo $m;
 		
 	}
 	
@@ -101,9 +113,23 @@ class acf_field_message extends acf_field {
 		// default_value
 		acf_render_field_setting( $field, array(
 			'label'			=> __('Message','acf'),
-			'instructions'	=> __('Please note that all text will first be passed through the wp function ','acf') . '<a href="http://codex.wordpress.org/Function_Reference/wpautop" target="_blank">wpautop()</a>',
+			'instructions'	=> '',
 			'type'			=> 'textarea',
 			'name'			=> 'message',
+		));
+		
+		
+		// formatting
+		acf_render_field_setting( $field, array(
+			'label'			=> __('New Lines','acf'),
+			'instructions'	=> __('Controls how new lines are rendered','acf'),
+			'type'			=> 'select',
+			'name'			=> 'new_lines',
+			'choices'		=> array(
+				'wpautop'		=> __("Automatically add paragraphs",'acf'),
+				'br'			=> __("Automatically add &lt;br&gt;",'acf'),
+				''				=> __("No Formatting",'acf')
+			)
 		));
 		
 		
@@ -111,21 +137,78 @@ class acf_field_message extends acf_field {
 		acf_render_field_setting( $field, array(
 			'label'			=> __('Escape HTML','acf'),
 			'instructions'	=> __('Allow HTML markup to display as visible text instead of rendering','acf'),
-			'type'			=> 'radio',
 			'name'			=> 'esc_html',
-			'choices'		=> array(
-				1				=> __("Yes",'acf'),
-				0				=> __("No",'acf'),
-			),
-			'layout'	=>	'horizontal',
+			'type'			=> 'true_false',
+			'ui'			=> 1,
 		));
+		
+	}
+	
+	
+	/*
+	*  translate_field
+	*
+	*  This function will translate field settings
+	*
+	*  @type	function
+	*  @date	8/03/2016
+	*  @since	5.3.2
+	*
+	*  @param	$field (array)
+	*  @return	$field
+	*/
+	
+	function translate_field( $field ) {
+		
+		// translate
+		$field['message'] = acf_translate( $field['message'] );
+		
+		
+		// return
+		return $field;
+		
+	}
+	
+	
+	/*
+	*  load_field()
+	*
+	*  This filter is appied to the $field after it is loaded from the database
+	*
+	*  @type	filter
+	*  @since	3.6
+	*  @date	23/01/13
+	*
+	*  @param	$field - the field array holding all the field options
+	*
+	*  @return	$field - the field array holding all the field options
+	*/
+	
+	function load_field( $field ) {
+		
+		// remove name to avoid caching issue
+		$field['name'] = '';
+		
+		
+		// remove required to avoid JS issues
+		$field['required'] = 0;
+		
+		
+		// set value other than 'null' to avoid ACF loading / caching issue
+		$field['value'] = false;
+		
+		
+		// return
+		return $field;
 		
 	}
 	
 }
 
-new acf_field_message();
 
-endif;
+// initialize
+acf_register_field_type( new acf_field_message() );
+
+endif; // class_exists check
 
 ?>

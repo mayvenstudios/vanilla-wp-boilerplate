@@ -95,6 +95,7 @@ class acf_field_image extends acf_field {
 		
 		// vars
 		$url = '';
+		$alt = '';
 		$div = array(
 			'class'					=> 'acf-image-uploader acf-cf',
 			'data-preview_size'		=> $field['preview_size'],
@@ -105,32 +106,40 @@ class acf_field_image extends acf_field {
 		
 		
 		// has value?
-		if( $field['value'] && is_numeric($field['value']) ) {
+		if( $field['value'] ) {
 			
+			// update vars
 			$url = wp_get_attachment_image_src($field['value'], $field['preview_size']);
+			$alt = get_post_meta($field['value'], '_wp_attachment_image_alt', true);
 			
+			
+			// url exists
+			if( $url ) $url = $url[0];
+			
+			
+			// url exists
 			if( $url ) {
 				
-				$url = $url[0];
-			
 				$div['class'] .= ' has-value';
 			
 			}
 						
 		}
 		
+		
+		// get size of preview value
+		$size = acf_get_image_size($field['preview_size']);
+		
 ?>
 <div <?php acf_esc_attr_e( $div ); ?>>
-	<div class="acf-hidden">
-		<?php acf_hidden_input(array( 'name' => $field['name'], 'value' => $field['value'], 'data-name' => 'id' )); ?>
-	</div>
-	<div class="view show-if-value acf-soh">
-		<img data-name="image" src="<?php echo $url; ?>" alt=""/>
+	<?php acf_hidden_input(array( 'name' => $field['name'], 'value' => $field['value'] )); ?>
+	<div class="view show-if-value acf-soh" <?php if( $size['width'] ) echo 'style="max-width: '.$size['width'].'px"'; ?>>
+		<img data-name="image" src="<?php echo $url; ?>" alt="<?php echo $alt; ?>"/>
 		<ul class="acf-hl acf-soh-target">
 			<?php if( $uploader != 'basic' ): ?>
-				<li><a class="acf-icon acf-icon-pencil dark" data-name="edit" href="#"></a></li>
+				<li><a class="acf-icon -pencil dark" data-name="edit" href="#" title="<?php _e('Edit', 'acf'); ?>"></a></li>
 			<?php endif; ?>
-			<li><a class="acf-icon acf-icon-cancel dark" data-name="remove" href="#"></a></li>
+			<li><a class="acf-icon -cancel dark" data-name="remove" href="#" title="<?php _e('Remove', 'acf'); ?>"></a></li>
 		</ul>
 	</div>
 	<div class="view hide-if-value">
@@ -140,11 +149,13 @@ class acf_field_image extends acf_field {
 				<div class="acf-error-message"><p><?php echo $field['value']; ?></p></div>
 			<?php endif; ?>
 			
-			<input type="file" name="<?php echo $field['name']; ?>" id="<?php echo $field['id']; ?>" />
+			<label class="acf-basic-uploader">
+				<input type="file" name="<?php echo $field['name']; ?>" id="<?php echo $field['id']; ?>" />
+			</label>
 			
 		<?php else: ?>
 			
-			<p style="margin:0;"><?php _e('No image selected','acf'); ?> <a data-name="add" class="acf-button" href="#"><?php _e('Add Image','acf'); ?></a></p>
+			<p style="margin:0;"><?php _e('No image selected','acf'); ?> <a data-name="add" class="acf-button button" href="#"><?php _e('Add Image','acf'); ?></a></p>
 			
 		<?php endif; ?>
 	</div>
@@ -245,9 +256,7 @@ class acf_field_image extends acf_field {
 			'name'			=> 'min_height',
 			'prepend'		=> __('Height', 'acf'),
 			'append'		=> 'px',
-			'wrapper'		=> array(
-				'data-append' => 'min_width'
-			)
+			'_append' 		=> 'min_width'
 		));
 		
 		acf_render_field_setting( $field, array(
@@ -256,9 +265,7 @@ class acf_field_image extends acf_field {
 			'name'			=> 'min_size',
 			'prepend'		=> __('File size', 'acf'),
 			'append'		=> 'MB',
-			'wrapper'		=> array(
-				'data-append' => 'min_width'
-			)
+			'_append' 		=> 'min_width'
 		));	
 		
 		
@@ -278,9 +285,7 @@ class acf_field_image extends acf_field {
 			'name'			=> 'max_height',
 			'prepend'		=> __('Height', 'acf'),
 			'append'		=> 'px',
-			'wrapper'		=> array(
-				'data-append' => 'max_width'
-			)
+			'_append' 		=> 'max_width'
 		));
 		
 		acf_render_field_setting( $field, array(
@@ -289,9 +294,7 @@ class acf_field_image extends acf_field {
 			'name'			=> 'max_size',
 			'prepend'		=> __('File size', 'acf'),
 			'append'		=> 'MB',
-			'wrapper'		=> array(
-				'data-append' => 'max_width'
-			)
+			'_append' 		=> 'max_width'
 		));	
 		
 		
@@ -325,11 +328,11 @@ class acf_field_image extends acf_field {
 	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
-		if( empty($value) ) {
+		if( empty($value) ) return false;
 		
-			return $value;
-			
-		}
+		
+		// bail early if not numeric (error message)
+		if( !is_numeric($value) ) return false;
 		
 		
 		// convert to int
@@ -347,6 +350,8 @@ class acf_field_image extends acf_field {
 			
 		}
 		
+		
+		// return
 		return $value;
 		
 	}
@@ -371,39 +376,7 @@ class acf_field_image extends acf_field {
 	    return($vars);
 	    
 	}
-	
-	
-	/*
-	*  image_size_names_choose
-	*
-	*  @description: 
-	*  @since: 3.5.7
-	*  @created: 13/01/13
-	*/
-	
-	/*
-function image_size_names_choose( $sizes )
-	{
-		global $_wp_additional_image_sizes;
-			
-		if( $_wp_additional_image_sizes )
-		{
-			foreach( $_wp_additional_image_sizes as $k => $v )
-			{
-				$title = $k;
-				$title = str_replace('-', ' ', $title);
-				$title = str_replace('_', ' ', $title);
-				$title = ucwords( $title );
-				
-				$sizes[ $k ] = $title;
-			}
-			// foreach( $image_sizes as $image_size )
-		}
 		
-        return $sizes;
-	}
-*/
-	
 	
 	/*
 	*  wp_prepare_attachment_for_js
@@ -482,31 +455,36 @@ function image_size_names_choose( $sizes )
 	
 	function update_value( $value, $post_id, $field ) {
 		
-		// array?
-		if( is_array($value) && isset($value['ID']) ) {
+		return acf_get_field_type('file')->update_value( $value, $post_id, $field );
 		
-			return $value['ID'];	
-			
-		}
-		
-		
-		// object?
-		if( is_object($value) && isset($value->ID) ) {
-		
-			return $value->ID;
-			
-		}
-		
-		
-		// return
-		return $value;
 	}
 	
 	
+	/*
+	*  validate_value
+	*
+	*  This function will validate a basic file input
+	*
+	*  @type	function
+	*  @date	11/02/2014
+	*  @since	5.0.0
+	*
+	*  @param	$post_id (int)
+	*  @return	$post_id (int)
+	*/
+	
+	function validate_value( $valid, $value, $field, $input ){
+		
+		return acf_get_field_type('file')->validate_value( $valid, $value, $field, $input );
+		
+	}
+	
 }
 
-new acf_field_image();
 
-endif;
+// initialize
+acf_register_field_type( new acf_field_image() );
+
+endif; // class_exists check
 
 ?>

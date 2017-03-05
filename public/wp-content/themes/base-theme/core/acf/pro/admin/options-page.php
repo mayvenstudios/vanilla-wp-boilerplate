@@ -28,6 +28,7 @@ class acf_pro_options_page {
 		add_filter( 'acf/location/rule_types', 					array($this, 'rule_types'), 10, 1 );
 		add_filter( 'acf/location/rule_values/options_page',	array($this, 'rule_values'), 10, 1 );
 		add_filter( 'acf/location/rule_match/options_page',		array($this, 'rule_match'), 10, 3 );
+		
 	}
 		
 	
@@ -48,6 +49,7 @@ class acf_pro_options_page {
 	    $choices[ __("Forms",'acf') ]['options_page'] = __("Options Page",'acf');
 		
 	    return $choices;
+	    
 	}
 	
 	
@@ -99,8 +101,8 @@ class acf_pro_options_page {
 	*  @date	24/02/2014
 	*  @since	5.0.0
 	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
+	*  @param	
+	*  @return	
 	*/
 	
 	function rule_match( $match, $rule, $options ) {
@@ -153,8 +155,8 @@ class acf_pro_options_page {
 	*  @date	24/02/2014
 	*  @since	5.0.0
 	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
+	*  @param	
+	*  @return	
 	*/
 	
 	function admin_menu() {
@@ -210,28 +212,28 @@ class acf_pro_options_page {
 		
 		// vars
 		$this->page = acf_get_options_page($plugin_page);
-		    	
-		    	
+		
+		
+		// get post_id (allow lang modification)
+		$this->page['post_id'] = acf_get_valid_post_id($this->page['post_id']);
+		
+		
 		// verify and remove nonce
 		if( acf_verify_nonce('options') ) {
 		
 			// save data
 		    if( acf_validate_save_post(true) ) {
 		    	
-		    	// get post_id (allow lang modification)
-		    	$post_id = acf_get_valid_post_id($this->page['post_id']);
-		    	
-		    	
 		    	// set autoload
 		    	acf_update_setting('autoload', $this->page['autoload']);
 		    	
 		    	
 		    	// save
-				acf_save_post( $post_id );
+				acf_save_post( $this->page['post_id'] );
 				
 				
 				// redirect
-				wp_redirect( admin_url("admin.php?page={$plugin_page}&message=1") );
+				wp_redirect( add_query_arg(array('message' => '1')) );
 				exit;
 				
 			}
@@ -239,34 +241,37 @@ class acf_pro_options_page {
 		}
 		
 		
+		// load acf scripts
+		acf_enqueue_scripts();
+		
+		
 		// actions
-		add_action('admin_enqueue_scripts', 	array($this,'admin_enqueue_scripts'));
-	
+		add_action( 'acf/input/admin_enqueue_scripts',		array($this,'admin_enqueue_scripts') );
+		add_action( 'acf/input/admin_head',					array($this,'admin_head') );
+		
+		
+		// add columns support
+		add_screen_option('layout_columns', array('max'	=> 2, 'default' => 2));
+		
 	}
 	
 	
 	/*
 	*  admin_enqueue_scripts
 	*
-	*  This action is run after post query but before any admin script / head actions. 
-	*  It is a good place to register all actions.
+	*  This function will enqueue the 'post.js' script which adds support for 'Screen Options' column toggle
 	*
-	*  @type	action (admin_enqueue_scripts)
-	*  @date	26/01/13
-	*  @since	3.6.0
+	*  @type	function
+	*  @date	23/03/2016
+	*  @since	5.3.2
 	*
-	*  @param	N/A
-	*  @return	N/A
+	*  @param	
+	*  @return	
 	*/
 	
 	function admin_enqueue_scripts() {
 		
-		// load acf scripts
-		acf_enqueue_scripts();
-		
-		
-		// actions
-		add_action( 'acf/input/admin_head',		array($this,'admin_head') );
+		wp_enqueue_script('post');
 		
 	}
 	
@@ -299,9 +304,15 @@ class acf_pro_options_page {
 			
 		}
 		
+		
+		// add submit div
+		add_meta_box('submitdiv', __('Publish','acf'), array($this, 'postbox_submitdiv'), 'acf_options_page', 'side', 'high');
+		
+		
+		
 		if( empty($field_groups) ) {
 		
-			acf_add_admin_notice(__("No Custom Field Groups found for this options page",'acf') . '. <a href="' . admin_url() . 'post-new.php?post_type=acf-field-group">' . __("Create a Custom Field Group",'acf') . '</a>', 'error');
+			acf_add_admin_notice( sprintf( __('No Custom Field Groups found for this options page. <a href="%s">Create a Custom Field Group</a>', 'acf'), admin_url() . 'post-new.php?post_type=acf-field-group' ), 'error');
 		
 		} else {
 			
@@ -332,7 +343,7 @@ class acf_pro_options_page {
 				
 				
 				// add meta box
-				add_meta_box( $id, $title, array($this, 'render_meta_box'), 'acf_options_page', $context, $priority, $args );
+				add_meta_box( $id, $title, array($this, 'postbox_acf'), 'acf_options_page', $context, $priority, $args );
 				
 				
 			}
@@ -340,6 +351,37 @@ class acf_pro_options_page {
 			
 		}
 		// if
+		
+	}
+	
+	
+	/*
+	*  postbox_submitdiv
+	*
+	*  This function will render the submitdiv metabox
+	*
+	*  @type	function
+	*  @date	23/03/2016
+	*  @since	5.3.2
+	*
+	*  @param	n/a
+	*  @return	n/a
+	*/
+	
+	function postbox_submitdiv( $post, $args ) {
+		
+		?>
+		<div id="major-publishing-actions">
+
+			<div id="publishing-action">
+				<span class="spinner"></span>
+				<input type="submit" accesskey="p" value="<?php echo $this->page['update_button']; ?>" class="button button-primary button-large" id="publish" name="publish">
+			</div>
+			
+			<div class="clear"></div>
+		
+		</div>
+		<?php
 		
 	}
 	
@@ -353,11 +395,12 @@ class acf_pro_options_page {
 	*  @date	24/02/2014
 	*  @since	5.0.0
 	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
+	*  @param	$post (object)
+	*  @param	$args (array)
+	*  @return	n/a
 	*/
 	
-	function render_meta_box( $post, $args ) {
+	function postbox_acf( $post, $args ) {
 		
 		// extract args
 		extract( $args ); // all variables from the add_meta_box function
@@ -369,36 +412,11 @@ class acf_pro_options_page {
 			'id'			=> $id,
 			'key'			=> $field_group['key'],
 			'style'			=> $field_group['style'],
+			'label'			=> $field_group['label_placement'],
 			'edit_url'		=> '',
 			'edit_title'	=> __('Edit field group', 'acf'),
 			'visibility'	=> true
 		);
-		
-		
-		// get post_id (allow lang modification)
-		$post_id = acf_get_valid_post_id($this->page['post_id']);
-		
-		
-		// load fields
-		$fields = acf_get_fields( $field_group );
-		
-		
-		// render
-		if( $field_group['label_placement'] == 'left' ) {
-		
-			?>
-			<table class="acf-table">
-				<tbody>
-					<?php acf_render_fields( $post_id, $fields, 'tr', $field_group['instruction_placement'] ); ?>
-				</tbody>
-			</table>
-			<?php
-		
-		} else {
-		
-			acf_render_fields( $post_id, $fields, 'div', $field_group['instruction_placement'] );
-			
-		}
 		
 		
 		// edit_url
@@ -407,6 +425,15 @@ class acf_pro_options_page {
 			$o['edit_url'] = admin_url('post.php?post=' . $field_group['ID'] . '&action=edit');
 				
 		}
+		
+		
+		// load fields
+		$fields = acf_get_fields( $field_group );
+		
+		
+		// render
+		acf_render_fields( $this->page['post_id'], $fields, 'div', $field_group['instruction_placement'] );
+		
 		
 		
 ?>
