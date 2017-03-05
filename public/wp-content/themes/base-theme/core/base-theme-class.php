@@ -228,6 +228,16 @@ abstract class base_theme_class {
             }
         }
 
+        $custom_functionality = get_template_directory() . '/custom-functionality/';
+
+        $files = glob($custom_functionality.'*');
+
+   
+        foreach($files as $file) {
+            if(is_file($file)) {
+                require_once $file;
+            }
+        }
     }
 
     public function load_wp_cli_commands()
