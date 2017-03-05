@@ -34,7 +34,7 @@ elixir(function(mix)
         'vendor'
     ], 'assets/compiled/js/vendor.js');
 
-    mix.browserify('app.js', 'assets/compiled/js/app.js');
+    mix.webpack('app.js', 'assets/compiled/js/app.js');
 
 
 });
