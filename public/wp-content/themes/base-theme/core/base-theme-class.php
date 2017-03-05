@@ -309,14 +309,15 @@ abstract class base_theme_class {
         if($this->include_jquery === false)
         {
             wp_deregister_script('jquery');
-            wp_enqueue_script( 'jquery' , asset('compiled/js/theme.js'), null, $this->version, true );
+            wp_enqueue_script( 'jquery' , asset('compiled/js/vendor.js'), null, $this->version, true );
 
         }
         else
         {
-            wp_enqueue_script( $this->theme_name .'-script' , asset('compiled/js/theme.js'), array('jquery'), $this->version, true );
+            wp_enqueue_script( $this->theme_name .'-vendors' , asset('compiled/js/vendor.js'), array('jquery'), $this->version, true );
         }
-
+        
+        wp_enqueue_script( $this->theme_name .'-script' , asset('compiled/js/app.js'), array('jquery'), $this->version, true );
     }
 
 
