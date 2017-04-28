@@ -90,24 +90,45 @@ class Helper {
 
     }
 
+    /**
+     * Wrapper for asset method that returns files from "images" folder
+     * @param $name - name of the image inside asset/images/ folder
+     * @return path - full image file path
+     */
      public static function assetImage( $name )
     {
         return self::asset('images/'.$name);
     }
 
+    /**
+     * Returns full image url from image ID
+     *
+     * @param $attachment_id - image ID
+     * @param string $size - WP defined image size, "thumbnail" by default. Use "full" for full size image
+     * @param bool|false $icon
+     * @return mixed
+     */
     public static function imageURL($attachment_id, $size = 'thumbnail', $icon = false){
         return wp_get_attachment_image_src($attachment_id, $size, $icon)[0];
     }
 
-    public static function imageDiv($attachment_id_or_url, $size = 'thumbnail', $attr = '') {
+    /**
+     * Creates a div with the image set as a background
+     *
+     * @param $attachment_id_or_url - use image ID or image URL
+     * @param string $size - e.g. "full", "thumbnail" (by default)
+     * @param array $attr - array of div attributes
+     * @return string
+     */
+    public static function imageDiv($attachment_id_or_url, $size = 'thumbnail', $attr = NULL) {
         $htmlAttr = '';
         $htmlCls = '';
         $htmlStyle = $attachment_id_or_url;
         if(is_numeric($attachment_id_or_url)){
             $htmlStyle = self::imageURL($attachment_id_or_url, $size, $attr);
         }
-        $htmlStyle = 'background-image: url('.$htmlStyle.');'
-        ;
+        $htmlStyle = 'background-image: url('.$htmlStyle.');';
+
         if($attr){
             foreach ( $attr as $name => $value ) {
                 if($name == 'class'){
@@ -122,6 +143,14 @@ class Helper {
         return "<div class='image$htmlCls' style='$htmlStyle' $htmlAttr ></div>";
     }
 
+    /**
+     * Creates a img tag from Image ID
+     *
+     * @param $attachment_id
+     * @param string $size
+     * @param string $attr
+     * @return string
+     */
     public static function image($attachment_id, $size = 'thumbnail', $attr = '') {
 
     $icon = false;
@@ -193,5 +222,15 @@ class Helper {
         if ($thumbnail_image && isset($thumbnail_image[0])) {
             echo '<span>'.$thumbnail_image[0]->post_excerpt.'</span>';
         }
+    }
+
+    /**
+     * When original PHP nl2br does not work use this one
+     *
+     * @param $input
+     * @return mixed
+     */
+    public static function nl2br($input){
+        return preg_replace("/(\r\n|\n|\r)/", "<br />", $input);
     }
 }
