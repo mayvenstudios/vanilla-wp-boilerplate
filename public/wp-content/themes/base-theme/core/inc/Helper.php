@@ -95,11 +95,6 @@ class Helper {
         return self::asset('images/'.$name);
     }
 
-    public static function assetImage( $name )
-    {
-        return self::asset('images/'.$name);
-    }
-
     public static function imageURL($attachment_id, $size = 'thumbnail', $icon = false){
         return wp_get_attachment_image_src($attachment_id, $size, $icon)[0];
     }
