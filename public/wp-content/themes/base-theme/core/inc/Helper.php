@@ -14,6 +14,8 @@ function asset($name)
 
 class Helper {
 
+    const POSTS_PER_PAGE = 10;
+
     /**
     * Helper function that returns the first word of a string.
     *
@@ -232,5 +234,90 @@ class Helper {
      */
     public static function nl2br($input){
         return preg_replace("/(\r\n|\n|\r)/", "<br />", $input);
+    }
+
+    /**
+     * Formats integer phone number to US format number string
+     * @param $phone
+     * @return string
+     */
+    public static function formatPhone($phone)
+    {
+        return "(".substr($phone, 0, 3).") ".substr($phone, 3, 3)."-".substr($phone,6);
+    }
+
+    /**
+     * Fetches domain name from any URL, useful for links on contact pages
+     * @param $url
+     * @return mixed
+     */
+    public static function getDomainName($url){
+        try{
+            $parts = parse_url($url);
+            return $parts['host'];
+        }catch (\Exception $e){}
+        return $url;
+    }
+
+    /**
+     * Extends WP query options array with pagination related options
+     *
+     * e.g.
+     * $options = [
+     *      'post_type' => 'post'
+     * ];
+     * Helper::pagination_options($options);
+     * $the_query = new WP_Query($options);
+     *
+     * @param array $options - wp query options array
+     * @param number $ppp - optional number of posts per page. if provided it will override default one
+     * @return Nothing Passed options array will be updated by reference
+     */
+    public static function pagination_options(&$options = array(), $ppp = NULL)
+    {
+        $pagination = Helper::pagination(NULL, $ppp);
+        $options['offset'] = $pagination->offset;
+        $options['posts_per_page'] = !empty($ppp)? $ppp : self::POSTS_PER_PAGE;
+    }
+
+    /**
+     * Returns an array with pagination data
+     *
+     * Usage:
+     * $pagination = Helper::pagination($the_query);
+     *
+     * @param null $queryObject
+     * @param null $postsPerPage - optional, it not provided, default ppp will be used instead
+     * @return object Pagination object
+     * @internal param the $items query items
+     */
+    public static function pagination($queryObject = NULL, $postsPerPage = NULL)
+    {
+        $total_pages = 0;
+        $current_page = get_query_var('page');
+        $current_page = $current_page ? $current_page : 1;
+
+        $base_url = get_permalink();
+
+        //Ensure that trailing slash is added
+        $base_url = rtrim($base_url, '/') . '/';
+
+        if ($queryObject) {
+            $total_pages = $queryObject->max_num_pages;
+        }
+
+        $ppp = self::POSTS_PER_PAGE > 0 ? self::POSTS_PER_PAGE : 10;
+        if(!empty($postsPerPage)){
+            $ppp = $postsPerPage;
+        }
+
+        $offset = ($current_page - 1) * $ppp;
+
+        return (object) array(
+            'total_pages' => $total_pages,
+            'current_page' => $current_page,
+            'offset' => $offset,
+            'base_url' => $base_url
+        );
     }
 }
