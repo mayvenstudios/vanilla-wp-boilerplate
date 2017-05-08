@@ -14,6 +14,8 @@ function asset($name)
 
 class Helper {
 
+    const POSTS_PER_PAGE = 10;
+
     /**
     * Helper function that returns the first word of a string.
     *
@@ -90,6 +92,67 @@ class Helper {
 
     }
 
+    /**
+     * Wrapper for asset method that returns files from "images" folder
+     * @param $name - name of the image inside asset/images/ folder
+     * @return path - full image file path
+     */
+     public static function assetImage( $name )
+    {
+        return self::asset('images/'.$name);
+    }
+
+    /**
+     * Returns full image url from image ID
+     *
+     * @param $attachment_id - image ID
+     * @param string $size - WP defined image size, "thumbnail" by default. Use "full" for full size image
+     * @param bool|false $icon
+     * @return mixed
+     */
+    public static function imageURL($attachment_id, $size = 'thumbnail', $icon = false){
+        return wp_get_attachment_image_src($attachment_id, $size, $icon)[0];
+    }
+
+    /**
+     * Creates a div with the image set as a background
+     *
+     * @param $attachment_id_or_url - use image ID or image URL
+     * @param string $size - e.g. "full", "thumbnail" (by default)
+     * @param array $attr - array of div attributes
+     * @return string
+     */
+    public static function imageDiv($attachment_id_or_url, $size = 'thumbnail', $attr = NULL) {
+        $htmlAttr = '';
+        $htmlCls = '';
+        $htmlStyle = $attachment_id_or_url;
+        if(is_numeric($attachment_id_or_url)){
+            $htmlStyle = self::imageURL($attachment_id_or_url, $size, $attr);
+        }
+        $htmlStyle = 'background-image: url('.$htmlStyle.');';
+
+        if($attr){
+            foreach ( $attr as $name => $value ) {
+                if($name == 'class'){
+                    $htmlCls .= ' '.$value;
+                }else if($name == 'style'){
+                    $htmlStyle .= ' '.$value;
+                }else{
+                    $htmlAttr .= " $name=" . '"' . $value . '"';
+                }
+            }
+        }
+        return "<div class='image$htmlCls' style='$htmlStyle' $htmlAttr ></div>";
+    }
+
+    /**
+     * Creates a img tag from Image ID
+     *
+     * @param $attachment_id
+     * @param string $size
+     * @param string $attr
+     * @return string
+     */
     public static function image($attachment_id, $size = 'thumbnail', $attr = '') {
 
     $icon = false;
@@ -161,5 +224,100 @@ class Helper {
         if ($thumbnail_image && isset($thumbnail_image[0])) {
             echo '<span>'.$thumbnail_image[0]->post_excerpt.'</span>';
         }
+    }
+
+    /**
+     * When original PHP nl2br does not work use this one
+     *
+     * @param $input
+     * @return mixed
+     */
+    public static function nl2br($input){
+        return preg_replace("/(\r\n|\n|\r)/", "<br />", $input);
+    }
+
+    /**
+     * Formats integer phone number to US format number string
+     * @param $phone
+     * @return string
+     */
+    public static function formatPhone($phone)
+    {
+        return "(".substr($phone, 0, 3).") ".substr($phone, 3, 3)."-".substr($phone,6);
+    }
+
+    /**
+     * Fetches domain name from any URL, useful for links on contact pages
+     * @param $url
+     * @return mixed
+     */
+    public static function getDomainName($url){
+        try{
+            $parts = parse_url($url);
+            return $parts['host'];
+        }catch (\Exception $e){}
+        return $url;
+    }
+
+    /**
+     * Extends WP query options array with pagination related options
+     *
+     * e.g.
+     * $options = [
+     *      'post_type' => 'post'
+     * ];
+     * Helper::pagination_options($options);
+     * $the_query = new WP_Query($options);
+     *
+     * @param array $options - wp query options array
+     * @param number $ppp - optional number of posts per page. if provided it will override default one
+     * @return Nothing Passed options array will be updated by reference
+     */
+    public static function pagination_options(&$options = array(), $ppp = NULL)
+    {
+        $pagination = Helper::pagination(NULL, $ppp);
+        $options['offset'] = $pagination->offset;
+        $options['posts_per_page'] = !empty($ppp)? $ppp : self::POSTS_PER_PAGE;
+    }
+
+    /**
+     * Returns an array with pagination data
+     *
+     * Usage:
+     * $pagination = Helper::pagination($the_query);
+     *
+     * @param null $queryObject
+     * @param null $postsPerPage - optional, it not provided, default ppp will be used instead
+     * @return object Pagination object
+     * @internal param the $items query items
+     */
+    public static function pagination($queryObject = NULL, $postsPerPage = NULL)
+    {
+        $total_pages = 0;
+        $current_page = get_query_var('page');
+        $current_page = $current_page ? $current_page : 1;
+
+        $base_url = get_permalink();
+
+        //Ensure that trailing slash is added
+        $base_url = rtrim($base_url, '/') . '/';
+
+        if ($queryObject) {
+            $total_pages = $queryObject->max_num_pages;
+        }
+
+        $ppp = self::POSTS_PER_PAGE > 0 ? self::POSTS_PER_PAGE : 10;
+        if(!empty($postsPerPage)){
+            $ppp = $postsPerPage;
+        }
+
+        $offset = ($current_page - 1) * $ppp;
+
+        return (object) array(
+            'total_pages' => $total_pages,
+            'current_page' => $current_page,
+            'offset' => $offset,
+            'base_url' => $base_url
+        );
     }
 }
