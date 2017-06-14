@@ -1,0 +1,12 @@
+{
+    "require": {
+        "johnbillion/extended-taxos": "~2.0",
+        "johnbillion/extended-cpts": "~3.0"
+    },
+    "autoload": {
+        "files": [
+            "vendor/johnbillion/extended-taxos/extended-taxos.php",
+            "vendor/johnbillion/extended-cpts/extended-cpts.php"
+        ]
+    }
+}

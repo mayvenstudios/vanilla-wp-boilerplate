@@ -176,12 +176,9 @@ abstract class base_theme_class {
      *
      */
     public function add_custom_post_types()
-    {   
-        require_once 'extended-cpts/extended-cpts.php';
-
+    {
         /* loads the CPTs from functions.php */
         $this->load_custom_post_types();
-
     }
 
     /**
@@ -190,11 +187,8 @@ abstract class base_theme_class {
      */
     public function add_custom_taxonomies()
     {   
-        require_once 'extended-taxos/extended-taxos.php';
-
         /* loads the custom taxonomies from functions.php */
         $this->load_custom_taxonomies();
-
     }
     /**
     * Files to Include
@@ -431,7 +425,7 @@ abstract class base_theme_class {
 
         if( !class_exists('WP_Blade_Main_Controller') )
         {
-            include_once( 'blade/blade.php' );       
+            include_once('lib/blade/blade.php');
         }
 
     }
@@ -476,10 +470,8 @@ abstract class base_theme_class {
 
             add_filter('acf/settings/path', array($this, 'my_acf_settings_path') );
             add_filter('acf/settings/dir', array($this, 'my_acf_settings_dir') );
-            
-            
 
-            include_once( 'acf/acf.php'); 
+            include_once('lib/acf/acf.php');
 
 
             if((WP_DEBUG == false && $this->force_enable_acf_option_panel === false) || FORCE_HIDE_ACF_EDIT === true)
@@ -520,7 +512,7 @@ abstract class base_theme_class {
      
     public function my_acf_settings_path( $path ) {
      
-        $path = get_stylesheet_directory() . '/core/acf/';
+        $path = get_stylesheet_directory() . '/core/lib/acf/';
         
         return $path;
         
@@ -529,7 +521,7 @@ abstract class base_theme_class {
      
     public function my_acf_settings_dir( $dir ) {
      
-        $dir = get_stylesheet_directory_uri() . '/core/acf/';
+        $dir = get_stylesheet_directory_uri() . '/core/lib/acf/';
         
         return $dir;
         
