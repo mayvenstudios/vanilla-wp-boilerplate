@@ -1,10 +1,13 @@
 {
     "require": {
         "johnbillion/extended-taxos": "~2.0",
-        "johnbillion/extended-cpts": "~3.0"
+        "johnbillion/extended-cpts": "~3.0",
+        "illuminate/support": "^5.4",
+        "symfony/var-dumper": "^3.3"
     },
     "autoload": {
         "files": [
+            "core/helpers.php",
             "vendor/johnbillion/extended-taxos/extended-taxos.php",
             "vendor/johnbillion/extended-cpts/extended-cpts.php"
         ]

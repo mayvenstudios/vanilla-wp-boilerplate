@@ -1,14 +1,11 @@
 {
   "private": true,
-  "devDependencies": {},
   "scripts": {
-    "prod": "gulp --production",
-    "dev": "gulp watch"
+    "build": "webpack --progress --hide-modules",
+    "watch": "webpack --watch --progress --hide-modules",
+    "hot": "webpack-dev-server --inline --hot"
   },
   "dependencies": {
-    "gulp": "^3.9.1",
-    "laravel-elixir": "^6.0.0-10",
-    "laravel-elixir-vue-2": "^0.2.0",
-    "laravel-elixir-webpack-official": "^1.0.2"
+    "laravel-mix": "^0.12.1"
   }
 }
