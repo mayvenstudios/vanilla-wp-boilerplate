@@ -27,5 +27,5 @@ define( 'WP_BLADE_CONFIG_PATH', WP_BLADE_APP_PATH . 'config/' );
 define( 'WP_BLADE_LIBRARIES_PATH', WP_BLADE_APP_PATH . 'lib/' );
 
 
-require_once ( WP_BLADE_CONFIG_PATH . '/initialize.php' );
+require_once(WP_BLADE_CONFIG_PATH . '/initialize.php');
 WP_Blade_Main_Controller::make();
