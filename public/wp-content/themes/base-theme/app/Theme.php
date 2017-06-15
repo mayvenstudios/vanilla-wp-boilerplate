@@ -4,84 +4,13 @@ namespace App;
 
 class Theme extends \Core\Theme {
 
-
-    /*
-    
-    Allows you to disable WordPress from including jQuery by default.
-
-    You should only set this to value if your theme.js file includes jQuery.
-
-    */
-    var $include_jquery = true;
-
-
-    /*
-    
-    Loads an options panel in wp-admin.
-    If this is enabled, you create custom fields and target them to this option panel.
-
-    */
-    var $load_options_panel = true;
-
-
-    /*
-
-    if you want to force disable to WP theme editor, set this to true.
-    Since we keep our WP themes in version control, we set this to true by default.
-
-    */
-    var $disabled_theme_editor = true;
-
-
-    /*
-
-    toggle featured image support on your posts and pages
-
-    */
-    var $load_thumbnail_support = true;
-
-
-    /*
-
-    this allows you to edit the default text that appears with post excerpts.
-    If you set this to null, a simple "..." will output at the end of each excerpt.
-
-    */
-    var $excerpt_text = 'Read More';
-
-
-    /*
-
-    by default, the theme will disable the ACF Options menu in wp-admin, unless WP_DEBUG is set to true.
-    If you want to force enable to ACF options panel to display, you can set this variable as true
-    
-    */
-    var $force_enable_acf_option_panel = true;
-
-
-    public function __construct()
+    /**
+     * Load Custom Post Types
+     * Extended CPTs https://github.com/johnbillion/extended-cpts/wiki
+     */
+    public function loadPostTypes()
     {
-
-        parent::__construct(); 
-
-        $this->theme_name = defined('THEME_NAME') ? THEME_NAME : 'base-theme';
-        $this->version = getenv('VERSION') ? getenv('VERSION') : '1.0';
-
-    }
-
-
-    /*
-    
-    Load Custom Post Types
-    Extended CPTs https://github.com/johnbillion/extended-cpts/wiki
-    
-    */
-    public function load_custom_post_types()
-    {
-
-        
-
-        /* 
+        /*
         // Sample Custom Post Type - Add as many as you'd like 
         register_extended_post_type( 'story', array(
 
@@ -129,13 +58,11 @@ class Theme extends \Core\Theme {
 
     }
 
-    /*
-    
-    Load Custom Taxonomies
-    Extended Taxos https://github.com/johnbillion/extended-taxos
-    
-    */
-    public function load_custom_taxonomies()
+    /**
+     * Load Custom Taxonomies
+     * Extended Taxos https://github.com/johnbillion/extended-taxos
+     */
+    public function loadCustomTaxonomies()
     {
 
         // Sample Custom Taxonomy - Add as many as you'd like 
@@ -171,7 +98,10 @@ class Theme extends \Core\Theme {
         */
     }
 
-    public function load_shortcodes()
+    /**
+     * Load Short Codes
+     */
+    public function loadShortCodes()
     {
 
         //This is a sample shortcode.  Please see full shortcode documentation. 
@@ -194,8 +124,10 @@ class Theme extends \Core\Theme {
     }
 
 
-
-    public function load_sidebars()
+    /**
+     * Load Sidebars
+     */
+    public function loadSidebars()
     {
 
         /*register_sidebar(array(
@@ -210,7 +142,10 @@ class Theme extends \Core\Theme {
         
     }
 
-    public function load_options_panel()
+    /**
+     * Load options panel
+     */
+    protected function loadOptionsPanel()
     {
 
         acf_add_options_page(array(
@@ -232,37 +167,5 @@ class Theme extends \Core\Theme {
             'menu_title'    => 'Javascript / CSS',
             'parent_slug'   => 'theme-options-settings',
         ));
-
-        
-
     }
-
-    public function set_menus()
-    {
-
-        $this->menus = array(
-            'main_nav' => 'Main Navigation', 
-            'footer_nav' => 'Footer Navigation'
-        );
-        
-    }
-
-    /**
-    * Set the image size array.
-    *
-    * $image_sizes[] = array('name' => 'image-size-name', 'width' => 600, 'height' => 400, 'crop' => true)  
-    * set width/height to 9999 to not force that size.
-    * set crop to false to not force the size.
-    */
-    public function set_image_sizes()
-    {
-
-        $this->image_sizes[] = array(
-            'name' => 'medium-size',
-            'width' => 600,
-            'height' => 400,
-            'crop' =>true
-        );
-    }
-
 }

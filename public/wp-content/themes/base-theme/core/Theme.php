@@ -2,564 +2,405 @@
 
 namespace Core;
 
-abstract class Theme {
-
-    /* Set this to the version of your theme */
-    public $version;
-
-    /* The name of the theme */
-    public $theme_name;
-
-    /* You can set this to false if the theme javascript includes jQuery */
-    public $include_jquery;
-
+abstract class Theme
+{
     /**
-    * This is the array that holds the image sizes.
-    * Set this with the set_image_sizes method.
-    */
-    public $image_sizes;
-
-    /**
-    * This is the array of menus for the site.
-    * Set this with the set_menus method.
-    */
-    public $menus;
-
-
-    /* This allows you to enable/disable the theme editor. */
-    public $disabled_theme_editor;
-
-    /**
-     * Set the excerpt read more link text.
-     * set to null if you do not want to output a read more link.
-     * @param  int  
-     * @return Response
+     * Theme settings
+     *
+     * @var array
      */
-    public $excerpt_text;
+    protected $settings;
 
     /**
-    * This is a boolean that determines whether or not to load the custom options panel
-    * The custom options panel can be set in the load_options_panel method
-    * Set this with the set_menus method.
-    */
-    public $load_options_panel;
+     * Bootstrap function for the class.
+     * Loads everything up based off of various parameters you can set.
+     *
+     * @param string $path root theme path
+     */
+    public function __construct($path = '')
+    {
+        $this->rootPath = $path;
+        $this->loadConfiguration();
+        $this->loadBlade();
+        $this->loadACF();
+        $this->loadShortCodes();
+        $this->loadPostTypes();
+        $this->loadCustomTaxonomies();
+        $this->loadSidebars();
+        $this->loadThumbnailSupport();
+        $this->removeJunk();
 
+        $this->loadOptionsPanelIfNeeded();
+        $this->loadMenus();
 
-    /* This allows you to enable/disable the post thumbnail. */
-    public $load_thumbnail_support;
+        define('DISALLOW_FILE_EDIT', $this->config('disabled_theme_editor'));
 
-
-    /**
-    * By default, the ACF Option panel is wp-admin is hidden unless WP_DEBUG is defined as true.
-    * By setting this var to true, you can force enable the option panel to show even if WP_DEBUG is set to false (i.e. in a production environment)
-    */
-    public $force_enable_acf_option_panel;
-
-    /**
-    * This is the variable where you add the custom post types to be loaded into the theme
-    */
-    public $custom_post_types;
-
-
-    /**
-    * This is the variable where you add the custom taxonomies to be loaded into the theme
-    */
-    public $custom_taxonomies;
-    /**
-    * Bootstrap function for the class.
-    * Loads everything up based off of various parameters you can set.
-    */
-    public function __construct()
-    {   
-
-        add_action('init', array($this, 'load_files') );
-
-        $this->load_blade_templating();
-
-        $this->include_advanced_custom_fields();
+        add_action('init', array($this, 'loadFiles'));
+        add_action('init', array($this, 'clearBladeCache'));
+        add_action('init', array($this, 'loadConsoleCommands'));
 
         /* Enqueue the Theme Script */
-        add_action( 'wp_enqueue_scripts', array($this, 'load_scripts') );
+        add_action('wp_enqueue_scripts', array($this, 'loadScripts'));
+        add_action('wp_enqueue_scripts', array($this, 'loadStyles'));
 
-        /* Enqueue the Theme Stylesheet */
-        add_action( 'wp_enqueue_scripts', array($this, 'load_styles') );
-
-        /* Load custom CSS/JS into head */
-        add_action('wp_head', array($this, 'load_additional_head_js_css') );
+        add_action('wp_head', array($this, 'echoAdditionalJsCss')); /* Load custom CSS/JS into head */
+        add_action('wp_head', array($this, 'echoFaviconHtml')); /* Load favicions into head */
 
         /* Load additional JS into footer */
-        add_action('wp_footer', array($this, 'load_additional_footer_js') );
-
-        /* Load favicions into head */
-        add_action('wp_head', array($this, 'load_favicons') );
+        add_action('wp_footer', array($this, 'echoAdditionalFooterJsCss'));
 
         /* Clean up excerpt */
-        add_filter('excerpt_more', array($this,'excerpt_more') );
-
-        /* Clear blade view cache if DISABLE_BLADE_CACHE constant = true */
-        add_action('init', array($this, 'clear_blade_cache') );
-
-        define( 'DISALLOW_FILE_EDIT', $this->disabled_theme_editor );
-
-
-        add_action('init', array($this, 'load_wp_cli_commands'));
-
-
-        /* Load shortcodes */
-        if(method_exists($this, 'load_shortcodes'))
-        {
-
-            $this->load_shortcodes();
-
-        }
-
-        /* Load all custom post types */
-        if(method_exists($this, 'load_custom_post_types'))
-        {
-
-            add_action('init', array($this, 'add_custom_post_types'));
-
-        }
-
-        /* Load all custom post types */
-        if(method_exists($this, 'load_custom_taxonomies'))
-        {
-
-            add_action('init', array($this, 'add_custom_taxonomies'));
-
-        }
-
-        /* Load all options panels if not globally disabled */
-        if(method_exists($this, 'load_options_panel') && $this->load_options_panel == true)
-        {
-
-            $this->load_options_panel();
-
-        }
-
-        
-        /* Load all dynamic sidebars */
-        if(method_exists($this, 'load_sidebars'))
-        {
-
-            add_action('widgets_init', array($this, 'load_sidebars') );
-
-        }
-
-
-        /* Load all image sizes */
-        if(method_exists($this, 'set_image_sizes'))
-        {   
-        
-            $this->set_image_sizes();
-            $this->load_thumbnail_support();
-        
-        }
-
-
-        /* Set all menus and load menu support */
-        if(method_exists($this, 'set_menus'))
-        {   
-        
-            $this->set_menus();
-            $this->load_menu_support();
-        
-        }
+        add_filter('excerpt_more', array($this, 'substituteExcerpt'));
 
         /* Remove all junk */
-        $this->remove_junk();
+
     }
 
-
     /**
-     * This method will loop through the $custom_post_types array and generate the register_post_type function call.
-     *
+     * @return string Path to configuration folder
      */
-    public function add_custom_post_types()
+    public function configPath()
     {
-        /* loads the CPTs from functions.php */
-        $this->load_custom_post_types();
+        return $this->rootPath . DIRECTORY_SEPARATOR . 'config';
     }
 
     /**
-     * This method will loop through the $custom_post_types array and generate the register_post_type function call.
-     *
+     * Load the configuration to be available through $this->config('name')
+     * @see $this->config()
      */
-    public function add_custom_taxonomies()
-    {   
-        /* loads the custom taxonomies from functions.php */
-        $this->load_custom_taxonomies();
-    }
-    /**
-    * Files to Include
-    *
-    * The $files_to_load array determines the code included in the theme by default.
-    * Add or remove files to the array as needed.
-    *
-    */
-    public function load_files()
+    protected function loadConfiguration()
     {
+        $settings = require_once($this->configPath() . '/app.php');
+        $this->settings = array_merge($this->settings, $settings);
+    }
 
+    /**
+     * Loads the blade template engine.
+     */
+    protected function loadBlade()
+    {
+        if (!class_exists('WP_Blade_Main_Controller')) {
+            include_once('lib/blade/blade.php');
+        }
+    }
 
-        $files_to_load = array(
-            'inc/Helper.php'
-        );
+    /**
+     * Loads ACF if the plugin is not included.
+     */
+    protected function loadACF()
+    {
+        if (!class_exists('acf')) {
+            add_filter('acf/settings/path', array($this, 'myAcfSettingsPath'));
+            add_filter('acf/settings/dir', array($this, 'myAcfSettingsDir'));
+            include_once('lib/acf/acf.php');
 
-        foreach ($files_to_load as $file)
-        {
-            require_once $file;
+            if ((WP_DEBUG == false && $this->config('force_enable_acf_option_panel') === false) || FORCE_HIDE_ACF_EDIT === true) {
+                add_filter('acf/settings/show_admin', '__return_false');
+            }
         }
 
+        add_filter('acf/format_value', array($this, 'parseTemplateDirectory'), 10, 3);
+
+        if (function_exists('acf_wpcli_register_groups')) {
+            acf_wpcli_register_groups();
+        }
+    }
+
+    /**
+     * Load Short Codes
+     */
+    protected function loadShortCodes()
+    {
+        //
+    }
+
+    /**
+     * Custom Post Types should be loaded in this method
+     */
+    protected function loadPostTypes()
+    {
+        //
+    }
+
+    /**
+     * Custom Taxonomies should be loaded in this method
+     */
+    protected function loadCustomTaxonomies()
+    {
+        //
+    }
+
+    /**
+     * Custom sidebars should be loaded in this method
+     */
+    protected function loadSidebars()
+    {
+        //
+    }
+
+    /**
+     * Load Thumbnail Support
+     */
+    protected function loadThumbnailSupport()
+    {
+        if (is_array($this->config('image_sizes'))) {
+            if ($this->config('load_thumbnail_support')) {
+                add_theme_support('post-thumbnails');
+            }
+            foreach ($this->config('image_sizes') as $size) {
+                add_image_size($size['name'], $size['width'], $size['height'], $size['crop']);
+            }
+        }
+    }
+
+    /**
+     * Clean code = better code.
+     */
+    protected function removeJunk()
+    {
+        remove_action('template_redirect', 'wp_shortlink_header', 11);
+        add_filter('wp_headers', [$this, 'removeXPingback']);
+
+        remove_action('wp_head', 'rel_canonical');
+        remove_action('wp_head', 'rsd_link');
+        remove_action('wp_head', 'wp_generator');
+        remove_action('wp_head', 'feed_links', 2);
+        remove_action('wp_head', 'index_rel_link');
+        remove_action('wp_head', 'wlwmanifest_link');
+        remove_action('wp_head', 'feed_links_extra', 3);
+        remove_action('wp_head', 'start_post_rel_link', 10);
+        remove_action('wp_head', 'parent_post_rel_link', 10);
+        remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
+
+    }
+
+    /**
+     * Options Panel should be loaded in this method
+     */
+    protected function loadOptionsPanel()
+    {
+        //
+    }
+
+    /**
+     * Call loadOptionsPanel if load_options_panel setting is set to true
+     */
+    private function loadOptionsPanelIfNeeded() {
+        if ($this->config('load_options_panel')) {
+            $this->loadOptionsPanel();
+        }
+    }
+
+    /**
+     * Loads the menus.
+     * Menus are configured in the config/app.php file
+     *
+     * @see /config/app.php
+     */
+    private function loadMenus()
+    {
+        if (is_array($this->config('menus'))) {
+            add_theme_support('menus');
+            register_nav_menus($this->config('menus'));
+        }
+    }
+
+    /**
+     * Files to Include
+     *
+     * The $files_to_load array determines the code included in the theme by default.
+     * Add or remove files to the array as needed.
+     *
+     */
+    public function loadFiles()
+    {
+        require_once 'inc/Helper.php';
 
         $custom_endpoints = get_template_directory() . '/endpoints/';
-
-        $files = glob($custom_endpoints.'*');
-
-   
-        foreach($files as $file) {
-            if(is_file($file)) {
+        $files = glob($custom_endpoints . '*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
                 require_once $file;
             }
         }
 
         $custom_functionality = get_template_directory() . '/custom-functionality/';
-
-        $files = glob($custom_functionality.'*');
-
-   
-        foreach($files as $file) {
-            if(is_file($file)) {
+        $files = glob($custom_functionality . '*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
                 require_once $file;
             }
         }
     }
 
-    public function load_wp_cli_commands()
+    /**
+     * Clears the blade view cache in development
+     */
+    protected function clearBladeCache()
     {
-        if ( defined( 'WP_CLI' ) && \WP_CLI )
-        {
+        if (defined('WP_DEBUG') && WP_DEBUG === true) {
+            $cachedViewsDirectory = WP_BLADE_ROOT . 'storage/views/';
+            $files = glob($cachedViewsDirectory . '*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+        }
+    }
 
+    /**
+     * Load console commands
+     */
+    public function loadConsoleCommands()
+    {
+        if (defined('WP_CLI') && \WP_CLI) {
             $files_to_load = array(
                 'wp-cli-commands/DevMode.php',
                 'wp-cli-commands/UpdateSiteUrl.php'
             );
 
-            foreach ($files_to_load as $file)
-            {
+            foreach ($files_to_load as $file) {
                 require_once $file;
             }
 
-             \WP_CLI::add_command( 'devmode', '\DevMode_Command' );
-             \WP_CLI::add_command( 'url', '\UpdateSiteUrl_Command' );
+            \WP_CLI::add_command('devmode', '\DevMode_Command');
+            \WP_CLI::add_command('url', '\UpdateSiteUrl_Command');
+        }
+    }
+
+    /**
+     * Loads the theme scripts.
+     */
+    public function loadScripts()
+    {
+        $vendor = asset('compiled/js/vendor.js');
+        if ($this->config('include_jquery') === false) {
+            wp_deregister_script('jquery');
+            wp_enqueue_script('jquery', $vendor, [], $this->version(), true);
+        } else {
+            wp_enqueue_script($this->name() . '-vendors', $vendor, ['jquery'], $this->version(), true);
         }
 
+        $appJs = mix('resources/assets/compiled/js/app.js');
+        wp_enqueue_script($this->name() . '-script', $appJs, ['jquery'], $this->version(), true);
+    }
 
+    /**
+     * Loads the theme styles.
+     */
+    public function loadStyles()
+    {
+        $themeCss = mix('resources/assets/compiled/css/theme.css');
+        wp_enqueue_style($this->name() . '-style', $themeCss, [], $this->version());
+    }
+
+    /**
+     * Echoes additional header JS and CSS
+     */
+    public function echoAdditionalJsCss()
+    {
+        echo get_field('header_css_js_custom', 'option');
+    }
+
+    /**
+     * Echoes the path to the favicon files for the head of the site.
+     */
+    public function echoFaviconHtml()
+    {
+        $html = '';
+
+        $faviconPath = get_field('favicon', 'option');
+        $otherIcons = get_field('other_icons', 'option');
+
+        if ($faviconPath) {
+            $html .= "<link rel='shortcut icon' href='{$faviconPath}' type='image/x-icon'>\n";
+        }
+
+        if ($otherIcons) {
+            foreach ($otherIcons as $icon) {
+                $html .= "<link rel='apple-touch-icon' type='image/png' sizes='{$icon['size']}' href='{$icon['image']}'>\n";
+            }
+        }
+
+        echo $html;
+    }
+
+    /**
+     * Echoes additional footer JS and CSS
+     */
+    public function echoAdditionalFooterJsCss()
+    {
+        echo get_field('custom_js_footer', 'option');
     }
 
     /**
      * Clean up the_excerpt()
      */
-    public function excerpt_more($more)
+    public function substituteExcerpt()
     {
-
-
-        if( !is_null($this->excerpt_text) )
-        {
-
-            return '... <a href="' . get_permalink() . '">' . $this->excerpt_text . '</a>';
-
-        }
-        else
-        {
-                
+        if ($this->config('excerpt_text')) {
+            return '... <a href="' . get_permalink() . '">' . $this->config('excerpt_text') . '</a>';
+        } else {
             return '...';
-
         }
-
-
-
-      
     }
-
-    public function load_additional_head_js_css()
-    {
-        echo get_field('header_css_js_custom', 'option');
-    }
-
-    public function load_additional_footer_js()
-    {
-
-        echo get_field('custom_js_footer', 'option');
-
-    }
-
 
     /**
-    * Loads the theme scripts.
-    *
-    */
-    public function load_scripts()
-    {   
-        if($this->include_jquery === false)
-        {
-            wp_deregister_script('jquery');
-            wp_enqueue_script( 'jquery' , asset('compiled/js/vendor.js'), null, $this->version, true );
-
-        }
-        else
-        {
-            wp_enqueue_script( $this->theme_name .'-vendors' , asset('compiled/js/vendor.js'), array('jquery'), $this->version, true );
-        }
-        
-        wp_enqueue_script( $this->theme_name .'-script' , mix('resources/assets/compiled/js/app.js'), array('jquery'), $this->version, true );
-    }
-
-
-    /**
-    * Loads the theme styles.
-    *
-    */
-    public function load_styles()
+     * Remove unneeded ping back header.
+     * @param $headers array Headers
+     * @return array
+     */
+    public function removeXPingback($headers)
     {
-        wp_enqueue_style( $this->theme_name .'-style', mix('resources/assets/compiled/css/theme.css'),array(), $this->version);
-
+        unset($headers['X-Pingback']);
+        return $headers;
     }
 
-
-
-    /**
-    * Display the specified resource.
-    *
-    * @param  int  
-    * @return Response
-    */
-    protected function load_thumbnail_support()
+    public function parseTemplateDirectory($value, $post_id, $field)
     {
-
-
-        if($this->load_thumbnail_support === true)
-        {
-            add_theme_support( 'post-thumbnails' );
-        }
-        
-        if(is_array($this->image_sizes))
-        {
-
-            foreach($this->image_sizes as $size)
-            {
-
-                add_image_size($size['name'], $size['width'], $size['height'], $size['crop']);
-
-            }
-
-        }
-        
-    }
-
-
-    /**
-    * Returms the path to the favicon files for the head of the site.
-    * 
-    * @param  $faviconPath - this should be absolute path to the favicon file.
-    * @param  $additionalIconPath:
-    *           - array('72x72' => 'path/to/image.png', '144x144' => 'path/to/image')  
-    * @return HTML output
-    */
-    public function load_favicons()
-    {
-
-        $output = '';    
-
-        $faviconPath = get_field('favicon','option');
-        $otherIcons  = get_field('other_icons','option');
-
-        if($faviconPath)
-        {
-            $output .= "<link rel='shortcut icon' href='{$faviconPath}' type='image/x-icon'>\n";
-        }
-
-        if($otherIcons)
-        {
-            foreach($otherIcons as $icon)
-            {
-
-
-                $output .= "<link rel='apple-touch-icon' type='image/png' sizes='{$icon['size']}' href='{$icon['image']}'>\n";
-
-            }    
-        }
-
-        echo $output;
-    }
-
-
-    /**
-    * Loads the menus.
-    *
-    * You will need to set the $menus param in the set_menus method in functions.php 
-    * @return Response
-    */
-    protected function load_menu_support()
-    {
-
-        
-
-        if(is_array( $this->menus ))
-        {
-            
-            add_theme_support( 'menus' );
-
-            register_nav_menus( $this->menus );
-                
-        }
-        
-    }
-
-
-    /**
-    * Loads the blade template engine.
-    *
-    */
-    protected function load_blade_templating()
-    {
-
-        if( !class_exists('WP_Blade_Main_Controller') )
-        {
-            include_once('lib/blade/blade.php');
-        }
-
-    }
-
-
-    /**
-    * Clears the blade view cache in development
-    *
-    */
-    public function clear_blade_cache()
-    {
-
-
-        if(defined('WP_DEBUG') && WP_DEBUG === true)
-        {
-
-            $cachedViewsDirectory = WP_BLADE_ROOT . 'storage/views/';
-
-
-            $files = glob($cachedViewsDirectory.'*');
-
-            foreach($files as $file) {
-                if(is_file($file)) {
-                    @unlink($file);
-                }
-            }
-
-        }
-
-    }
-
-
-    /**
-    * Loads ACF if the plugin is not included.
-    */
-    public function include_advanced_custom_fields()
-    {   
-
-
-        if( ! class_exists('acf') )
-        {
-
-            add_filter('acf/settings/path', array($this, 'my_acf_settings_path') );
-            add_filter('acf/settings/dir', array($this, 'my_acf_settings_dir') );
-
-            include_once('lib/acf/acf.php');
-
-
-            if((WP_DEBUG == false && $this->force_enable_acf_option_panel === false) || FORCE_HIDE_ACF_EDIT === true)
-            {
-                
-                add_filter('acf/settings/show_admin', '__return_false');        
-            
-            }
-            
-
-        }    
-
-        add_filter('acf/format_value',array( $this,'parse_template_directory'), 10, 3);
-
-        if(function_exists('acf_wpcli_register_groups'))
-        {
-            acf_wpcli_register_groups();
-        }
-    }
-
-    public function parse_template_directory( $value, $post_id, $field )
-    {
-
-        $searchAndReplace = array(
-
+        $searchAndReplace = [
             '{IMAGEPATH}' => get_template_directory_uri() . '/public/images'
+        ];
 
-        );
-
-        foreach($searchAndReplace as $search => $replace)
-        {
+        foreach ($searchAndReplace as $search => $replace) {
             $value = str_replace($search, $replace, $value);
         }
 
         return $value;
     }
 
-     
-    public function my_acf_settings_path( $path ) {
-     
-        $path = get_stylesheet_directory() . '/core/lib/acf/';
-        
-        return $path;
-        
-    }
-     
-     
-    public function my_acf_settings_dir( $dir ) {
-     
-        $dir = get_stylesheet_directory_uri() . '/core/lib/acf/';
-        
-        return $dir;
-        
-    }
-     
-    /**
-    * Clean code = better code.
-    */
-    protected function remove_junk()
+    public function myAcfSettingsPath($path)
     {
+        return get_stylesheet_directory() . '/core/lib/acf/';
+    }
 
-        // Remove "Link" canonical HTTP header
-        remove_action('template_redirect', 'wp_shortlink_header', 11);
-
-        add_filter('wp_headers', array($this,'remove_x_pingback') );
-
-        // remove junk from head
-        remove_action('wp_head', 'rel_canonical'); 
-        remove_action('wp_head', 'rsd_link'); 
-        remove_action('wp_head', 'wp_generator'); 
-        remove_action('wp_head', 'feed_links', 2); 
-        remove_action('wp_head', 'index_rel_link'); 
-        remove_action('wp_head', 'wlwmanifest_link'); 
-        remove_action('wp_head', 'feed_links_extra', 3); 
-        remove_action('wp_head', 'start_post_rel_link', 10, 0); 
-        remove_action('wp_head', 'parent_post_rel_link', 10, 0); 
-        remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10, 0); 
-
+    public function myAcfSettingsDir($dir)
+    {
+        return get_stylesheet_directory_uri() . '/core/lib/acf/';
     }
 
     /**
-    * Uneeded pingback header.
-    */
-    public function remove_x_pingback($headers) {
+     * Fetch particular settings property
+     *
+     * @param $key string
+     * @param $default mixed Default value
+     *
+     * @return mixed
+     */
+    public function config($key, $default = null)
+    {
+        return isset($this->settings[$key]) ? $this->settings[$key] : $default;
+    }
 
-        unset($headers['X-Pingback']);
+    public function name()
+    {
+        return $this->config('name', 'base-theme');
+    }
 
-        return $headers;
+    public function version()
+    {
+        return $this->config('version', '1.0');
     }
 
 }

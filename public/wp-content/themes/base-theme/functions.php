@@ -1,4 +1,4 @@
 <?php
 
 require __DIR__.'/vendor/autoload.php';
-$app = new App\Theme();
+$app = new App\Theme(__DIR__);
