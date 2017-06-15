@@ -1031,7 +1031,6 @@ function acf_get_field_group_style( $field_group ) {
 */
 
 function acf_import_field_group( $field_group ) {
-	
 	// disable filters to ensure ACF loads raw data from DB
 	acf_disable_filters();
 	

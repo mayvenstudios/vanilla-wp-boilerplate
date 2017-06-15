@@ -270,7 +270,6 @@ class Theme extends base_theme_class {
             'crop' =>true
         );
     }
-
 }
 
 $theme = new \BaseTheme\Theme;

@@ -293,7 +293,6 @@ class acf_admin_field_groups {
 		
 		// sync
 		if( !empty($sync_keys) ) {
-			
 			// validate
 			check_admin_referer('bulk-posts');
 			

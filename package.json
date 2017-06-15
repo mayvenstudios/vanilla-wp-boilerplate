@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "devDependencies": {
+    "shared-git-hooks": "^1.2.1"
+  }
+}
