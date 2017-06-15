@@ -12,7 +12,7 @@ class ACF_Command extends WP_CLI_Command
         $groups = acf_get_field_groups();
 
         if (!$groups) {
-            WP_CLI::log('Info. Nothing to sync.');
+            WP_CLI::log('Info. ACF groups not found. Nothing to sync.');
             return;
         }
 
@@ -36,11 +36,11 @@ class ACF_Command extends WP_CLI_Command
         $syncCount = count($sync);
 
         if (!$syncCount) {
-            WP_CLI::log('Info. Nothing to sync.');
+            WP_CLI::log('Info. ACF groups are up to date. Nothing to sync.');
             return;
         }
 
-        WP_CLI::log("Info. $syncCount unsynced groups found");
+        WP_CLI::log("Info. $syncCount unsynced ACF groups found");
 
 
         // disable filters to ensure ACF loads raw data from DB
@@ -61,6 +61,6 @@ class ACF_Command extends WP_CLI_Command
             acf_import_field_group($group);
         }
 
-        WP_CLI::log("Info. Groups synced");
+        WP_CLI::log("Info. ACF groups synced");
     }
 }
