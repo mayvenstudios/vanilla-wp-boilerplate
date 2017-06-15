@@ -1,14 +1,8 @@
 <?php
 
-namespace BaseTheme;
+namespace App;
 
-/**
-* Loads the base theme class.  The base_theme_class is extended here.
-* Please see wiki documentation for full set of features and helpers available in the base_theme_class.
-*/
-include_once( 'core/base-theme-class.php' );  
-
-class Theme extends base_theme_class {
+class Theme extends \Core\Theme {
 
 
     /*
@@ -272,6 +266,3 @@ class Theme extends base_theme_class {
     }
 
 }
-
-$theme = new \BaseTheme\Theme;
-

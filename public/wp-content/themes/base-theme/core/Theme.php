@@ -1,8 +1,8 @@
 <?php
 
-namespace BaseTheme;
+namespace Core;
 
-abstract class base_theme_class {
+abstract class Theme {
 
     /* Set this to the version of your theme */
     public $version;
@@ -311,7 +311,7 @@ abstract class base_theme_class {
             wp_enqueue_script( $this->theme_name .'-vendors' , asset('compiled/js/vendor.js'), array('jquery'), $this->version, true );
         }
         
-        wp_enqueue_script( $this->theme_name .'-script' , mix('assets/compiled/js/app.js'), array('jquery'), $this->version, true );
+        wp_enqueue_script( $this->theme_name .'-script' , mix('resources/assets/compiled/js/app.js'), array('jquery'), $this->version, true );
     }
 
 
@@ -321,7 +321,7 @@ abstract class base_theme_class {
     */
     public function load_styles()
     {
-        wp_enqueue_style( $this->theme_name .'-style', mix('assets/compiled/css/theme.css'),array(), $this->version);
+        wp_enqueue_style( $this->theme_name .'-style', mix('resources/assets/compiled/css/theme.css'),array(), $this->version);
 
     }
 
