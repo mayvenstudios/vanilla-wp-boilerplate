@@ -11,7 +11,7 @@ if (! function_exists('mix')) {
      *
      * @throws \Exception
      */
-    function mix($path, $manifestDirectory = '')
+    function mix($path)
     {
         static $manifest;
 
@@ -19,16 +19,8 @@ if (! function_exists('mix')) {
             $path = "/{$path}";
         }
 
-        if ($manifestDirectory && ! starts_with($manifestDirectory, '/')) {
-            $manifestDirectory = "/{$manifestDirectory}";
-        }
-
-        if (file_exists(public_path($manifestDirectory.'/hot'))) {
-            return new HtmlString("//localhost:8080{$path}");
-        }
-
         if (! $manifest) {
-            if (! file_exists($manifestPath = WP_THEME_ROOT.'/mix-manifest.json')) {
+            if (! file_exists($manifestPath = __DIR__.'/../mix-manifest.json')) {
                 throw new Exception('The Mix manifest does not exist.');
             }
 
