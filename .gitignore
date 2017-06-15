@@ -1,3 +1,5 @@
 .env
 .DS_Store
-/vendor
+vendor
+.idea
+node_modules

@@ -1,7 +1,5 @@
 <?php
-/**
- * Implements example command.
- */
+
 class DevMode_Command extends WP_CLI_Command {
 
     function enable( $args, $assoc_args ) {

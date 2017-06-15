@@ -257,7 +257,8 @@ abstract class Theme
         if (defined('WP_CLI') && \WP_CLI) {
             $files_to_load = array(
                 'wp-cli-commands/DevMode.php',
-                'wp-cli-commands/UpdateSiteUrl.php'
+                'wp-cli-commands/UpdateSiteUrl.php',
+                'wp-cli-commands/ACF.php'
             );
 
             foreach ($files_to_load as $file) {
@@ -266,6 +267,7 @@ abstract class Theme
 
             \WP_CLI::add_command('devmode', '\DevMode_Command');
             \WP_CLI::add_command('url', '\UpdateSiteUrl_Command');
+            \WP_CLI::add_command('url', '\ACF_Command');
         }
     }
 
