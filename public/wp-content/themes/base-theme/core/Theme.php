@@ -9,7 +9,7 @@ abstract class Theme
      *
      * @var array
      */
-    protected $settings;
+    protected $settings = [];
 
     /**
      * Bootstrap function for the class.
@@ -236,7 +236,7 @@ abstract class Theme
     /**
      * Clears the blade view cache in development
      */
-    protected function clearBladeCache()
+    public function clearBladeCache()
     {
         if (defined('WP_DEBUG') && WP_DEBUG === true) {
             $cachedViewsDirectory = WP_BLADE_ROOT . 'storage/views/';
