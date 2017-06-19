@@ -12,6 +12,16 @@ class Company extends PostType {
     protected $name = 'company';
 
     /**
+     * Specify the templates to be used for single page and archive page
+     *
+     * @var array
+     */
+    protected $views = [
+        'single' => 'company/single',
+        'index' => 'company/index'
+    ];
+
+    /**
      * The singular name, plural name, and slug are generated from the post type name.
      * These can be overridden with the $names array
      *

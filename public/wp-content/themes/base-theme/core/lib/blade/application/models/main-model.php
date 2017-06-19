@@ -30,6 +30,12 @@ class WP_Blade_Main_Model {
 	 * @return { str } compiled template path
 	 */
 	public function template_include_blade( $template ) {
+        if ($postType = get_post_type_object(get_post_type())) {
+            $requiredView = is_archive() ? 'index_view' : 'single_view';
+            if ($view = $postType->$requiredView) {
+                $template = WP_BLADE_VIEWS_PATH . $view . '.blade.php';
+            }
+        }
 
 		if( $this->bladedTemplate )
 			return $this->bladedTemplate;
