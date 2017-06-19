@@ -1,4 +1,5 @@
-@layout('layouts/master')
+@layout('layouts.master')
+
 <?php /* Template Name: Sample Page Template */ ?>
 @section('head')
 <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
@@ -32,6 +33,7 @@
     }
 </style>
 @endsection
+
 @section('content')
 <?php while ( have_posts() ) : the_post(); ?>
 <div class="container">
@@ -39,5 +41,5 @@
         <div class="title">WordPress Rapid Development Theme</div>
     </div>
 </div>
-@endsection
 <?php endwhile; ?>
+@endsection

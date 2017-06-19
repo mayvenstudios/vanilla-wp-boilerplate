@@ -123,8 +123,8 @@ class View implements ArrayAccess {
 		$view = str_replace('.', '/', $view);
 
 		$search_paths = array(
-			get_stylesheet_directory(),
-			get_template_directory()
+			get_template_directory().'/resources',
+            get_template_directory().'/resources/views'
 		);
 
 		foreach ($search_paths as $dir)
