@@ -12,6 +12,13 @@ abstract class Theme
     protected $settings = [];
 
     /**
+     * Registered postTypes
+     *
+     * @var array
+     */
+    protected $postTypes = [];
+
+    /**
      * Bootstrap function for the class.
      * Loads everything up based off of various parameters you can set.
      *
@@ -38,6 +45,7 @@ abstract class Theme
         add_action('init', array($this, 'loadFiles'));
         add_action('init', array($this, 'clearBladeCache'));
         add_action('init', array($this, 'loadConsoleCommands'));
+        add_action('init', array($this, 'removeDefaultPostTypes'));
 
         /* Enqueue the Theme Script */
         add_action('wp_enqueue_scripts', array($this, 'loadScripts'));
@@ -119,7 +127,24 @@ abstract class Theme
      */
     protected function loadPostTypes()
     {
-        //
+        $this->postTypes()->each(function ($className) {
+            $this->loadPostType($className);
+        });
+    }
+
+    /**
+     * Load pot type
+     *
+     * @param $className post type class name
+     */
+    protected function loadPostType($className)
+    {
+        /** @var PostType $postType */
+        $postType = new $className();
+
+        // Ignore built in post types
+        if(in_array($postType->name(), ['post', 'page', 'attachment'])) return;
+        register_extended_post_type($postType->name(), $postType->args(), $postType->names());
     }
 
     /**
@@ -272,6 +297,29 @@ abstract class Theme
     }
 
     /**
+     * Disable unregistered default post types
+     */
+    public function removeDefaultPostTypes()
+    {
+        $names = $this->postTypes()->map(function ($class) {
+            return (new $class())->name();
+        });
+
+        if(!$names->contains('post')) {
+            unregister_post_type_forced('post');
+        }
+
+        if(!$names->contains('page')) {
+            unregister_post_type_forced('page');
+        }
+
+        if(!$names->contains('attachment')) {
+            unregister_post_type_forced('attachment');
+        }
+
+    }
+
+    /**
      * Loads the theme scripts.
      */
     public function loadScripts()
@@ -403,6 +451,14 @@ abstract class Theme
     public function version()
     {
         return $this->config('version', '1.0');
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function postTypes()
+    {
+        return collect($this->postTypes);
     }
 
 }

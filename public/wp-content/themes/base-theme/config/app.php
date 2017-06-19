@@ -16,7 +16,7 @@ return [
      * Allows you to disable WordPress from including jQuery by default.
      * You should only set this to value if your files include jQuery.
      */
-    'include_jquery' => false,
+    'include_jquery' => true,
 
     /**
      * This is a boolean that determines whether or not to load the custom options panel

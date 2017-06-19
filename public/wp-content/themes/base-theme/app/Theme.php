@@ -2,61 +2,19 @@
 
 namespace App;
 
+use App\PostTypes\Company;
+use Core\PostTypes\Attachment;
+use Core\PostTypes\Page;
+use Core\PostTypes\Post;
+
 class Theme extends \Core\Theme {
 
-    /**
-     * Load Custom Post Types
-     * Extended CPTs https://github.com/johnbillion/extended-cpts/wiki
-     */
-    public function loadPostTypes()
-    {
-        /*
-        // Sample Custom Post Type - Add as many as you'd like 
-        register_extended_post_type( 'story', array(
-
-            # Add the post type to the site's main RSS feed:
-            'show_in_feed' => true,
-
-            # Show all posts on the post type archive:
-            'archive' => array(
-                'nopaging' => true
-            ),
-
-            # Add some custom columns to the admin screen:
-            'admin_cols' => array(
-                'featured_image' => array(
-                    'title'          => 'Illustration',
-                    'featured_image' => 'thumbnail'
-                ),
-                'published' => array(
-                    'title'       => 'Published',
-                    'meta_key'    => 'published_date',
-                    'date_format' => 'd/m/Y'
-                ),
-                'genre' => array(
-                    'taxonomy' => 'genre'
-                )
-            ),
-
-            # Add a dropdown filter to the admin screen:
-            'admin_filters' => array(
-                'genre' => array(
-                    'taxonomy' => 'genre'
-                )
-            )
-
-        ), array(
-
-            # Override the base names used for labels:
-            'singular' => 'Story',
-            'plural'   => 'Stories',
-            'slug'     => 'stories'
-
-        ) );
-        */
-        
-
-    }
+    protected $postTypes = [
+        Post::class,
+        Page::class,
+        Attachment::class,
+        Company::class
+    ];
 
     /**
      * Load Custom Taxonomies
