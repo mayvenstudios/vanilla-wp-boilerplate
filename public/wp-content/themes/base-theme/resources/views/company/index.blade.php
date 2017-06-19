@@ -41,7 +41,8 @@
     </div>
     <div class="row">|
         <?php while ( have_posts() ) : the_post(); ?>
-            <strong>{{ get_the_title() }}</strong>|
+            <pre>{{ class_basename(post()) }}</pre>
+            <strong>{{ post()->id() }} -> {{ get_the_title() }}</strong>|
         <?php endwhile; ?>
     </div>
 </div>

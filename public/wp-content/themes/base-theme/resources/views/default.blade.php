@@ -37,8 +37,10 @@
 @section('content')
 <?php while ( have_posts() ) : the_post(); ?>
 <div class="container">
+    <div class="title">WordPress Rapid Development Theme</div>
     <div class="content">
-        <div class="title">WordPress Rapid Development Theme</div>
+        <pre>{{ class_basename(post()) }}</pre>
+        <strong>{{ post() ? post()->id() : 'null' }} -> {{ get_the_title() }}</strong>
     </div>
 </div>
 <?php endwhile; ?>

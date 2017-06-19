@@ -4,6 +4,8 @@ namespace Core;
 
 abstract class PostType {
 
+    protected static $instances = [];
+
     /**
      * @var string Post Type name
      */
@@ -129,6 +131,16 @@ abstract class PostType {
             'site_sortables' => $this->siteSortables,
             'single_view' => isset($this->views['single']) ? $this->views['single'] : null,
             'index_view' => isset($this->views['index']) ? $this->views['index'] : null,
+            'className' => static::class
         ];
+    }
+
+    public function get()
+    {
+        $key = get_the_ID() ? : 'null';
+        if(!isset(static::$instances[$key])) {
+            static::$instances[$key] = $this;
+        }
+        return static::$instances[$key];
     }
 }

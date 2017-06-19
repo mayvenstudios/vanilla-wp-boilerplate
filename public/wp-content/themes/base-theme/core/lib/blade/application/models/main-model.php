@@ -41,7 +41,6 @@ class WP_Blade_Main_Model {
 			return $this->bladedTemplate;
 		if( ! $template )
 			return $template; // Noting to do here. Come back later.
-
 		require_once(WP_BLADE_CONFIG_PATH . 'paths.php');
 
 		Laravel\Blade::sharpen();

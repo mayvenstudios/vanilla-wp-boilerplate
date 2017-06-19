@@ -36,8 +36,9 @@
 
 @section('content')
 <div class="container">
+    <div class="title">That's {{ get_the_title() }} company page</div>
     <div class="content">
-        <div class="title">That's {{ get_the_title() }} company page</div>
+        {{ post()->name() }}
     </div>
 </div>
 @endsection

@@ -92,7 +92,7 @@ class View implements ArrayAccess {
 	 */
 	public function __construct($view, $data = array())
 	{
-		$this->view = $view;
+	    $this->view = $view;
 		$this->data = $data;
 
 		// In order to allow developers to load views outside of the normal loading
@@ -403,7 +403,7 @@ class View implements ArrayAccess {
 	 */
 	public function data()
 	{
-		$data = array_merge($this->data, static::$shared);
+	    $data = array_merge($this->data, static::$shared);
 
 		// All nested views and responses are evaluated before the main view.
 		// This allows the assets used by nested views to be added to the
