@@ -238,20 +238,18 @@ abstract class base_theme_class {
 
     public function load_wp_cli_commands()
     {
-        if ( defined( 'WP_CLI' ) && \WP_CLI ) {
+        if (defined('WP_CLI') && \WP_CLI && php_sapi_name() == 'cli') {
             $files_to_load = array(
-                'wp-cli-commands/DevMode.php',
-                'wp-cli-commands/UpdateSiteUrl.php',
-                'wp-cli-commands/ACF.php'
+                'wp-cli-commands/ACF.php',
+                'wp-cli-commands/CustomPostType.php'
             );
 
             foreach ($files_to_load as $file) {
                 require_once $file;
             }
 
-            \WP_CLI::add_command('devmode', '\DevMode_Command');
-            \WP_CLI::add_command('url', '\UpdateSiteUrl_Command');
             \WP_CLI::add_command('acf', '\ACF_Command');
+            \WP_CLI::add_command('custom-post-type', '\CustomPostType_Command');
         }
     }
 
