@@ -88,7 +88,7 @@ class Helper {
     public static function asset( $name )
     {
 
-        return get_template_directory_uri() . "/assets/{$name}";
+        return get_template_directory_uri() . "/resources/assets/{$name}";
 
     }
 
