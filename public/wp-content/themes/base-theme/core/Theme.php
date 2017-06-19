@@ -24,6 +24,13 @@ abstract class Theme
     protected $postTypes = [];
 
     /**
+     * Registered taxonomies
+     *
+     * @var array
+     */
+    protected $taxonomies = [];
+
+    /**
      * @return Theme
      */
     public static function getInstance() {
@@ -51,7 +58,7 @@ abstract class Theme
         $this->loadACF();
         $this->loadShortCodes();
         $this->loadPostTypes();
-        $this->loadCustomTaxonomies();
+        $this->loadTaxonomies();
         $this->loadSidebars();
         $this->loadThumbnailSupport();
         $this->removeJunk();
@@ -166,9 +173,15 @@ abstract class Theme
     /**
      * Custom Taxonomies should be loaded in this method
      */
-    protected function loadCustomTaxonomies()
+    protected function loadTaxonomies()
     {
-        //
+        $this->taxonomies()->each(function ($taxonomy) {
+            $this->loadTaxonomy($taxonomy);
+        });
+    }
+
+    protected function loadTaxonomy(Taxonomy $taxonomy) {
+        register_extended_taxonomy($taxonomy->name(), $taxonomy->postTypes(), $taxonomy->args(), $taxonomy->names());
     }
 
     /**
@@ -473,6 +486,13 @@ abstract class Theme
     public function postTypes()
     {
         return collect($this->postTypes)->map(function ($className) {
+            return new $className;
+        });
+    }
+
+    public function taxonomies()
+    {
+        return collect($this->taxonomies)->map(function ($className) {
             return new $className;
         });
     }
