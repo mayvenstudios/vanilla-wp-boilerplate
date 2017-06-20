@@ -31,6 +31,13 @@ abstract class Theme
     protected $taxonomies = [];
 
     /**
+     * Register custom console commands
+     *
+     * @var array
+     */
+    protected $commands = [];
+
+    /**
      * @return Theme
      */
     public static function getInstance() {
@@ -308,18 +315,10 @@ abstract class Theme
      */
     public function loadConsoleCommands()
     {
-        if (defined('WP_CLI') && \WP_CLI && php_sapi_name() == 'cli') {
-            $files_to_load = array(
-                'wp-cli-commands/ACF.php',
-                'wp-cli-commands/CustomPostType.php'
-            );
-
-            foreach ($files_to_load as $file) {
-                require_once $file;
-            }
-
-            \WP_CLI::add_command('acf', '\ACF_Command');
-            \WP_CLI::add_command('custom-post-type', '\CustomPostType_Command');
+        if(class_exists('WP_CLI') && $this->runningInConsole()) {
+            $this->commands()->each(function (Command $command) {
+                $command->register();
+            });
         }
     }
 
@@ -497,4 +496,15 @@ abstract class Theme
         });
     }
 
+    public function commands()
+    {
+        return collect($this->commands)->map(function ($className) {
+            return new $className;
+        });
+    }
+
+    public function runningInConsole()
+    {
+        return php_sapi_name() == 'cli' || php_sapi_name() == 'phpdbg';
+    }
 }

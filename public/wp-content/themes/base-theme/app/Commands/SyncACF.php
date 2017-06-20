@@ -1,23 +1,44 @@
 <?php
 
-class ACF_Command extends WP_CLI_Command
-{
+namespace App\Commands;
+
+use Core\Command;
+
+class SyncACF extends Command {
+
     /**
-     * Sync ACF groups which were changed extenally (e.g. by another developer)
+     * Command name.
+     * The command will be available as `wp {name}`
+     *
+     * @var string
      */
-    public function sync()
+    protected $name = 'acf-sync';
+
+    /**
+     * Command description
+     * The description to be shown in `wp help`
+     *
+     * @var string
+     */
+    protected $description = 'Sync changes in acf .json files with database';
+
+    /**
+     * Command handler
+     *
+     * @param $args array Command arguments
+     * @param $named array Command named arguments
+     *
+     * @return mixed
+     */
+    public function handle($args, $named)
     {
-        // reference acf_admin_field_groups::sync()
-
         $groups = acf_get_field_groups();
-
         if (!$groups) {
-            WP_CLI::log('Info. ACF groups not found. Nothing to sync.');
+            $this->log('Info. ACF groups not found. Nothing to sync.');
             return;
         }
 
         $sync = [];
-
         foreach ($groups as $group) {
             $local = acf_maybe_get($group, 'local', false);
             $modified = acf_maybe_get($group, 'modified', 0);
@@ -36,11 +57,11 @@ class ACF_Command extends WP_CLI_Command
         $syncCount = count($sync);
 
         if (!$syncCount) {
-            WP_CLI::log('Info. ACF groups are up to date. Nothing to sync.');
+            $this->log('Info. ACF groups are up to date. Nothing to sync.');
             return;
         }
 
-        WP_CLI::log("Info. $syncCount unsynced ACF groups found");
+        $this->log("Info. $syncCount not synced ACF groups found");
 
 
         // disable filters to ensure ACF loads raw data from DB
@@ -54,13 +75,12 @@ class ACF_Command extends WP_CLI_Command
         foreach ($sync as $key => $group) {
             // append fields
             if (acf_have_local_fields($key)) {
-                $this->sync[$key]['fields'] = acf_get_local_fields($key);
+                acf_get_local_fields($key);
             }
-
             // import
             acf_import_field_group($group);
         }
 
-        WP_CLI::log("Info. ACF groups synced");
+        $this->log("Info. ACF groups synced");
     }
 }

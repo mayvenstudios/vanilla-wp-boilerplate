@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Commands\FlushRewrites;
+use App\Commands\SyncACF;
 use App\PostTypes\Company;
 use App\Taxonomies\Industry;
 use Core\PostTypes\Attachment;
@@ -19,6 +21,11 @@ class Theme extends \Core\Theme {
 
     protected $taxonomies = [
         Industry::class
+    ];
+
+    protected $commands = [
+        SyncACF::class,
+        FlushRewrites::class
     ];
 
     /**
