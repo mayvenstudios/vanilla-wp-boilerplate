@@ -17,16 +17,27 @@ class Company extends PostType {
         'plural' => 'Companies'
     ];
 
-    protected $titlePlaceholder = 'Company name!';
+    /**
+     * Company id
+     * @return null|int
+     */
+    public function id() {
+        return get_the_ID() ?: null;
+    }
 
     /**
-     * Text which replaces the 'Featured Image' phrase for this post type.
+     * Post Type settings. For available options
      *
-     * @var string
+     * @see https://github.com/johnbillion/extended-cpts register_extended_post_type()
+     * @see https://codex.wordpress.org/Function_Reference/register_post_type register_post_type()
+     *
+     * @return array
      */
-    protected $featuredImageTitle = 'Company logo';
-
-    public function id() {
-        return get_the_ID();
+    protected function args()
+    {
+        return [
+            'featured_image' => 'Company Logo',
+            'enter_title_here' => 'Company Name'
+        ];
     }
 }

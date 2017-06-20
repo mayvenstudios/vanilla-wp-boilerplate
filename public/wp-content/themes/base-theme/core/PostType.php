@@ -27,75 +27,13 @@ abstract class PostType {
     protected $names = [];
 
     /**
-     * Associative array of admin screen columns to show for this post type.
+     * Post Type settings. For available options
+     * @see https://github.com/johnbillion/extended-cpts register_extended_post_type()
+     * @see https://codex.wordpress.org/Function_Reference/register_post_type register_post_type()
      *
-     * @var array
+     * @return void|array
      */
-    protected $adminColumns = [];
-
-    /**
-     * Associative array of admin screen filters to show for this post type.
-     *
-     * @var array
-     */
-    protected $adminFilters = [];
-
-    /**
-     * Associative array of query vars to override on this post type's archive.
-     *
-     * @var array
-     */
-    protected $archive = [];
-
-    /**
-     * Whether to show this post type on the 'At a Glance'
-     * section of the admin dashboard.
-     *
-     * @var bool
-     */
-    protected $showInAtAGlance = true;
-
-    /**
-     * Placeholder text which appears in the title field for this post type.
-     *
-     * @var string
-     */
-    protected $titlePlaceholder = 'Enter title here';
-
-    /**
-     * Text which replaces the 'Featured Image' phrase for this post type.
-     *
-     * @var string
-     */
-    protected $featuredImageTitle = 'Featured Image';
-
-    /**
-     * Whether to show Quick Edit links for this post type. Default true.
-     *
-     * @var bool
-     */
-    protected $quickEditEnabled = true;
-
-    /**
-     * Whether to include this post type in the site's main feed. Default false.
-     *
-     * @var bool
-     */
-    protected $showInFeed = true;
-
-    /**
-     * Associative array of query vars and their parameters for front end filtering.
-     *
-     * @var array
-     */
-    protected $siteFilters = [];
-
-    /**
-     * Associative array of query vars and their parameters for front end sorting.
-     *
-     * @var array
-     */
-    protected $siteSortables = [];
+    abstract protected function args();
 
     /**
      * @return string
@@ -114,25 +52,16 @@ abstract class PostType {
     }
 
     /**
+     * Arguments for register_extended_post_type function
+     *
      * @return array
      */
-    public function args()
-    {
-        return [
-            'admin_cols' => $this->adminColumns,
-            'admin_filters' => $this->adminFilters,
-            'archive' => $this->archive,
-            'dashboard_glance' => $this->showInAtAGlance,
-            'enter_title_here' => $this->titlePlaceholder,
-            'featured_image' => $this->featuredImageTitle,
-            'quick_edit' => $this->quickEditEnabled,
-            'show_in_feed' => $this->showInFeed,
-            'site_filters' => $this->siteFilters,
-            'site_sortables' => $this->siteSortables,
+    public function arguments() {
+        return array_merge($this->args() ?: [], [
             'single_view' => isset($this->views['single']) ? $this->views['single'] : null,
             'index_view' => isset($this->views['index']) ? $this->views['index'] : null,
             'className' => static::class
-        ];
+        ]);
     }
 
     public function get()

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\PostTypes\Company;
+use App\Taxonomies\Industry;
 use Core\PostTypes\Attachment;
 use Core\PostTypes\Page;
 use Core\PostTypes\Post;
@@ -16,45 +17,9 @@ class Theme extends \Core\Theme {
         Company::class
     ];
 
-    /**
-     * Load Custom Taxonomies
-     * Extended Taxos https://github.com/johnbillion/extended-taxos
-     */
-    public function loadCustomTaxonomies()
-    {
-
-        // Sample Custom Taxonomy - Add as many as you'd like 
-
-        /*
-
-        register_extended_taxonomy( 'story', 'post', array(
-
-            # Use radio buttons in the meta box for this taxonomy on the post editing screen:
-            'meta_box' => 'radio',
-
-            # Show this taxonomy in the 'At a Glance' dashboard widget:
-            'dashboard_glance' => true,
-
-            # Add a custom column to the admin screen:
-            'admin_cols' => array(
-            'updated' => array(
-                'title'       => 'Updated',
-                'meta_key'    => 'updated_date',
-                'date_format' => 'd/m/Y'
-            ),
-            ),
-
-            ), array(
-
-            # Override the base names used for labels:
-            'singular' => 'Story',
-            'plural'   => 'Stories',
-            'slug'     => 'tales'
-
-        ) );
-
-        */
-    }
+    protected $taxonomies = [
+        Industry::class
+    ];
 
     /**
      * Load Short Codes
