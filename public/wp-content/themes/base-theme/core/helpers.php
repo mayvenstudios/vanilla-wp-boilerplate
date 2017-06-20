@@ -114,3 +114,19 @@ if(!function_exists('post')) {
         return $postType->className ? (new $postType->className())->get() : null;
     }
 }
+
+if(!function_exists('collectInstances')) {
+    /**
+     * Create objects for each of the classNames
+     * return collection of objects
+     *
+     * @param \Illuminate\Support\Collection $classNames
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    function collectInstances(\Illuminate\Support\Collection $classNames) {
+        return $classNames->map(function ($className) {
+            return new $className;
+        });
+    }
+}

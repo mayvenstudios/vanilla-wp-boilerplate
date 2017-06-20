@@ -4,6 +4,7 @@ namespace App;
 
 use App\Commands\FlushRewrites;
 use App\Commands\SyncACF;
+use App\Endpoints\ContactForm;
 use App\PostTypes\Company;
 use App\Taxonomies\Industry;
 use Core\PostTypes\Attachment;
@@ -26,6 +27,10 @@ class Theme extends \Core\Theme {
     protected $commands = [
         SyncACF::class,
         FlushRewrites::class
+    ];
+
+    protected $endpoints = [
+        ContactForm::class
     ];
 
     /**

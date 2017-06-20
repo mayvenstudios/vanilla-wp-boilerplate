@@ -4,6 +4,9 @@ namespace Core;
 
 abstract class PostType {
 
+    /**
+     * @var array
+     */
     protected static $instances = [];
 
     /**
@@ -64,6 +67,10 @@ abstract class PostType {
         ]);
     }
 
+    /**
+     * Get post type instance
+     * @return static
+     */
     public function get()
     {
         $key = get_the_ID() ? : 'null';
@@ -71,5 +78,17 @@ abstract class PostType {
             static::$instances[$key] = $this;
         }
         return static::$instances[$key];
+    }
+
+    /**
+     * Register post type
+     */
+    public function register()
+    {
+        // Ignore built in post types
+        if(!in_array($this->name(), ['post', 'page', 'attachment'])) {
+            register_extended_post_type($this->name(), $this->arguments(), $this->names());
+        }
+        return $this;
     }
 }

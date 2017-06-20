@@ -61,12 +61,21 @@ abstract class Taxonomy {
     }
 
     /**
-     * @return array associated Core\PostType
+     * @return array associated Core\PostType names
      */
-    public function postTypes()
+    public function postTypeNames()
     {
         return collect($this->postTypes)->map(function ($className) {
             return (new $className)->name();
         })->toArray();
+    }
+
+    /**
+     * Register taxonomy
+     */
+    public function register()
+    {
+        register_extended_taxonomy($this->name(), $this->postTypeNames(), $this->arguments(), $this->names());
+        return $this;
     }
 }

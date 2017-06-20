@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Illuminate\Support\Collection;
+
 abstract class Theme
 {
     /**
@@ -24,6 +26,11 @@ abstract class Theme
     protected $postTypes = [];
 
     /**
+     * @var Collection
+     */
+    private $registeredPostTypes;
+
+    /**
      * Registered taxonomies
      *
      * @var array
@@ -38,6 +45,20 @@ abstract class Theme
     protected $commands = [];
 
     /**
+     * Register custom endpoints
+     *
+     * @var array
+     */
+    protected $endpoints = [];
+
+    /**
+     * Theme root
+     *
+     * @var string
+     */
+    protected $rootPath = '';
+
+    /**
      * @return Theme
      */
     public static function getInstance() {
@@ -47,8 +68,11 @@ abstract class Theme
         return static::$instance;
     }
 
+    /**
+     * Theme constructor. Singleton
+     */
     private function __construct() {
-        //...
+        $this->registeredPostTypes = collect();
     }
 
     /**
@@ -60,41 +84,39 @@ abstract class Theme
     public function bootstrap($path = '')
     {
         $this->rootPath = $path;
+
+        define('DISALLOW_FILE_EDIT', $this->config('disabled_theme_editor'));
+        add_action('init', [$this, 'initHandler']);
+        add_action('wp_enqueue_scripts', array($this, 'loadScripts'));
+        add_action('wp_enqueue_scripts', array($this, 'loadStyles'));
+        add_action('wp_head', array($this, 'echoAdditionalJsCss')); /* Load custom CSS/JS into head */
+        add_action('wp_head', array($this, 'echoFaviconHtml')); /* Load favicions into head */
+        add_action('wp_footer', array($this, 'echoAdditionalFooterJsCss'));
+        add_filter('excerpt_more', array($this, 'substituteExcerpt'));
+    }
+
+    public function initHandler()
+    {
         $this->loadConfiguration();
+        $this->registerPostTypes();
+        $this->removeDefaultPostTypes();
+        $this->registerTaxonomies();
+        $this->registerCommands();
+        $this->registerEndpoints();
+
+        $this->loadFiles();
+        $this->clearBladeCache();
+
         $this->loadBlade();
         $this->loadACF();
         $this->loadShortCodes();
-        $this->loadPostTypes();
-        $this->loadTaxonomies();
+
         $this->loadSidebars();
         $this->loadThumbnailSupport();
         $this->removeJunk();
 
         $this->loadOptionsPanelIfNeeded();
         $this->loadMenus();
-
-        define('DISALLOW_FILE_EDIT', $this->config('disabled_theme_editor'));
-
-        add_action('init', array($this, 'loadFiles'));
-        add_action('init', array($this, 'clearBladeCache'));
-        add_action('init', array($this, 'loadConsoleCommands'));
-        add_action('init', array($this, 'removeDefaultPostTypes'));
-
-        /* Enqueue the Theme Script */
-        add_action('wp_enqueue_scripts', array($this, 'loadScripts'));
-        add_action('wp_enqueue_scripts', array($this, 'loadStyles'));
-
-        add_action('wp_head', array($this, 'echoAdditionalJsCss')); /* Load custom CSS/JS into head */
-        add_action('wp_head', array($this, 'echoFaviconHtml')); /* Load favicions into head */
-
-        /* Load additional JS into footer */
-        add_action('wp_footer', array($this, 'echoAdditionalFooterJsCss'));
-
-        /* Clean up excerpt */
-        add_filter('excerpt_more', array($this, 'substituteExcerpt'));
-
-        /* Remove all junk */
-
     }
 
     /**
@@ -158,37 +180,40 @@ abstract class Theme
     /**
      * Custom Post Types should be loaded in this method
      */
-    protected function loadPostTypes()
+    protected function registerPostTypes()
     {
-        $this->postTypes()->each(function ($className) {
-            $this->loadPostType($className);
+        $this->postTypes()->each(function (PostType $postType) {
+            $this->registeredPostTypes->push($postType->register());
         });
-    }
-
-    /**
-     * Load pot type
-     *
-     * @param PostType $postType
-     */
-    protected function loadPostType(PostType $postType)
-    {
-        // Ignore built in post types
-        if(in_array($postType->name(), ['post', 'page', 'attachment'])) return;
-        register_extended_post_type($postType->name(), $postType->arguments(), $postType->names());
     }
 
     /**
      * Custom Taxonomies should be loaded in this method
      */
-    protected function loadTaxonomies()
+    protected function registerTaxonomies()
     {
-        $this->taxonomies()->each(function ($taxonomy) {
-            $this->loadTaxonomy($taxonomy);
+        $this->taxonomies()->each(function (Taxonomy $taxonomy) {
+            $taxonomy->register();
         });
     }
 
-    protected function loadTaxonomy(Taxonomy $taxonomy) {
-        register_extended_taxonomy($taxonomy->name(), $taxonomy->postTypes(), $taxonomy->arguments(), $taxonomy->names());
+    /**
+     * Load console commands
+     */
+    protected function registerCommands()
+    {
+        if(!class_exists('WP_CLI') || !$this->runningInConsole()) return;
+
+        $this->commands()->each(function (Command $command) {
+            $command->register();
+        });
+    }
+
+    protected function registerEndpoints()
+    {
+        $this->endpoints()->each(function (Endpoint $endpoint) {
+            $endpoint->register();
+        });
     }
 
     /**
@@ -275,16 +300,6 @@ abstract class Theme
      */
     public function loadFiles()
     {
-        require_once 'inc/Helper.php';
-
-        $custom_endpoints = get_template_directory() . '/endpoints/';
-        $files = glob($custom_endpoints . '*');
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                require_once $file;
-            }
-        }
-
         $custom_functionality = get_template_directory() . '/custom-functionality/';
         $files = glob($custom_functionality . '*');
         foreach ($files as $file) {
@@ -310,26 +325,15 @@ abstract class Theme
         }
     }
 
-    /**
-     * Load console commands
-     */
-    public function loadConsoleCommands()
-    {
-        if(class_exists('WP_CLI') && $this->runningInConsole()) {
-            $this->commands()->each(function (Command $command) {
-                $command->register();
-            });
-        }
-    }
 
     /**
      * Disable unregistered default post types
      */
     public function removeDefaultPostTypes()
     {
-        $names = $this->postTypes()->map(function ($class) {
-            return (new $class())->name();
-        });
+        $names = $this->registeredPostTypes->map(function (PostType $postType) {
+            return $postType->name();
+        }) ;
 
         if(!$names->contains('post')) {
             unregister_post_type_forced('post');
@@ -484,23 +488,22 @@ abstract class Theme
      */
     public function postTypes()
     {
-        return collect($this->postTypes)->map(function ($className) {
-            return new $className;
-        });
+        return collectInstances(collect($this->postTypes));
     }
 
     public function taxonomies()
     {
-        return collect($this->taxonomies)->map(function ($className) {
-            return new $className;
-        });
+        return collectInstances(collect($this->taxonomies));
     }
 
     public function commands()
     {
-        return collect($this->commands)->map(function ($className) {
-            return new $className;
-        });
+        return collectInstances(collect($this->commands));
+    }
+
+    public function endpoints()
+    {
+        return collectInstances(collect($this->endpoints));
     }
 
     public function runningInConsole()
