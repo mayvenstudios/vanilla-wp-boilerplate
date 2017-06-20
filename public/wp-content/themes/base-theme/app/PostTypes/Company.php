@@ -19,9 +19,11 @@ class Company extends PostType {
 
     /**
      * Company id
+     *
      * @return null|int
      */
-    public function id() {
+    public function id()
+    {
         return get_the_ID() ?: null;
     }
 

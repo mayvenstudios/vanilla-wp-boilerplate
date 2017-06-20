@@ -3,3 +3,4 @@
 vendor
 .idea
 node_modules
+public/wp-content/uploads

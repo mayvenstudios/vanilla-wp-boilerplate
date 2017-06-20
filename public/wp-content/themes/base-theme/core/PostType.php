@@ -16,7 +16,7 @@ abstract class PostType {
      *
      * @var array
      */
-    protected $views;
+    protected $views = [];
 
     /**
      * The singular name, plural name, and slug are generated from the post type name.
