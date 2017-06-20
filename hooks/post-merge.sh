@@ -2,4 +2,4 @@
 
 echo "Syncing ACF Groups.."
 cd public
-wp acf sync
+wp acf-sync

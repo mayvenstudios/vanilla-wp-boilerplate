@@ -62,13 +62,27 @@ if (!function_exists('unregister_post_type_forced')) {
 }
 
 if (!function_exists('app')) {
+
+    /**
+     * Get the Application instance
+     *
+     * @return \Core\Theme
+     */
     function app() {
         return App\Theme::getInstance();
     }
 }
 
 if(!function_exists('post')) {
+
+    /**
+     * Get the *current* custom post type object
+     * return null if current post type is one of the default types
+     *
+     * @return null|\Core\PostType
+     */
     function post() {
+        /** @var WP_Post_Type $postType */
         $postType = get_post_type_object(get_post_type());
         return $postType->className ? (new $postType->className())->get() : null;
     }
