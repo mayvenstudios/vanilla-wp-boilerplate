@@ -1,17 +1,5 @@
 <?php
 
-function asset($name)
-{
-    /**
-     * Generate an asset path for the application.
-     *
-     * @param  string  $path
-     * @return string
-     */
-    return Helper::asset($name);
-
-}
-
 class Helper {
 
     const POSTS_PER_PAGE = 10;
@@ -77,29 +65,6 @@ class Helper {
         } else {
             return get_the_title();
         }
-    }
-
-    /**
-    * Helper method that returns a file from the public directory.
-    *
-    * @param  $name - path to asset
-    * @return path/to/asset
-    */
-    public static function asset( $name )
-    {
-
-        return get_template_directory_uri() . "/resources/assets/{$name}";
-
-    }
-
-    /**
-     * Wrapper for asset method that returns files from "images" folder
-     * @param $name - name of the image inside asset/images/ folder
-     * @return path - full image file path
-     */
-     public static function assetImage( $name )
-    {
-        return self::asset('images/'.$name);
     }
 
     /**

@@ -1,6 +1,33 @@
 <?php
 use Illuminate\Support\HtmlString;
 
+if(!function_exists('asset')) {
+    /**
+     * Generate an asset path for the file.
+     *
+     * @param string  $path
+     * @return string
+     */
+
+    function asset($path)
+    {
+        return get_template_directory_uri() . "/resources/assets/{$path}";
+    }
+}
+
+if(!function_exists('assetImage')) {
+    /**
+     * Wrapper for asset method that returns files from "images" folder
+     *
+     * @param $path - name of the image inside asset/images/ folder
+     * @return string full image uri path
+     */
+    function assetImage($path)
+    {
+        return asset("images/$path");
+    }
+}
+
 if (!function_exists('mix')) {
 
     /**
