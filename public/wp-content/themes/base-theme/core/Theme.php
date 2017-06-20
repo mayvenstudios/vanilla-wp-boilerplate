@@ -167,7 +167,7 @@ abstract class Theme
     {
         // Ignore built in post types
         if(in_array($postType->name(), ['post', 'page', 'attachment'])) return;
-        register_extended_post_type($postType->name(), $postType->args(), $postType->names());
+        register_extended_post_type($postType->name(), $postType->arguments(), $postType->names());
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class Theme
     }
 
     protected function loadTaxonomy(Taxonomy $taxonomy) {
-        register_extended_taxonomy($taxonomy->name(), $taxonomy->postTypes(), $taxonomy->args(), $taxonomy->names());
+        register_extended_taxonomy($taxonomy->name(), $taxonomy->postTypes(), $taxonomy->arguments(), $taxonomy->names());
     }
 
     /**
