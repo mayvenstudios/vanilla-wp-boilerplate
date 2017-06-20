@@ -60,3 +60,16 @@ if (!function_exists('unregister_post_type_forced')) {
         unset($wp_post_types[$type]);
     }
 }
+
+if (!function_exists('app')) {
+    function app() {
+        return App\Theme::getInstance();
+    }
+}
+
+if(!function_exists('post')) {
+    function post() {
+        $postType = get_post_type_object(get_post_type());
+        return $postType->className ? (new $postType->className())->get() : null;
+    }
+}

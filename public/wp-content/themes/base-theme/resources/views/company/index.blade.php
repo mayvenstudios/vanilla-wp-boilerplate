@@ -35,13 +35,15 @@
 @endsection
 
 @section('content')
-<?php while ( have_posts() ) : the_post(); ?>
 <div class="container">
-    <div class="title">WordPress Rapid Development Theme</div>
     <div class="content">
-        <pre>{{ class_basename(post()) }}</pre>
-        <strong>{{ post() ? post()->id() : 'null' }} -> {{ get_the_title() }}</strong>
+        <div class="title">Companies index</div>
+    </div>
+    <div class="row">|
+        <?php while ( have_posts() ) : the_post(); ?>
+            <pre>{{ class_basename(post()) }}</pre>
+            <strong>{{ post()->id() }} -> {{ get_the_title() }}</strong>|
+        <?php endwhile; ?>
     </div>
 </div>
-<?php endwhile; ?>
 @endsection

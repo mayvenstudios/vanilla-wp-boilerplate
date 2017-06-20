@@ -4,10 +4,19 @@ namespace Core;
 
 abstract class PostType {
 
+    protected static $instances = [];
+
     /**
      * @var string Post Type name
      */
     protected $name;
+
+    /**
+     * Specify the templates to be used for single page and archive page
+     *
+     * @var array
+     */
+    protected $views;
 
     /**
      * The singular name, plural name, and slug are generated from the post type name.
@@ -119,7 +128,19 @@ abstract class PostType {
             'quick_edit' => $this->quickEditEnabled,
             'show_in_feed' => $this->showInFeed,
             'site_filters' => $this->siteFilters,
-            'site_sortables' => $this->siteSortables
+            'site_sortables' => $this->siteSortables,
+            'single_view' => isset($this->views['single']) ? $this->views['single'] : null,
+            'index_view' => isset($this->views['index']) ? $this->views['index'] : null,
+            'className' => static::class
         ];
+    }
+
+    public function get()
+    {
+        $key = get_the_ID() ? : 'null';
+        if(!isset(static::$instances[$key])) {
+            static::$instances[$key] = $this;
+        }
+        return static::$instances[$key];
     }
 }

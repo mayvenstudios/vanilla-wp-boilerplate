@@ -5,6 +5,11 @@ namespace Core;
 abstract class Theme
 {
     /**
+     * @var static
+     */
+    public static $instance;
+
+    /**
      * Theme settings
      *
      * @var array
@@ -19,12 +24,26 @@ abstract class Theme
     protected $postTypes = [];
 
     /**
+     * @return Theme
+     */
+    public static function getInstance() {
+        if(is_null(static::$instance)) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
+
+    private function __construct() {
+        //...
+    }
+
+    /**
      * Bootstrap function for the class.
      * Loads everything up based off of various parameters you can set.
      *
      * @param string $path root theme path
      */
-    public function __construct($path = '')
+    public function bootstrap($path = '')
     {
         $this->rootPath = $path;
         $this->loadConfiguration();
@@ -135,13 +154,10 @@ abstract class Theme
     /**
      * Load pot type
      *
-     * @param $className post type class name
+     * @param PostType $postType
      */
-    protected function loadPostType($className)
+    protected function loadPostType(PostType $postType)
     {
-        /** @var PostType $postType */
-        $postType = new $className();
-
         // Ignore built in post types
         if(in_array($postType->name(), ['post', 'page', 'attachment'])) return;
         register_extended_post_type($postType->name(), $postType->args(), $postType->names());
@@ -456,7 +472,9 @@ abstract class Theme
      */
     public function postTypes()
     {
-        return collect($this->postTypes);
+        return collect($this->postTypes)->map(function ($className) {
+            return new $className;
+        });
     }
 
 }
