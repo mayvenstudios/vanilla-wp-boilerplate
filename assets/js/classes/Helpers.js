@@ -1,4 +1,5 @@
 import '../global.js'
+import '../plugins/slick.js'
 
 
 export const MobileNav = () => {
@@ -23,28 +24,27 @@ export const MobileNav = () => {
     });
 }
 
-export const OpenClose = () => {
-    $('[data-more]').next('[data-more-content]').hide();
-
-    $('[data-more]').click(function(e) {
-        e.preventDefault();
-        // $('[data-more]').not(this).removeClass('active').next('[data-more-content]').slideUp(200);
-        $(this).hasClass('active') ? $(this).removeClass('active').next('[data-more-content]').slideUp(200) : $(this).addClass('active').next('[data-more-content]').slideToggle(200);
-    })
-
-    $('[data-outside] + [data-more-content]').find('a:not(.hasdrop-a)').click(function() {
-        $('[data-outside]').removeClass('active').next('[data-more-content]').slideUp(200);
-    })
+export const AnchorLink = () => {
+    jQuery('a[href*="#"]:not([href="#"])').click(function () {
+        var headerHeight = jQuery('header.navbar').outerHeight();
+        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+            var target = jQuery(this.hash);
+            target = target.length ? target : jQuery('[name=' + this.hash.slice(1) + ']');
+            if (target.length) {
+                jQuery('html, body').animate({
+                    scrollTop: target.offset().top - headerHeight + 10
+                }, 1000);
+                return false;
+            }
+        }
+    });
 }
 
-export const Tabs = () => {
-    $('ul.tabs li').click(function(){
-        var tab_id = $(this).attr('data-tab');
-
-        $(this).siblings().removeClass('current');
-        $("#"+tab_id).siblings().removeClass('current');
-
-        $(this).addClass('current');
-        $("#"+tab_id).addClass('current');
-    })
+export const SlickSlider = () => {
+    jQuery('.slick-slider').slick({
+        infinite: true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        dots: true
+    });
 }

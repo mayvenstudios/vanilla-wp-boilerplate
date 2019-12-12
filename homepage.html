@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIGUP</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="assets/compiled/css/app.css">
 </head>
@@ -13,52 +13,59 @@
         <header class="navbar">
             <div class="navbar__main-logo">
                 <a href="#"><img class="rigup-logo" src="assets/images/logo-rigup.svg" alt=""></a>
-                <button title="Open Menu" aria-label="Open Menu" class="navbar__menu-button">
-                    <svg class="icon primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <button class="navbar__menu-button">
+                    <svg class="icon icon-open primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                    <svg class="icon icon-close primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                     </svg>
                 </button>
             </div>
             <nav class="navbar__site-links">
                 <ul class="navbar__site-links-list">
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
-                            <li><a href="#" target="" rel="noopener noreferrer">Contractors</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Vendors</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Operators</a></li>
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
+                            <li><a href="#">Contractors</a></li>
+                            <li><a href="#">Vendors</a></li>
+                            <li><a href="#">Operators</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
-                            <li><a href="#" target="" rel="noopener noreferrer">Drilling</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">HSE</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Completions</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Production</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Pipeline</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Solar</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Wind</a></li>
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
+                            <li><a href="#">Drilling</a></li>
+                            <li><a href="#">HSE</a></li>
+                            <li><a href="#">Completions</a></li>
+                            <li><a href="#">Production</a></li>
+                            <li><a href="#">Pipeline</a></li>
+                            <li><a href="#">Solar</a></li>
+                            <li><a href="#">Wind</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
-                            <li><a href="#" target="" rel="noopener noreferrer">Workforce Marketplace</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Vendor Marketplace</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Managed Field Services</a></li>
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
+                            <li><a href="#">Workforce Marketplace</a></li>
+                            <li><a href="#">Vendor Marketplace</a></li>
+                            <li><a href="#">Managed Field Services</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">About Us<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
-                            <li><a href="#" target="" rel="noopener noreferrer">Our Story</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Resources</a></li>
-                            <li><a href="#" target="" rel="noopener noreferrer">Careers</a></li>
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">About Us<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
+                            <li><a href="#">Our Story</a></li>
+                            <li><a href="#">Resources</a></li>
+                            <li><a href="#">Careers</a></li>
                         </ul>
                     </li>
                 </ul>
                 <ul class="navbar__account-links">
-                    <li><a href="#" rel="noopener noreferrer" target="_blank">Support</a></li>
+                    <li><a href="#" target="_blank">Support</a></li>
                     <li><a href="#">Sign Up</a></li>
                     <li class="navbar__account-button-link"><a class="button primary sm" href="#">Sign in</a></li>
-                    <div class="navbar__links-bottom-spacer"></div>
+                    <li class="navbar__links-bottom-spacer"></li>
                 </ul>
             </nav>
         </header>
@@ -206,22 +213,22 @@
                         <div class="columns is-vcentered is-multiline logo-band__columns is-mobile">
                             <div class="column is-6-mobile is-2-desktop">
                                 <div class="logo-band__img-container">
-                                    <a href="#" rel="noopener noreferrer"><img src="assets/images/logo-anadarko.png" alt="Anadarko logo" width="100%"></a>
+                                    <a href="#"><img src="assets/images/logo-anadarko.png" alt="Anadarko logo"></a>
                                 </div>
                             </div>
                             <div class="column is-6-mobile is-2-desktop">
                                 <div class="logo-band__img-container">
-                                    <a href="#" rel="noopener noreferrer"><img src="assets/images/logo-gulfport.png" alt="Gulfport Energy logo" width="100%"></a>
+                                    <a href="#"><img src="assets/images/logo-gulfport.png" alt="Gulfport Energy logo"></a>
                                 </div>
                             </div>
                             <div class="column is-6-mobile is-2-desktop">
                                 <div class="logo-band__img-container">
-                                    <a href="#" rel="noopener noreferrer"><img src="assets/images/logo-noble.png" alt="Noble Energy Logo" width="100%"></a>
+                                    <a href="#"><img src="assets/images/logo-noble.png" alt="Noble Energy Logo"></a>
                                 </div>
                             </div>
                             <div class="column is-6-mobile is-2-desktop">
                                 <div class="logo-band__img-container">
-                                    <a href="#" rel="noopener noreferrer"><img src="assets/images/logo-bp.png" alt="BP Logo" width="100%"></a>
+                                    <a href="#"><img src="assets/images/logo-bp.png" alt="BP Logo"></a>
                                 </div>
                             </div>
                         </div>
@@ -232,7 +239,7 @@
             <div class="section-container section-container--white">
                 <div class="container home-page-image-and-text">
                     <div class="columns is-desktop">
-                        <div class="column"><img src="https://images.prismic.io/rigup%2F2e62a6ed-248d-4de7-b657-9e47ac4f0fda_banner4.jpg?auto=compress,format" width="100%"></div>
+                        <div class="column"><img class="img-block" src="assets/images/bg05.jpg" alt=""></div>
                         <div class="column home-page-image-and-text__text">
                             <div class="home-page-image-and-text__label">
                                 <h2>Empowering Contractors</h2>
@@ -279,7 +286,7 @@
                     <div class="columns is-desktop">
                         <div class="column is-4-desktop">
                             <div class="home-page-card-grid__card">
-                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/hardhat-icon.svg"></div>
+                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/hardhat-icon.svg" alt=""></div>
                                 <div class="home-page-card-grid__card-title">
                                     <h2>Workforce Marketplace</h2>
                                 </div>
@@ -293,7 +300,7 @@
                         </div>
                         <div class="column is-4-desktop">
                             <div class="home-page-card-grid__card">
-                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/vendor-icon.svg"></div>
+                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/vendor-icon.svg" alt=""></div>
                                 <div class="home-page-card-grid__card-title">
                                     <h2>Vendor Marketplace</h2>
                                 </div>
@@ -307,7 +314,7 @@
                         </div>
                         <div class="column is-4-desktop">
                             <div class="home-page-card-grid__card">
-                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/service-provider-icon.svg"></div>
+                                <div class="home-page-card-grid__card-image-container"><img src="assets/images/service-provider-icon.svg" alt=""></div>
                                 <div class="home-page-card-grid__card-title">
                                     <h2>Managed Field Services</h2>
                                 </div>
@@ -346,10 +353,10 @@
                             <br>
                         </div>
                         <div class="footer--social-media-icons">
-                            <a href="#" rel="noopener noreferrer" target="_blank"><img alt="Facebook" src="assets/images/facebook.svg"></a>
-                            <a href="#" rel="noopener noreferrer" target="_blank"><img alt="Twitter" src="assets/images/twitter.svg"></a>
-                            <a href="#" rel="noopener noreferrer" target="_blank"><img alt="Linkedin" src="assets/images/linkedin.svg"></a>
-                            <a href="#" rel="noopener noreferrer" target="_blank"><img alt="Instagram" src="assets/images/instagram.svg"></a>
+                            <a href="#" target="_blank"><img alt="Facebook" src="assets/images/facebook.svg"></a>
+                            <a href="#" target="_blank"><img alt="Twitter" src="assets/images/twitter.svg"></a>
+                            <a href="#" target="_blank"><img alt="Linkedin" src="assets/images/linkedin.svg"></a>
+                            <a href="#" target="_blank"><img alt="Instagram" src="assets/images/instagram.svg"></a>
                         </div>
                         <div class="footer--desktop-copyright-container">
                             <div class="footer--copyright">© 2019 RigUp, Inc.</div>
@@ -361,46 +368,46 @@
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">Who We Serve</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Contractors</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Vendors</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Operators</a></li>
+                                    <li class="footer--nav-item"><a href="#">Contractors</a></li>
+                                    <li class="footer--nav-item"><a href="#">Vendors</a></li>
+                                    <li class="footer--nav-item"><a href="#">Operators</a></li>
                                 </ul>
                             </div>
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">Service Lines</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Drilling</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">HSE</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Completions</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Production</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Pipeline</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Solar</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Wind</a></li>
+                                    <li class="footer--nav-item"><a href="#">Drilling</a></li>
+                                    <li class="footer--nav-item"><a href="#">HSE</a></li>
+                                    <li class="footer--nav-item"><a href="#">Completions</a></li>
+                                    <li class="footer--nav-item"><a href="#">Production</a></li>
+                                    <li class="footer--nav-item"><a href="#">Pipeline</a></li>
+                                    <li class="footer--nav-item"><a href="#">Solar</a></li>
+                                    <li class="footer--nav-item"><a href="#">Wind</a></li>
                                 </ul>
                             </div>
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">Solutions</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Workforce Marketplace</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Vendor Marketplace</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Managed Field Services</a></li>
+                                    <li class="footer--nav-item"><a href="#">Workforce Marketplace</a></li>
+                                    <li class="footer--nav-item"><a href="#">Vendor Marketplace</a></li>
+                                    <li class="footer--nav-item"><a href="#">Managed Field Services</a></li>
                                 </ul>
                             </div>
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">Other Resources</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="_blank" rel="noopener noreferrer">RigUp Store</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="_blank" rel="noopener noreferrer">RigUp Org</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Media Kit</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">RigUp Labs</a></li>
+                                    <li class="footer--nav-item"><a href="#" target="_blank">RigUp Store</a></li>
+                                    <li class="footer--nav-item"><a href="#" target="_blank">RigUp Org</a></li>
+                                    <li class="footer--nav-item"><a href="#">Media Kit</a></li>
+                                    <li class="footer--nav-item"><a href="#">RigUp Labs</a></li>
                                 </ul>
                             </div>
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">About Us</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Our Story</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Resources</a></li>
-                                    <li class="footer--nav-item"><a href="#" target="" rel="noopener noreferrer">Careers</a></li>
+                                    <li class="footer--nav-item"><a href="#">Our Story</a></li>
+                                    <li class="footer--nav-item"><a href="#">Resources</a></li>
+                                    <li class="footer--nav-item"><a href="#">Careers</a></li>
                                 </ul>
                             </div>
                         </div>

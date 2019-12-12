@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIGUP</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="assets/compiled/css/app.css">
 </head>
@@ -13,23 +13,28 @@
         <header class="navbar">
             <div class="navbar__main-logo">
                 <a href="#"><img class="rigup-logo" src="assets/images/logo-rigup.svg" alt=""></a>
-                <button title="Open Menu" aria-label="Open Menu" class="navbar__menu-button">
-                    <svg class="icon primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <button class="navbar__menu-button">
+                    <svg class="icon icon-open primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                    <svg class="icon icon-close primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                     </svg>
                 </button>
             </div>
             <nav class="navbar__site-links">
                 <ul class="navbar__site-links-list">
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Contractors</a></li>
                             <li><a href="#">Vendors</a></li>
                             <li><a href="#">Operators</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Drilling</a></li>
                             <li><a href="#">HSE</a></li>
                             <li><a href="#">Completions</a></li>
@@ -39,15 +44,17 @@
                             <li><a href="#">Wind</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Workforce Marketplace</a></li>
                             <li><a href="#">Vendor Marketplace</a></li>
                             <li><a href="#">Managed Field Services</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">About Us<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">About Us<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Our Story</a></li>
                             <li><a href="#">Resources</a></li>
                             <li><a href="#">Careers</a></li>
@@ -58,7 +65,7 @@
                     <li><a href="#" target="_blank">Support</a></li>
                     <li><a href="#">Sign Up</a></li>
                     <li class="navbar__account-button-link"><a class="button primary sm" href="#">Sign in</a></li>
-                    <div class="navbar__links-bottom-spacer"></div>
+                    <li class="navbar__links-bottom-spacer"></li>
                 </ul>
             </nav>
         </header>
@@ -195,26 +202,26 @@
                     <div>
                         <h2 class="white-text">We're Hiring</h2>
                         <div class="department-pills">
-                            <div class="department-pill">Accounting &amp; Finance</div>
-                            <div class="department-pill">Benefits</div>
-                            <div class="department-pill">Business Intelligence</div>
-                            <div class="department-pill">Business Operations</div>
-                            <div class="department-pill">Design</div>
-                            <div class="department-pill">General</div>
-                            <div class="department-pill">IT</div>
-                            <div class="department-pill">Marketing</div>
-                            <div class="department-pill">Operations</div>
-                            <div class="department-pill">Payroll</div>
-                            <div class="department-pill">Product</div>
-                            <div class="department-pill">Product Marketing</div>
-                            <div class="department-pill">Sales</div>
-                            <div class="department-pill">Sales Operations</div>
-                            <div class="department-pill">Software Engineering</div>
-                            <div class="department-pill">Support</div>
-                            <div class="department-pill">Talent</div>
+                            <a href="#accounting" class="department-pill">Accounting &amp; Finance</a>
+                            <a href="#benifits" class="department-pill">Benefits</a>
+                            <a href="#business-intelligence" class="department-pill">Business Intelligence</a>
+                            <a href="#business-operations" class="department-pill">Business Operations</a>
+                            <a href="#design" class="department-pill">Design</a>
+                            <a href="#general" class="department-pill">General</a>
+                            <a href="#it" class="department-pill">IT</a>
+                            <a href="#marketing" class="department-pill">Marketing</a>
+                            <a href="#operations" class="department-pill">Operations</a>
+                            <a href="#payroll" class="department-pill">Payroll</a>
+                            <a href="#product" class="department-pill">Product</a>
+                            <a href="#product-marketing" class="department-pill">Product Marketing</a>
+                            <a href="#sales" class="department-pill">Sales</a>
+                            <a href="#sales-operations" class="department-pill">Sales Operations</a>
+                            <a href="#software-engineering" class="department-pill">Software Engineering</a>
+                            <a href="#support" class="department-pill">Support</a>
+                            <a href="#talent" class="department-pill">Talent</a>
                         </div>
                         <div>
-                            <div class="department-section">
+                            <div class="department-section"  id="accounting">
                                 <h6>Accounting &amp; Finance</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -295,7 +302,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="benifits">
                                 <h6>Benefits</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -315,7 +322,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="business-intelligence">
                                 <h6>Business Intelligence</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -410,7 +417,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="business-operations">
                                 <h6>Business Operations</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -460,7 +467,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="design">
                                 <h6>Design</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -495,7 +502,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="general">
                                 <h6>General</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -516,7 +523,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="it">
                                 <h6>IT</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -536,7 +543,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="marketing">
                                 <h6>Marketing</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -617,7 +624,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="operations">
                                 <h6>Operations</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -896,7 +903,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="payroll">
                                 <h6>Payroll</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -931,7 +938,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="product">
                                 <h6>Product</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -951,7 +958,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="product-marketing">
                                 <h6>Product Marketing</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -986,7 +993,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="sales">
                                 <h6>Sales</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -1081,7 +1088,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="sales-operations">
                                 <h6>Sales Operations</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -1101,7 +1108,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="software-engineering">
                                 <h6>Software Engineering</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -1198,7 +1205,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="support">
                                 <h6>Support</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">
@@ -1233,7 +1240,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="department-section">
+                            <div class="department-section" id="talent">
                                 <h6>Talent</h6>
                                 <div class="department-postings">
                                     <div class="job-posting-wrapper">

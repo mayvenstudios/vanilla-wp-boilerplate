@@ -2452,6 +2452,12 @@ svg.icon {
   * {
     box-sizing: border-box;
   }
+
+  .navbar__menu-button {
+    .icon-close {
+      display: none;
+    }
+  }
 }
 
 @media screen and (max-width: 1023px) {
@@ -2532,12 +2538,23 @@ svg.icon {
 
 .navbar__links-bottom-spacer {
   height: 60px;
+  margin: 0 !important;
 }
 
 .navbar.navbar--open {
   height: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+
+  .navbar__menu-button {
+    .icon-open {
+      display: none;
+    }
+
+    .icon-close {
+      display: block;
+    }
+  }
 }
 
 .navbar--open .navbar__site-links {
@@ -4282,6 +4299,16 @@ img {
   }
 }
 
+.logo-band__container {
+  img {
+    width: 100%;
+  }
+}
+
+.img-block {
+  width: 100%;
+}
+
 @media only screen and (max-width: 1023px) {
   .two-column-text__column-two-copy ul {
     margin-top: 0;
@@ -5178,6 +5205,7 @@ img {
       margin: 0 30px 15px 0;
       padding: 5px 15px;
       transition: background 0.15s ease-out, color 0.15s ease-out;
+      text-decoration: none;
 
       &:hover {
         background-color: rgba(0, 0, 0, 0.25);

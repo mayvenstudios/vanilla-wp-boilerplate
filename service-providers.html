@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIGUP</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="assets/compiled/css/app.css">
 </head>
@@ -13,23 +13,28 @@
         <header class="navbar">
             <div class="navbar__main-logo">
                 <a href="#"><img class="rigup-logo" src="assets/images/logo-rigup.svg" alt=""></a>
-                <button title="Open Menu" aria-label="Open Menu" class="navbar__menu-button">
-                    <svg class="icon primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <button class="navbar__menu-button">
+                    <svg class="icon icon-open primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                    <svg class="icon icon-close primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                     </svg>
                 </button>
             </div>
             <nav class="navbar__site-links">
                 <ul class="navbar__site-links-list">
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Contractors</a></li>
                             <li><a href="#">Vendors</a></li>
                             <li><a href="#">Operators</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Drilling</a></li>
                             <li><a href="#">HSE</a></li>
                             <li><a href="#">Completions</a></li>
@@ -39,15 +44,17 @@
                             <li><a href="#">Wind</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Workforce Marketplace</a></li>
                             <li><a href="#">Vendor Marketplace</a></li>
                             <li><a href="#">Managed Field Services</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">About Us<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">About Us<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Our Story</a></li>
                             <li><a href="#">Resources</a></li>
                             <li><a href="#">Careers</a></li>
@@ -58,7 +65,7 @@
                     <li><a href="#" target="_blank">Support</a></li>
                     <li><a href="#">Sign Up</a></li>
                     <li class="navbar__account-button-link"><a class="button primary sm" href="#">Sign in</a></li>
-                    <div class="navbar__links-bottom-spacer"></div>
+                    <li class="navbar__links-bottom-spacer"></li>
                 </ul>
             </nav>
         </header>
@@ -213,10 +220,10 @@
             <div class="content-block targeted-logos-section white">
                 <div class="content-container">
                     <div class="logos-row">
-                        <div class="company-logo" style="max-width:25%"><img src="assets/images/parsley_logo.png"></div>
-                        <div class="company-logo" style="max-width:25%"><img src="assets/images/precision_logo_bw.png"></div>
-                        <div class="company-logo" style="max-width:25%"><img src="assets/images/logo-sanchez.jpg"></div>
-                        <div class="company-logo" style="max-width:25%"><img src="assets/images/bakerhughes_logo_bw.png"></div>
+                        <div class="company-logo" style="max-width:25%"><img alt="" src="assets/images/parsley_logo.png"></div>
+                        <div class="company-logo" style="max-width:25%"><img alt="" src="assets/images/precision_logo_bw.png"></div>
+                        <div class="company-logo" style="max-width:25%"><img alt="" src="assets/images/logo-sanchez.jpg"></div>
+                        <div class="company-logo" style="max-width:25%"><img alt="" src="assets/images/bakerhughes_logo_bw.png"></div>
                     </div>
                 </div>
             </div>
@@ -224,29 +231,21 @@
             <div class="content-block targeted-testimonials dynamic-background-image" style="background-image:url(assets/images/bg06.jpg)">
                 <div class="sm-res-img" style="background-image:url(assets/images/bg06.jpg)"></div>
                 <div class="content-container">
-                    <div class="slick-slider slick-initialized">
-                        <div class="slick-list">
-                            <div class="slick-track" style="width: 1041px; opacity: 1; transform: translate3d(0px, 0px, 0px);">
-                                <div data-index="0" class="slick-slide slick-active slick-current" tabindex="-1" aria-hidden="false" style="outline: none; width: 1041px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url(assets/images/img13.jpg);border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Jason McCall</h6>
-                                                    <div class="blue-text">Operations Manager</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>Easy to work with and very helpful. Quick to respond to any questions and requests, which is the kind of support I need to keep day to day operations running smoothly.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <div class="slick-slider">
+                        <div>
+                            <div class="targeted-testimonial">
+                                <div class="testimonial-person">
+                                    <div class="headshot-image-container">
+                                        <div class="rigup-headshot" style="background-image:url(assets/images/img13.jpg);"></div>
+                                        <hr class="med">
+                                    </div>
+                                    <hr class="small">
+                                    <h6 class="white-text">Jason McCall</h6>
+                                    <div class="blue-text">Operations Manager</div>
+                                </div>
+                                <div>
+                                    <div class="testimonial-text">
+                                        <p>Easy to work with and very helpful. Quick to respond to any questions and requests, which is the kind of support I need to keep day to day operations running smoothly.</p>
                                     </div>
                                 </div>
                             </div>
@@ -345,7 +344,7 @@
                             <div class="footer--nav-segment">
                                 <div class="footer--nav-title">Other Resources</div>
                                 <ul>
-                                    <li class="footer--nav-item"><a href="#" target="_blank" ">RigUp Store</a></li>
+                                    <li class="footer--nav-item"><a href="#" target="_blank">RigUp Store</a></li>
                                     <li class="footer--nav-item"><a href="#" target="_blank">RigUp Org</a></li>
                                     <li class="footer--nav-item"><a href="#">Media Kit</a></li>
                                     <li class="footer--nav-item"><a href="#">RigUp Labs</a></li>

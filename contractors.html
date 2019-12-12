@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RIGUP</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i|Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/favicon.ico">
     <link rel="stylesheet" href="assets/compiled/css/app.css">
 </head>
@@ -13,23 +13,28 @@
         <header class="navbar">
             <div class="navbar__main-logo">
                 <a href="#"><img class="rigup-logo" src="assets/images/logo-rigup.svg" alt=""></a>
-                <button title="Open Menu" aria-label="Open Menu" class="navbar__menu-button">
-                    <svg class="icon primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <button class="navbar__menu-button">
+                    <svg class="icon icon-open primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                    </svg>
+                    <svg class="icon icon-close primary" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
                     </svg>
                 </button>
             </div>
             <nav class="navbar__site-links">
                 <ul class="navbar__site-links-list">
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Who We Serve<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Contractors</a></li>
                             <li><a href="#">Vendors</a></li>
                             <li><a href="#">Operators</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Service Lines<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Drilling</a></li>
                             <li><a href="#">HSE</a></li>
                             <li><a href="#">Completions</a></li>
@@ -39,15 +44,17 @@
                             <li><a href="#">Wind</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">Solutions<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Workforce Marketplace</a></li>
                             <li><a href="#">Vendor Marketplace</a></li>
                             <li><a href="#">Managed Field Services</a></li>
                         </ul>
                     </li>
-                    <li class="navbar-link-group"><span class="navbar-link-group__label" aria-haspopup="true" tabindex="0">About Us<span class="navbar-link-group__chevron-icon"></span></span>
-                        <ul class="navbar-link-group__list" aria-label="submenu">
+                    <li class="navbar-link-group">
+                        <span class="navbar-link-group__label">About Us<span class="navbar-link-group__chevron-icon"></span></span>
+                        <ul class="navbar-link-group__list">
                             <li><a href="#">Our Story</a></li>
                             <li><a href="#">Resources</a></li>
                             <li><a href="#">Careers</a></li>
@@ -58,7 +65,7 @@
                     <li><a href="#" target="_blank">Support</a></li>
                     <li><a href="#">Sign Up</a></li>
                     <li class="navbar__account-button-link"><a class="button primary sm" href="#">Sign in</a></li>
-                    <div class="navbar__links-bottom-spacer"></div>
+                    <li class="navbar__links-bottom-spacer"></li>
                 </ul>
             </nav>
         </header>
@@ -203,11 +210,11 @@
             <div class="content-block targeted-logos-section white">
                 <div class="content-container">
                     <div class="logos-row">
-                        <div class="company-logo" style="max-width:20%"><img src="assets/images/wpx_logo.png"></div>
-                        <div class="company-logo" style="max-width:20%"><img src="assets/images/halliburton_logo_bw.png"></div>
-                        <div class="company-logo" style="max-width:20%"><img src="assets/images/logo-eclipse.jpg"></div>
-                        <div class="company-logo" style="max-width:20%"><img src="assets/images/premier_directional_logo.png"></div>
-                        <div class="company-logo" style="max-width:20%"><img src="assets/images/rsppermian_logo_bw.png"></div>
+                        <div class="company-logo" style="max-width:20%"><img alt="" src="assets/images/wpx_logo.png"></div>
+                        <div class="company-logo" style="max-width:20%"><img alt="" src="assets/images/halliburton_logo_bw.png"></div>
+                        <div class="company-logo" style="max-width:20%"><img alt="" src="assets/images/logo-eclipse.jpg"></div>
+                        <div class="company-logo" style="max-width:20%"><img alt="" src="assets/images/premier_directional_logo.png"></div>
+                        <div class="company-logo" style="max-width:20%"><img alt="" src="assets/images/rsppermian_logo_bw.png"></div>
                     </div>
                 </div>
             </div>
@@ -215,179 +222,61 @@
             <div class="content-block targeted-testimonials dynamic-background-image" style="background-image:url(assets/images/bg06.jpg)">
                 <div class="sm-res-img" style="background-image:url(assets/images/bg06.jpg)"></div>
                 <div class="content-container">
-                    <div class="slick-slider slick-initialized" dir="ltr">
-
-                        <button type="button" data-role="none" class="slick-arrow slick-prev" style="display:block">Previous</button>
-                        <div class="slick-list">
-                            <div class="slick-track" style="width: 5390px; opacity: 1; transform: translate3d(-770px, 0px, 0px);">
-                                <div data-index="-1" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true" style="width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member11.png');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Richard Northcott</h6>
-                                                    <div class="blue-text">Completions Consultant</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>With my previous consulting firms, I would sometimes wait 90 days without getting a check. It was a nightmare. Now that I am with RigUp, I can submit my invoice on a Friday, and the money is in my bank account the following week. It has been a tremendous change.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <div class="slick-slider">
+                        <div>
+                            <div class="targeted-testimonial">
+                                <div class="testimonial-person">
+                                    <div class="headshot-image-container">
+                                        <div class="rigup-headshot" style="background-image:url('assets/images/member12.jpg');"></div>
+                                        <hr class="med">
                                     </div>
+                                    <hr class="small">
+                                    <h6 class="white-text">Jonathan Christesen</h6>
+                                    <div class="blue-text">Lease Operator / Pumper</div>
                                 </div>
-                                <div data-index="0" class="slick-slide slick-active slick-current" tabindex="-1" aria-hidden="false" style="outline: none; width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member12.jpg');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Jonathan Christesen</h6>
-                                                    <div class="blue-text">Lease Operator / Pumper</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>I like to think RigUp chose me. Everything fell into place and I feel incredibly blessed. The people at RigUp are friendly and professional. I’d like to say thank you for allowing me to be a part of it!</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-index="1" class="slick-slide" tabindex="-1" aria-hidden="true" style="outline: none; width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member13.jpg');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">James Melton</h6>
-                                                    <div class="blue-text">Drilling, Completions and Workover Consultant</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>Everyone I speak with keeps their word and truly cares about us. RigUp puts a face to a name by coming out to the field and asks about how we’re doing. They get a better knowledge of what we do out on the field.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-index="2" class="slick-slide" tabindex="-1" aria-hidden="true" style="outline: none; width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member11.png');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Richard Northcott</h6>
-                                                    <div class="blue-text">Completions Consultant</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>With my previous consulting firms, I would sometimes wait 90 days without getting a check. It was a nightmare. Now that I am with RigUp, I can submit my invoice on a Friday, and the money is in my bank account the following week. It has been a tremendous change.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-index="3" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true" style="width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member12.jpg');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Jonathan Christesen</h6>
-                                                    <div class="blue-text">Lease Operator / Pumper</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>I like to think RigUp chose me. Everything fell into place and I feel incredibly blessed. The people at RigUp are friendly and professional. I’d like to say thank you for allowing me to be a part of it!</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-index="4" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true" style="width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member13.jpg');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">James Melton</h6>
-                                                    <div class="blue-text">Drilling, Completions and Workover Consultant</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>Everyone I speak with keeps their word and truly cares about us. RigUp puts a face to a name by coming out to the field and asks about how we’re doing. They get a better knowledge of what we do out on the field.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-index="5" tabindex="-1" class="slick-slide slick-cloned" aria-hidden="true" style="width: 770px;">
-                                    <div>
-                                        <div tabindex="-1" style="width:100%;display:inline-block">
-                                            <div class="targeted-testimonial">
-                                                <div class="testimonial-person">
-                                                    <div class="headshot-image-container">
-                                                        <div class="rigup-headshot" style="background-image:url('assets/images/member11.png');border-radius:[object Object]px;height:[object Object]px;width:[object Object]px"></div>
-                                                        <hr class="med">
-                                                    </div>
-                                                    <hr class="small">
-                                                    <h6 class="white-text">Richard Northcott</h6>
-                                                    <div class="blue-text">Completions Consultant</div>
-                                                </div>
-                                                <div>
-                                                    <div class="testimonial-text">
-                                                        <p>With my previous consulting firms, I would sometimes wait 90 days without getting a check. It was a nightmare. Now that I am with RigUp, I can submit my invoice on a Friday, and the money is in my bank account the following week. It has been a tremendous change.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div>
+                                    <div class="testimonial-text">
+                                        <p>I like to think RigUp chose me. Everything fell into place and I feel incredibly blessed. The people at RigUp are friendly and professional. I’d like to say thank you for allowing me to be a part of it!</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <button type="button" data-role="none" class="slick-arrow slick-next" style="display:block">Next</button>
-                        <ul style="display:block" class="slick-dots">
-                            <li class="slick-active">
-                                <button>1</button>
-                            </li>
-                            <li class="">
-                                <button>2</button>
-                            </li>
-                            <li class="">
-                                <button>3</button>
-                            </li>
-                        </ul>
+                        <div>
+                            <div class="targeted-testimonial">
+                                <div class="testimonial-person">
+                                    <div class="headshot-image-container">
+                                        <div class="rigup-headshot" style="background-image:url('assets/images/member13.jpg');"></div>
+                                        <hr class="med">
+                                    </div>
+                                    <hr class="small">
+                                    <h6 class="white-text">James Melton</h6>
+                                    <div class="blue-text">Drilling, Completions and Workover Consultant</div>
+                                </div>
+                                <div>
+                                    <div class="testimonial-text">
+                                        <p>Everyone I speak with keeps their word and truly cares about us. RigUp puts a face to a name by coming out to the field and asks about how we’re doing. They get a better knowledge of what we do out on the field.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="targeted-testimonial">
+                                <div class="testimonial-person">
+                                    <div class="headshot-image-container">
+                                        <div class="rigup-headshot" style="background-image:url('assets/images/member11.png');"></div>
+                                        <hr class="med">
+                                    </div>
+                                    <hr class="small">
+                                    <h6 class="white-text">Richard Northcott</h6>
+                                    <div class="blue-text">Completions Consultant</div>
+                                </div>
+                                <div>
+                                    <div class="testimonial-text">
+                                        <p>With my previous consulting firms, I would sometimes wait 90 days without getting a check. It was a nightmare. Now that I am with RigUp, I can submit my invoice on a Friday, and the money is in my bank account the following week. It has been a tremendous change.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -410,7 +299,7 @@
                     </div>
                 </div>
                 <div class="alternating-block reverse">
-                    <div class="alternating-img-section" style="background-image:url('https://images.prismic.io/rigup/5ecd8f8ac5f0b2e89f4b2c7eae8dc89bf513713d_dsc01898.png?auto=compress,format')"></div>
+                    <div class="alternating-img-section" style="background-image:url('assets/images/bg09.jpg')"></div>
                     <div class="alternating-block-content">
                         <div class="content-side">
                             <h2>We've got your back.</h2>
