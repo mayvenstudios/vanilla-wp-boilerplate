@@ -27,15 +27,9 @@ $media-expressions: (
 @import 'base/functions';
 @import 'base/mixins';
 @import 'base/helpers';
-// @import 'base/reset';
-// @import 'base/typography';
-// @import 'base/forms';
 
-// @import 'vendors/grid';
-
-// @import 'layouts/header';
-// @import 'layouts/common';
-// @import 'layouts/footer';
 @import 'layouts/drilling';
 @import 'layouts/all';
 @import 'layouts/blog';
+@import 'layouts/rigup-org';
+
