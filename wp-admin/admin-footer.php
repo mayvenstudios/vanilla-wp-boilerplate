@@ -7,8 +7,9 @@
  */
 
 // don't load directly
-if ( !defined('ABSPATH') )
-	die('-1');
+if ( ! defined( 'ABSPATH' ) ) {
+	die( '-1' );
+}
 
 /**
  * @global string $hook_suffix
@@ -31,7 +32,12 @@ global $hook_suffix;
 	?>
 	<p id="footer-left" class="alignleft">
 		<?php
-		$text = sprintf( __( 'Thank you for creating with <a href="%s">WordPress</a>.' ), __( 'https://wordpress.org/' ) );
+		$text = sprintf(
+			/* translators: %s: https://wordpress.org/ */
+			__( 'Thank you for creating with <a href="%s">WordPress</a>.' ),
+			__( 'https://wordpress.org/' )
+		);
+
 		/**
 		 * Filters the "Thank you" text displayed in the admin footer.
 		 *
@@ -78,12 +84,8 @@ do_action( 'admin_footer', '' );
  * refers to the global hook suffix of the current page.
  *
  * @since 4.6.0
- *
- * @global string $hook_suffix
- *
- * @param string $hook_suffix The current admin page.
  */
-do_action( "admin_print_footer_scripts-{$hook_suffix}" );
+do_action( "admin_print_footer_scripts-{$hook_suffix}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 /**
  * Prints any scripts and data queued for the footer.
@@ -99,16 +101,14 @@ do_action( 'admin_print_footer_scripts' );
  * refers to the global hook suffix of the current page.
  *
  * @since 2.8.0
- *
- * @global string $hook_suffix
- * @param string $hook_suffix The current admin page.
  */
-do_action( "admin_footer-{$hook_suffix}" );
+do_action( "admin_footer-{$hook_suffix}" ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 
 // get_site_option() won't exist when auto upgrading from <= 2.7
-if ( function_exists('get_site_option') ) {
-	if ( false === get_site_option('can_compress_scripts') )
+if ( function_exists( 'get_site_option' ) ) {
+	if ( false === get_site_option( 'can_compress_scripts' ) ) {
 		compression_test();
+	}
 }
 
 ?>
