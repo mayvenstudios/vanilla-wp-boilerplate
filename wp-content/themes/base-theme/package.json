@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "jquery-match-height": "^0.7.2",
-    "jquery-validation": "^1.19.0",
+    "jquery-validation": "^1.19.3",
     "string-includes-polyfill": "^1.0.1"
   }
 }
