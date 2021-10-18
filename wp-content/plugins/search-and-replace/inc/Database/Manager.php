@@ -1,4 +1,7 @@
 <?php
+/** @noinspection SqlDialectInspection */
+/** @noinspection SqlNoDataSourceInspection */
+
 namespace Inpsyde\SearchReplace\Database;
 
 /**
@@ -10,7 +13,7 @@ class Manager {
 
 	/**
 	 * @var \wpdb
-	 * Wordpress Database Class
+	 * WordPress Database Class.
 	 * some functions adapted from :
 	 * https://github.com/ExpandedFronts/Better-Search-Replace/blob/master/includes/class-bsr-db.php
 	 */
@@ -43,7 +46,9 @@ class Manager {
 				$tables = $this->wpdb->get_col( "SHOW TABLES LIKE'" . $this->wpdb->base_prefix . "%'" );
 			} else {
 				$blog_id = get_current_blog_id();
-				$tables  = $this->wpdb->get_col( "SHOW TABLES LIKE '" . $this->wpdb->base_prefix . absint( $blog_id ) . "\_%'" );
+				$tables  = $this->wpdb->get_col(
+					"SHOW TABLES LIKE '" . $this->wpdb->base_prefix . absint( $blog_id ) . "\_%'"
+				);
 			}
 
 		} else {
@@ -67,10 +72,10 @@ class Manager {
 		if ( is_array( $tables ) && ! empty( $tables ) ) {
 
 			foreach ( $tables as $table ) {
-				$size                      = round( $table[ 'Data_length' ] / 1024, 2 );
+				$size = round( $table[ 'Data_length' ] / 1024, 2 );
+				// Translators: %s is the value of the size in kByte.
 				$sizes[ $table[ 'Name' ] ] = sprintf( __( '(%s KB)', 'search-and-replace' ), $size );
 			}
-
 		}
 
 		return $sizes;
@@ -81,7 +86,7 @@ class Manager {
 	 *
 	 * @access public
 	 *
-	 * @param $table
+	 * @param array|string $table
 	 *
 	 * @return int
 	 */
@@ -103,7 +108,7 @@ class Manager {
 	 */
 	public function get_columns( $table ) {
 
-		$primary_key = NULL;
+		$primary_key = null;
 		$columns     = array();
 		$fields      = $this->wpdb->get_results( 'DESCRIBE ' . $table );
 
@@ -120,9 +125,9 @@ class Manager {
 	}
 
 	/**
-	 * @param $table String The Table Name
-	 * @param $start Int The start row
-	 * @param $end   Int Number of Rows to be fetched
+	 * @param string  $table The Table Name.
+	 * @param integer $start The start row.
+	 * @param integer $end   Int Number of Rows to be fetched.
 	 *
 	 * @return array|null|object
 	 */
@@ -136,16 +141,16 @@ class Manager {
 	/**
 	 * Update table.
 	 *
-	 * @param $table
-	 * @param $update_sql
-	 * @param $where_sql
+	 * @param string $table
+	 * @param array  $update_sql
+	 * @param array  $where_sql
 	 *
 	 * @return false|int
 	 */
 	public function update( $table, $update_sql, $where_sql ) {
 
 		$sql = 'UPDATE ' . $table . ' SET ' . implode( ', ', $update_sql ) .
-		       ' WHERE ' . implode( ' AND ', array_filter( $where_sql ) );
+			' WHERE ' . implode( ' AND ', array_filter( $where_sql ) );
 
 		return $this->wpdb->query( $sql );
 	}
@@ -153,7 +158,7 @@ class Manager {
 	/**
 	 * Get table structure.
 	 *
-	 * @param $table
+	 * @param string $table
 	 *
 	 * @return array|null|object
 	 */
@@ -163,9 +168,9 @@ class Manager {
 	}
 
 	/**
-	 * returns a SQL CREATE TABLE Statement for the table provided in $table
+	 * Returns a SQL CREATE TABLE Statement for the table provided in $table.
 	 *
-	 * @param $table String The Name of the table we want to create the statement for.
+	 * @param string $table String The Name of the table we want to create the statement for.
 	 *
 	 * @return string
 	 */

@@ -43,6 +43,7 @@ class ReplaceDomain extends AbstractPage implements PageInterface {
 
 	/**
 	 * @return bool
+	 * @throws \Throwable
 	 */
 	public function save() {
 
@@ -50,25 +51,37 @@ class ReplaceDomain extends AbstractPage implements PageInterface {
 		$replace       = esc_url_raw( filter_input( INPUT_POST, 'replace' ) );
 		$new_db_prefix = esc_attr( filter_input( INPUT_POST, 'new_db_prefix' ) );
 
-		//search field should not be empty
+		// search field should not be empty
 		if ( '' === $replace ) {
 			$this->add_error( esc_html__( 'Replace Field should not be empty.', 'search-and-replace' ) );
 
-			return FALSE;
+			return false;
 		}
 
-		$report = $this->dbe->db_backup( $search, $replace, array(), TRUE, $new_db_prefix );
+		// Do not pass the new db prefix if `change_db_prefix` isn't flagged.
+		// @codingStandardsIgnoreStart
+		$change_db_prefix = isset( $_POST[ 'change_db_prefix' ] ) ?
+			filter_var( $_POST[ 'change_db_prefix' ], FILTER_VALIDATE_BOOLEAN ) :
+			false;
+		// @codingStandardsIgnoreEnd
+
+		$new_db_prefix = $change_db_prefix ? $new_db_prefix : '';
+
+		// Make the backup.
+		$report = $this->dbe->db_backup( $search, $replace, [], true, $new_db_prefix );
+
+		// Show the replace report.
 		$this->downloader->show_modal( $report );
 
-		return TRUE;
+		return true;
 	}
 
 	/**
-	 * shows the page template
+	 * Shows the page template
 	 */
 	public function render() {
 
-		require_once( __DIR__ . '/../templates/replace_domain.php' );
+		require_once __DIR__ . '/../templates/replace-domain.php';
 	}
 
 	/**

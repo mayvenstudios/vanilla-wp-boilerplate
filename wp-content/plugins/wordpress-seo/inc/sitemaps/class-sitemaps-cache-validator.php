@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\XML_Sitemaps
  */
 
@@ -10,25 +12,37 @@
  */
 class WPSEO_Sitemaps_Cache_Validator {
 
-	/** @var string Prefix of the transient key for sitemap caches */
+	/**
+	 * Prefix of the transient key for sitemap caches.
+	 *
+	 * @var string
+	 */
 	const STORAGE_KEY_PREFIX = 'yst_sm_';
 
-	/** Name of the option that holds the global validation value */
+	/**
+	 * Name of the option that holds the global validation value.
+	 *
+	 * @var string
+	 */
 	const VALIDATION_GLOBAL_KEY = 'wpseo_sitemap_cache_validator_global';
 
-	/** The format which creates the key of the option that holds the type validation value */
+	/**
+	 * The format which creates the key of the option that holds the type validation value.
+	 *
+	 * @var string
+	 */
 	const VALIDATION_TYPE_KEY_FORMAT = 'wpseo_sitemap_%s_cache_validator';
 
 	/**
-	 * Get the cache key for a certain type and page
+	 * Get the cache key for a certain type and page.
 	 *
 	 * A type of cache would be something like 'page', 'post' or 'video'.
 	 *
-	 * Example key format for sitemap type "post", page 1: wpseo_sitemap_post_1:akfw3e_23azBa
+	 * Example key format for sitemap type "post", page 1: wpseo_sitemap_post_1:akfw3e_23azBa .
 	 *
 	 * @since 3.2
 	 *
-	 * @param null|string $type The type to get the key for. Null or self::SITEMAP_INDEX_TYPE for index cache.
+	 * @param string|null $type The type to get the key for. Null or self::SITEMAP_INDEX_TYPE for index cache.
 	 * @param int         $page The page of cache to get the key for.
 	 *
 	 * @return bool|string The key where the cache is stored on. False if the key could not be generated.
@@ -58,7 +72,7 @@ class WPSEO_Sitemaps_Cache_Validator {
 	}
 
 	/**
-	 * If the type is over length make sure we compact it so we don't have any database problems
+	 * If the type is over length make sure we compact it so we don't have any database problems.
 	 *
 	 * When there are more 'extremely long' post types, changes are they have variations in either the start or ending.
 	 * Because of this, we cut out the excess in the middle which should result in less chance of collision.
@@ -74,23 +88,23 @@ class WPSEO_Sitemaps_Cache_Validator {
 	 * @throws OutOfRangeException When there is less than 15 characters of space for a key that is originally longer.
 	 */
 	public static function truncate_type( $type, $prefix = '', $postfix = '' ) {
-		/**
+		/*
 		 * This length has been restricted by the database column length of 64 in the past.
 		 * The prefix added by WordPress is '_transient_' because we are saving to a transient.
 		 * We need to use a timeout on the transient, otherwise the values get autoloaded, this adds
 		 * another restriction to the length.
 		 */
-		$max_length = 45; // 64 - 19 ('_transient_timeout_')
+		$max_length  = 45; // 64 - 19 ('_transient_timeout_')
 		$max_length -= strlen( $prefix );
 		$max_length -= strlen( $postfix );
 
 		if ( strlen( $type ) > $max_length ) {
 
 			if ( $max_length < 15 ) {
-				/**
+				/*
 				 * If this happens the most likely cause is a page number that is too high.
 				 *
-				 * So this would not happen unintentionally..
+				 * So this would not happen unintentionally.
 				 * Either by trying to cause a high server load, finding backdoors or misconfiguration.
 				 */
 				throw new OutOfRangeException(
@@ -113,11 +127,11 @@ class WPSEO_Sitemaps_Cache_Validator {
 	}
 
 	/**
-	 * Invalidate sitemap cache
+	 * Invalidate sitemap cache.
 	 *
 	 * @since 3.2
 	 *
-	 * @param null|string $type The type to get the key for. Null for all caches.
+	 * @param string|null $type The type to get the key for. Null for all caches.
 	 *
 	 * @return void
 	 */
@@ -143,12 +157,12 @@ class WPSEO_Sitemaps_Cache_Validator {
 	}
 
 	/**
-	 * Cleanup invalidated database cache
+	 * Cleanup invalidated database cache.
 	 *
 	 * @since 3.2
 	 *
-	 * @param null|string $type      The type of sitemap to clear cache for.
-	 * @param null|string $validator The validator to clear cache of.
+	 * @param string|null $type      The type of sitemap to clear cache for.
+	 * @param string|null $validator The validator to clear cache of.
 	 *
 	 * @return void
 	 */
@@ -165,34 +179,35 @@ class WPSEO_Sitemaps_Cache_Validator {
 			$like = sprintf( '%1$s%2$s_%%', self::STORAGE_KEY_PREFIX, $type );
 		}
 
-		/**
+		/*
 		 * Add slashes to the LIKE "_" single character wildcard.
 		 *
 		 * We can't use `esc_like` here because we need the % in the query.
 		 */
-		$where   = array();
+		$where   = [];
 		$where[] = sprintf( "option_name LIKE '%s'", addcslashes( '_transient_' . $like, '_' ) );
 		$where[] = sprintf( "option_name LIKE '%s'", addcslashes( '_transient_timeout_' . $like, '_' ) );
 
 		// Delete transients.
 		$query = sprintf( 'DELETE FROM %1$s WHERE %2$s', $wpdb->options, implode( ' OR ', $where ) );
 		$wpdb->query( $query );
+
+		wp_cache_delete( 'alloptions', 'options' );
 	}
 
 	/**
-	 * Get the current cache validator
+	 * Get the current cache validator.
 	 *
 	 * Without the type the global validator is returned.
-	 *  This can invalidate -all- keys in cache at once
+	 * This can invalidate -all- keys in cache at once.
 	 *
-	 * With the type parameter the validator for that specific
-	 *  type can be invalidated
+	 * With the type parameter the validator for that specific type can be invalidated.
 	 *
 	 * @since 3.2
 	 *
 	 * @param string $type Provide a type for a specific type validator, empty for global validator.
 	 *
-	 * @return null|string The validator for the supplied type.
+	 * @return string|null The validator for the supplied type.
 	 */
 	public static function get_validator( $type = '' ) {
 
@@ -211,7 +226,7 @@ class WPSEO_Sitemaps_Cache_Validator {
 	}
 
 	/**
-	 * Get the cache validator option key for the specified type
+	 * Get the cache validator option key for the specified type.
 	 *
 	 * @since 3.2
 	 *
@@ -229,7 +244,7 @@ class WPSEO_Sitemaps_Cache_Validator {
 	}
 
 	/**
-	 * Refresh the cache validator value
+	 * Refresh the cache validator value.
 	 *
 	 * @since 3.2
 	 *
@@ -263,9 +278,9 @@ class WPSEO_Sitemaps_Cache_Validator {
 	/**
 	 * Encode to base61 format.
 	 *
-	 * @since 3.2
-	 *
 	 * This is base64 (numeric + alpha + alpha upper case) without the 0.
+	 *
+	 * @since 3.2
 	 *
 	 * @param int $base10 The number that has to be converted to base 61.
 	 *

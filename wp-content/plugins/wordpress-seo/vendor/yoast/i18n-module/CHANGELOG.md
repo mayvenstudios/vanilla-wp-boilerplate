@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.1.1
+
+### Fixed
+- Reverts the capitalization of the class names.
+
+## 3.1.0
+
+### Fixed
+- Fixes a bug where a 'You're using WordPress in a language we don't support yet.' notice would be shown for formal and informal locales when the locale actually was supported.
+
+## 3.0.0
+
+### Added
+- Added functionality to handle how the i18n-promobox notification is displayed.
+
+### Changed
+- [DEPRECATION] Postfix all classes with _v3. This prevents autoload collisions with 2.0 versions.
+
 ## 2.0.0
 
 ### Added

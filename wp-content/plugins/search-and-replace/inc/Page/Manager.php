@@ -12,7 +12,7 @@ class Manager {
 	/**
 	 * @var PageInterface[]
 	 */
-	private $pages = array();
+	private $pages = [];
 
 	/**
 	 * Add page.
@@ -63,7 +63,7 @@ class Manager {
 			 * @param string        $cap
 			 * @param PageInterface $page
 			 */
-			$cap = apply_filters( 'insr-capability', 'install_plugins', $page );
+			$cap = apply_filters( 'insr-capability', 'manage_options', $page );
 
 			add_submenu_page(
 				'tools.php',
@@ -71,7 +71,7 @@ class Manager {
 				$page->get_menu_title(),
 				$cap,
 				$slug,
-				array( $this, 'render' )
+				[ $this, 'render' ]
 			);
 		}
 	}
@@ -103,9 +103,9 @@ class Manager {
 		$output = '<div class="wrap">';
 		$output .= '<h1 id="title">' . esc_html__( 'Search & Replace', 'search-and-replace' ) . '</h1>';
 		$output .= '<h2 class="nav-tab-wrapper">';
-		$page = '';
+
 		foreach ( $this->pages as $slug => $page ) :
-			$class = $current_page === $slug ? 'nav-tab-active' : '';
+			$class  = $current_page === $slug ? 'nav-tab-active' : '';
 			$output .= sprintf(
 				'<a class="nav-tab %1$s" href="%2$s">%3$s</a>',
 				esc_attr( $class ),
@@ -113,16 +113,19 @@ class Manager {
 				$page->get_page_title()
 			);
 		endforeach;
+		unset( $page );
+
 		$output .= '</h2>';
+
+		// Set the current page.
+		$page = $this->pages[ $current_page ];
 
 		echo $output;
 		echo '<div class="tab__content">';
 		$this->save();
 		$page->display_errors();
-		$page = $this->pages[ $current_page ];
 		$page->render();
 		echo '</div>';
-
 		echo '</div>'; // wrap
 	}
 
@@ -133,17 +136,16 @@ class Manager {
 	 */
 	public function register_css() {
 
-		if ( ! isset( $_GET[ 'page' ] ) || ! array_key_exists( $_GET[ 'page' ], $this->pages ) ) {
+		if ( ! $this->is_search_and_replace_admin_page() ) {
 			return;
 		}
 
 		$suffix = $this->get_script_suffix();
-
 		$url    = ( SEARCH_REPLACE_BASEDIR . '/assets/css/inpsyde-search-replace' . $suffix . '.css' );
 		$handle = 'insr-styles';
-		wp_register_script( $handle, $url );
-		wp_enqueue_style( $handle, $url, array(), FALSE, FALSE );
 
+		wp_register_script( $handle, $url );
+		wp_enqueue_style( $handle, $url, [], false, false );
 	}
 
 	/**
@@ -153,17 +155,16 @@ class Manager {
 	 */
 	public function register_js() {
 
-		if ( ! isset( $_GET[ 'page' ] ) || ! array_key_exists( $_GET[ 'page' ], $this->pages ) ) {
+		if ( ! $this->is_search_and_replace_admin_page() ) {
 			return;
 		}
 
 		$suffix = $this->get_script_suffix();
-
 		$url    = ( SEARCH_REPLACE_BASEDIR . '/assets/js/inpsyde-search-replace' . $suffix . '.js' );
 		$handle = 'insr-js';
-		wp_register_script( $handle, $url );
-		wp_enqueue_script( $handle, $url, array(), FALSE, FALSE );
 
+		wp_register_script( $handle, $url );
+		wp_enqueue_script( $handle, $url, [], false, true );
 	}
 
 	/**
@@ -176,4 +177,17 @@ class Manager {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 	}
 
+	/**
+	 * Is admin search and replace page
+	 *
+	 * Check against the current screen in admin,
+	 *
+	 * @return bool True if current screen is one of the search and replace pages
+	 */
+	private function is_search_and_replace_admin_page() {
+
+		$current = str_replace( 'tools_page_', '', get_current_screen()->id );
+
+		return array_key_exists( $current, $this->pages );
+	}
 }

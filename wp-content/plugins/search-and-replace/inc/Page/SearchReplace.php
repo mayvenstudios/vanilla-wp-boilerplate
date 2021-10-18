@@ -1,8 +1,8 @@
 <?php
+
 namespace Inpsyde\SearchReplace\Page;
 
-use Inpsyde\SearchReplace\Database,
-	Inpsyde\SearchReplace\Service;
+use Inpsyde\SearchReplace\Database;
 use Inpsyde\SearchReplace\FileDownloader;
 
 /**
@@ -49,11 +49,32 @@ class SearchReplace extends AbstractPage implements PageInterface {
 	}
 
 	/**
-	 * shows the page contents
+	 * Shows the page contents
 	 */
 	public function render() {
 
-		require_once( __DIR__ . '/../templates/search_replace.php' );
+		require_once __DIR__ . '/../templates/search-replace.php';
+
+		wp_localize_script(
+			'insr-js',
+			'insr_data_obj', [
+				'search_matches_site_url' => __(
+					'Your search contains your current site url. Replacing your site url can cause your site to break. Are you sure you wish to proceed?',
+					'search-and-replace'
+				),
+				'site_url'                => $this->get_stripped_site_url(),
+			]
+		);
+	}
+
+	/**
+	 * Returns the site url, strips http:// or https://
+	 */
+	private function get_stripped_site_url() {
+
+		$url = get_site_url();
+
+		return substr( $url, strpos( $url, '/' ) + 2 );
 	}
 
 	/**
@@ -75,105 +96,101 @@ class SearchReplace extends AbstractPage implements PageInterface {
 	}
 
 	/**
-	 *prints a select with all the tables and their sizes
-	 *
-	 * @return void 
-	 */
-	protected function show_table_list() {
-
-		$tables      = $this->dbm->get_tables();
-		$sizes       = $this->dbm->get_sizes();
-		$table_count = count( $tables );
-
-		//adjust height of select according to table count, but max 20 rows
-		$select_rows = $table_count < 20 ? $table_count : 20;
-
-		//if we come from a dry run, we select the tables to the dry run again
-		/** @var bool | string $selected_tables */
-		$selected_tables = FALSE;
-		if ( isset( $_POST[ 'select_tables' ] ) ) {
-			$selected_tables = $_POST[ 'select_tables' ];
-		}
-
-		echo '<select id="select_tables" name="select_tables[]" multiple="multiple"  size = "' . $select_rows . '">';
-		foreach ( $tables as $table ) {
-			$table_size = isset ( $sizes[ $table ] ) ? $sizes[ $table ] : '';
-			//check if dry run. if dry run && current table is in "selected" array add selected attribute
-			if ( isset( $_POST[ 'dry_run' ] )
-				&& $selected_tables
-				&& in_array( $table, $selected_tables, FALSE )
-			) {
-				echo "<option value='$table' selected='selected'>$table .  $table_size </option>";
-
-				//if current table had not been selected echo option without "selected" attribute
-			} else {
-				echo '<option value="' . $table . '">' . $table . $table_size . '</option>';
-			}
-
-		}
-		echo( '</select>' );
-	}
-
-	/**
 	 * @return bool
+	 * @throws \Throwable
 	 */
 	public function save() {
 
-		//check for errors in form
 		if ( ! $this->is_request_valid() ) {
-
-			$this->display_errors();
-
-			return FALSE;
+			return false;
 		}
 
-		$tables  = isset( $_POST[ 'select_tables' ] ) ? $_POST[ 'select_tables' ] : '';
-		$dry_run = isset( $_POST[ 'dry_run' ] ) ? TRUE : FALSE;
+		// Retrieve tables.
+		$tables = $this->selected_tables();
+		if ( ! $tables ) {
+			return false;
+		}
 
-		//remove wp_magic_quotes
+		// @codingStandardsIgnoreLine
+		$dry_run = isset( $_POST[ 'dry_run' ] ) ? true : false;
+
+		// remove wp_magic_quotes
 		$search  = stripslashes( filter_input( INPUT_POST, 'search' ) );
 		$replace = stripslashes( filter_input( INPUT_POST, 'replace' ) );
+		$csv     = stripslashes( filter_input( INPUT_POST, 'csv' ) );
+		$csv     = ( $csv === '' ? null : $csv );
 
-		//if dry run is checked we run the replace function with dry run and return
-		if ( TRUE === $dry_run ) {
-			$this->run_replace( $search, $replace, $tables, $dry_run );
+		// Do not perform anything if we haven't anything.
+		if ( ( ! $search && ! $replace ) && ! $csv ) {
+			$this->add_error( esc_html__( 'You must provide at least a search string or a csv data', 'search-and-replace' ) );
+			return false;
+		}
 
-			return FALSE;
+		// If dry run is checked we run the replace function with dry run and return
+		if ( true === $dry_run ) {
+			$this->run_replace( $search, $replace, $tables, $dry_run, $csv );
+
+			return false;
 		}
 
 		$export_or_save = filter_input( INPUT_POST, 'export_or_save' );
 
 		if ( 'export' === $export_or_save ) {
-			//'export'-button was checked
-			$report = $this->dbe->db_backup( $search, $replace, $tables );
+			// 'export'-button was checked
+			$report = $this->dbe->db_backup( $search, $replace, $tables, false, '', $csv );
 			$this->downloader->show_modal( $report );
 		} else {
-			//"Save changes to database" was checked
-			$this->run_replace( $search, $replace, $tables, $dry_run );
+			// "Save changes to database" was checked
+			$this->run_replace( $search, $replace, $tables, $dry_run, $csv );
 		}
-		
-		return TRUE;
+
+		return true;
 	}
 
 	/**
-	 * @return string
+	 * Checks the input form and writes possible errors to a WP_Error object
+	 *
+	 * @return bool true|false
 	 */
-	protected function get_submit_button_title() {
+	protected function is_request_valid() {
 
-		return esc_html__( 'Do Search & Replace', 'search-and-replace' );
+		// If not table are selected mark the request as invalid but let user know why.
+		if ( ! $this->selected_tables() ) {
+			$this->add_error(
+				esc_html__(
+					'No Tables were selected. You must select at least one table to perform the action.',
+					'search-and-replace'
+				)
+			);
+
+			return false;
+		}
+
+		$search  = filter_input( INPUT_POST, 'search' );
+		$replace = filter_input( INPUT_POST, 'replace' );
+
+		// if search field is empty and replace field is not empty quit. If both fields are empty, go on (useful for backup of single tables without changing)
+		if ( '' === $search && '' !== $replace ) {
+			$this->add_error( esc_attr__( 'Search field is empty.', 'search-and-replace' ) );
+
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
-	 * calls run_replace_table()  on each table provided in array $tables
+	 * Calls run_replace_table()  on each table provided in array $tables.
 	 *
-	 * @param $search
-	 * @param $replace
-	 * @param $tables  array of tables we want to search
-	 * @param $dry_run True if dry run (no changes are written to db)
+	 * @param string $search
+	 * @param string $replace
+	 * @param array  $tables  Array of tables we want to search.
+	 * @param bool   $dry_run True if dry run (no changes are written to db).
+	 * @param bool   $csv
 	 *
-	 * @return null
+	 * @throws \Throwable
 	 */
-	protected function run_replace( $search, $replace, $tables, $dry_run ) {
+	protected function run_replace( $search, $replace, $tables, $dry_run, $csv = null ) {
 
 		echo '<div class="updated notice is-dismissible">';
 		if ( $dry_run ) {
@@ -194,90 +211,77 @@ class SearchReplace extends AbstractPage implements PageInterface {
 		}
 		$this->replace->set_dry_run( $dry_run );
 
-		$report = $this->replace->run_search_replace( $search, $replace, $tables );
+		$report = $this->replace->run_search_replace( $search, $replace, $tables, $csv );
 
 		if ( is_wp_error( $report ) ) {
-			$this->add_error( __( $report->get_error_message(), 'search-and-replace' ) );
-			$this->display_errors();
+			$this->add_error( $report->get_error_message() );
 		} else {
-
 			if ( count( $report[ 'changes' ] ) > 0 ) {
 				$this->downloader->show_changes( $report );
 			}
 
-			//if no changes found report that
+			// if no changes found report that
 			if ( 0 === count( $report [ 'changes' ] ) ) {
 				echo '<p>' . esc_html__( 'Search pattern not found.', 'search-and-replace' ) . '</p>';
 			}
 		}
 
 		echo '</div>';
-
 	}
 
 	/**
-	 * checks the input form and writes possible errors to a WP_Error object
+	 * Prints a select with all the tables and their sizes
 	 *
-	 * @return bool true|false
+	 * @return void
 	 */
-	protected function is_request_valid() {
+	protected function show_table_list() {
 
-		$select_tables = filter_input( INPUT_POST, 'select_tables' );
-		if ( '' === $select_tables ) {
-			$this->add_error( __( 'No Tables were selected.', 'search-and-replace' ) );
+		$tables      = $this->dbm->get_tables();
+		$sizes       = $this->dbm->get_sizes();
+		$table_count = count( $tables );
 
-			return FALSE;
-		}
+		// adjust height of select according to table count, but max 20 rows
+		$select_rows = $table_count < 20 ? $table_count : 20;
+		// if we come from a dry run, we select the tables to the dry run again
+		$selected_tables = $this->selected_tables();
 
-		$search  = filter_input( INPUT_POST, 'search' );
-		$replace = filter_input( INPUT_POST, 'replace' );
+		echo '<select id="select_tables" name="select_tables[]" multiple="multiple"  size = "' . $select_rows . '">';
+		foreach ( $tables as $table ) {
+			$table_size = isset ( $sizes[ $table ] ) ? $sizes[ $table ] : '';
+			// check if dry run. if dry run && current table is in "selected" array add selected attribute
+			$selected = ( isset( $_POST[ 'dry_run' ] )
+				&& $selected_tables
+				&& in_array( $table, $selected_tables, false )
+			)
+				? 'selected="selected"'
+				: '';
 
-		//if search field is empty and replace field is not empty quit. If both fields are empty, go on (useful for backup of single tables without changing)
-		if ( '' === $search && '' === $replace ) {
-			$this->add_error( esc_attr__( 'Search field is empty.', 'search-and-replace' ) );
-
-			return FALSE;
-		}
-
-		$export_or_save = filter_input( INPUT_POST, 'export_or_save' );
-		//check if the user tries to replace domain name into the database
-		if ( '' === $export_or_save || 'save_to_db' === $export_or_save ) {
-			$contains_site_url = strpos( $search, $this->get_stripped_site_url() );
-			if ( FALSE !== $contains_site_url ) {
-				$this->add_error(
-					esc_html__(
-						'Your search contains your current site url. Replacing your site url will most likely cause your site to break. If you want to change the URL (and you know what you doing), please use the export function and make sure you backup your database before reimporting the changed SQL.',
-						'search-and-replace'
-					)
-				);
-
-				return FALSE;
-			}
+			printf(
+				"<option value='%s' %s>%s</option>",
+				esc_attr( $table ),
+				$selected,
+				esc_html( $table . $table_size )
+			);
 
 		}
-
-
-
-		return TRUE;
+		echo '</select>';
 	}
 
 	/**
-	 * Returns the site url, strips http:// or https://
+	 * @return string
 	 */
-	private function get_stripped_site_url() {
+	protected function get_submit_button_title() {
 
-		$url = get_site_url();
-
-		return substr( $url, strpos( $url, '/' ) + 2 );
+		return esc_html__( 'Do Search & Replace', 'search-and-replace' );
 	}
 
 	/**
-	 * shows the search value in template.
+	 * Shows the search value in template.
 	 */
 	private function get_search_value() {
 
 		$search  = isset( $_POST[ 'search' ] ) ? $_POST[ 'search' ] : '';
-		$dry_run = isset( $_POST[ 'dry_run' ] ) ? TRUE : FALSE;
+		$dry_run = isset( $_POST[ 'dry_run' ] ) ? true : false;
 
 		if ( $dry_run ) {
 			$search = stripslashes( $search );
@@ -288,18 +292,49 @@ class SearchReplace extends AbstractPage implements PageInterface {
 	}
 
 	/**
-	 * shows the replace value in template
+	 * Shows the replace value in template
 	 */
 	private function get_replace_value() {
 
 		$replace = isset( $_POST[ 'replace' ] ) ? $_POST[ 'replace' ] : '';
-		$dry_run = isset( $_POST[ 'dry_run' ] ) ? TRUE : FALSE;
+		$dry_run = isset( $_POST[ 'dry_run' ] ) ? true : false;
 		if ( $dry_run ) {
 			$replace = stripslashes( $replace );
 			$replace = htmlentities( $replace );
 			echo $replace;
 		}
 
+	}
+
+	/**
+	 * Shows the csv value in template.
+	 */
+	private function get_csv_value() {
+
+		$csv     = isset( $_POST[ 'csv' ] ) ? $_POST[ 'csv' ] : '';
+		$dry_run = isset( $_POST[ 'dry_run' ] ) ? true : false;
+		if ( $dry_run ) {
+			$csv = stripslashes( $csv );
+			$csv = htmlentities( $csv );
+			echo $csv;
+		}
+
+	}
+
+	/**
+	 * Retrieve Selected Tables
+	 *
+	 * @return array The tables list from the POST request
+	 */
+	private function selected_tables() {
+
+		$tables = [];
+
+		if ( ! empty( $_POST[ 'select_tables' ] ) ) {
+			$tables = filter_var( $_POST[ 'select_tables' ], FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+		}
+
+		return $tables;
 	}
 
 }

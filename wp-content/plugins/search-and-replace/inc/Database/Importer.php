@@ -1,6 +1,8 @@
 <?php
 namespace Inpsyde\SearchReplace\Database;
 
+use Inpsyde\SearchReplace\Service\MaxExecutionTime;
+
 /**
  * Class Importer
  *
@@ -9,7 +11,21 @@ namespace Inpsyde\SearchReplace\Database;
 class Importer {
 
 	/**
-	 * imports a sql file via mysqli
+	 * @var MaxExecutionTime
+	 */
+	private $max_execution;
+
+	/**
+	 * Importer constructor.
+	 *
+	 * @param MaxExecutionTime $max_execution
+	 */
+	public function __construct( MaxExecutionTime $max_execution ) {
+		$this->max_execution = $max_execution;
+	}
+
+	/**
+	 * Imports a sql file via mysqli
 	 *
 	 * @param  string $sql
 	 *
@@ -17,7 +33,9 @@ class Importer {
 	 */
 	public function import_sql( $sql ) {
 
-		//connect via mysqli for easier db import
+		$this->max_execution->set();
+
+		// connect via mysqli for easier db import
 		$mysqli = new \mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
 
 		// Run the SQL
@@ -37,6 +55,8 @@ class Importer {
 		}
 
 		mysqli_close( $mysqli );
+
+		$this->max_execution->restore();
 
 		return $i;
 	}

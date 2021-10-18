@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin\Views
  */
 
@@ -10,13 +12,69 @@ if ( ! defined( 'WPSEO_VERSION' ) ) {
 }
 
 if ( ! current_theme_supports( 'title-tag' ) ) {
-	$yform->light_switch( 'forcerewritetitle', __( 'Force rewrite titles', 'wordpress-seo' ) );
-	echo '<p class="description">', sprintf( __( '%1$s has auto-detected whether it needs to force rewrite the titles for your pages, if you think it\'s wrong and you know what you\'re doing, you can change the setting here.', 'wordpress-seo' ), 'Yoast SEO' ) . '</p>';
+	$wpseo_rewrite_titles_title     = esc_html__( 'Rewrite titles', 'wordpress-seo' );
+	$wpseo_rewrite_titles_presenter = new WPSEO_Paper_Presenter(
+		$wpseo_rewrite_titles_title,
+		__DIR__ . '/paper-content/general/force-rewrite-title.php',
+		[
+			'collapsible' => true,
+			'expanded'    => true,
+			'paper_id'    => 'settings-general-rewrite-titles',
+			'title'       => $wpseo_rewrite_titles_title,
+			'class'       => 'search-appearance',
+		]
+	);
+	// phpcs:ignore WordPress.Security.EscapeOutput -- output contains HTML and we assume it's properly escape on object creation.
+	echo $wpseo_rewrite_titles_presenter->get_output();
 }
 
-echo '<h2>' . esc_html__( 'Title Separator', 'wordpress-seo' ) . '</h2>';
+$wpseo_title_separator_title     = esc_html__( 'Title Separator', 'wordpress-seo' );
+$wpseo_title_separator_presenter = new WPSEO_Paper_Presenter(
+	$wpseo_title_separator_title,
+	__DIR__ . '/paper-content/general/title-separator.php',
+	[
+		'collapsible' => true,
+		'expanded'    => true,
+		'paper_id'    => 'settings-general-title-separator',
+		'title'       => $wpseo_title_separator_title,
+		'class'       => 'search-appearance',
+	]
+);
+// phpcs:ignore WordPress.Security.EscapeOutput -- output contains HTML and we assume it's properly escape on object creation.
+echo $wpseo_title_separator_presenter->get_output();
 
-$legend      = __( 'Title separator symbol', 'wordpress-seo' );
-$legend_attr = array( 'class' => 'radiogroup screen-reader-text' );
-$yform->radio( 'separator', WPSEO_Option_Titles::get_instance()->get_separator_options(), $legend, $legend_attr );
-echo '<p class="description">', __( 'Choose the symbol to use as your title separator. This will display, for instance, between your post title and site name.', 'wordpress-seo' ), ' ', __( 'Symbols are shown in the size they\'ll appear in the search results.', 'wordpress-seo' ), '</p>';
+if ( get_option( 'show_on_front' ) === 'posts' ) {
+	$wpseo_homepage_title = esc_html__( 'Homepage', 'wordpress-seo' );
+}
+else {
+	$wpseo_homepage_title = esc_html__( 'Homepage &amp; Posts page', 'wordpress-seo' );
+}
+
+$wpseo_homepage_presenter = new WPSEO_Paper_Presenter(
+	$wpseo_homepage_title,
+	__DIR__ . '/paper-content/general/homepage.php',
+	[
+		'collapsible' => true,
+		'expanded'    => true,
+		'paper_id'    => 'settings-general-homepage',
+		'title'       => $wpseo_homepage_title,
+		'class'       => 'search-appearance',
+	]
+);
+// phpcs:ignore WordPress.Security.EscapeOutput -- output contains HTML and we assume it's properly escape on object creation.
+echo $wpseo_homepage_presenter->get_output();
+
+$wpseo_knowledge_graph_title     = esc_html__( 'Knowledge Graph & Schema.org', 'wordpress-seo' );
+$wpseo_knowledge_graph_presenter = new WPSEO_Paper_Presenter(
+	$wpseo_knowledge_graph_title,
+	__DIR__ . '/paper-content/general/knowledge-graph.php',
+	[
+		'collapsible' => true,
+		'expanded'    => true,
+		'paper_id'    => 'settings-general-knowledge-graph',
+		'title'       => $wpseo_knowledge_graph_title,
+		'class'       => 'search-appearance',
+	]
+);
+// phpcs:ignore WordPress.Security.EscapeOutput -- output contains HTML and we assume it's properly escape on object creation.
+echo $wpseo_knowledge_graph_presenter->get_output();
