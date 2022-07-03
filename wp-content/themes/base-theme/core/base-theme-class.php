@@ -497,11 +497,7 @@ abstract class base_theme_class {
     public function parse_template_directory( $value, $post_id, $field )
     {
 
-        $searchAndReplace = array(
-
-            '{IMAGEPATH}' => get_template_directory_uri() . '/public/images'
-
-        );
+        $searchAndReplace = [];
 
         foreach($searchAndReplace as $search => $replace)
         {
